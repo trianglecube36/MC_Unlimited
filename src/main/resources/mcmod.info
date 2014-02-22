@@ -1,0 +1,16 @@
+[
+{
+  "modid": "unlimited",
+  "name": "Unlimited",
+  "description": "Endless world height and depth!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["trianglecube32"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

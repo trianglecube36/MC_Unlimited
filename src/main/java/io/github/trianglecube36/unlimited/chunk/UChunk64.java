@@ -592,7 +592,7 @@ public class UChunk64
         int i = p_150813_1_.xCoord - this.xPosition * 64;
         int j = p_150813_1_.yCoord - this.yPosition * 64;
         int k = p_150813_1_.zCoord - this.zPosition * 64;
-        this.addTileEntity(i, j, k, p_150813_1_);
+        this.func_150812_a(i, j, k, p_150813_1_);
 
         if (this.isChunkLoaded)
         {
@@ -603,7 +603,7 @@ public class UChunk64
     /**
      * chunk add tileentity
      */
-    public void addTileEntity(int x, int y, int z, TileEntity p_150812_4_)
+    public void func_150812_a(int x, int y, int z, TileEntity p_150812_4_)
     {
         ChunkPosition chunkposition = new ChunkPosition(x, y, z);
         p_150812_4_.setWorldObj(this.worldObj);
@@ -624,7 +624,7 @@ public class UChunk64
         }
     }
 
-    public void func_150805_f(int p_150805_1_, int p_150805_2_, int p_150805_3_)
+    public void removeTileEntity(int p_150805_1_, int p_150805_2_, int p_150805_3_)
     {
         ChunkPosition chunkposition = new ChunkPosition(p_150805_1_, p_150805_2_, p_150805_3_);
 

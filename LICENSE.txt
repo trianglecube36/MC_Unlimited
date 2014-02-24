@@ -1,0 +1,18 @@
+This license may change frequently as this mod is in a vary early stage of development.
+
+Things you can do:
+1. install and use this mod
+2. distribute this mod and or its source code as long as it is not intended for profit
+   and as long as credit is given to the original developer(s).
+4. modify the source code
+5. HAVE FUN!
+
+Things you can NOT do:
+1. DO NOT use this mod in any hacked client with the intention of hurting others!
+2. DO NOT distribute malicious software included in and or with the mod.
+3. DO NOT create hacked clients with the intent on supporting explicitly this mod.
+
+If you want to use this mod in a public mod pack with intention of profit you must contact the original developer(s).
+I(we) will most likely say yes and good luck...
+As most mods will not be compatable as this mod changes the core of the minecraft world; the chunk system!
+In the future I hope to add some sort emulation for mods that dont support the 3D chunk system.

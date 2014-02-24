@@ -28,25 +28,6 @@ public class EmptyUChunk64 extends UChunk64 {
         return x == this.xPosition && y == this.yPosition && z == this.zPosition;
     }
 
-    /**
-     * Returns the value in the height map at this x, z coordinate in the chunk
-     */
-    public int getHeightValue(int x, int y, int z)
-    {
-        return 0;
-    }
-
-    /**
-     * Generates the initial skylight map for the chunk upon generation or load.
-     */
-    public void generateSkylightMap() {}
-
-    /**
-     * Generates the height map for a chunk from scratch
-     */
-    @SideOnly(Side.CLIENT)
-    public void generateHeightMap() {}
-
     public Block getBlock(int x, int y, int z)
     {
         return Blocks.air;
@@ -119,7 +100,7 @@ public class EmptyUChunk64 extends UChunk64 {
 
     public void func_150812_a(int x, int y, int z, TileEntity p_150812_4_) {}
 
-    public void func_150805_f(int x, int y, int z) {}
+    public void removeTileEntity(int x, int y, int z) {}
 
     /**
      * Called when this Chunk is loaded by the ChunkProvider

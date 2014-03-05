@@ -41,29 +41,16 @@ import net.minecraftforge.event.world.ChunkEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class UChunk64
+public class UChunk32
 {
     private static final Logger field_150817_t = LogManager.getLogger();
-    /**
-     * Determines if the chunk is lit or not at a light value greater than 0.
-     */
     public static boolean isLit;
     /**
-     * INDEXING BIT ORDER: yyzzxx
+     * INDEXING BIT ORDER: yzx
      */
-    private ExtendedBlockStorage[] storageArrays; // now 4x4x4 array
+    private ExtendedBlockStorage[] storageArrays; // now 2x2x2 array
 
-    /**
-     * Which columns need their skylightMaps updated.
-     */
-    public boolean[] updateSkylightColumns; //TODO: keep or delete?
-    /**
-     * Whether or not this Chunk is currently loaded into the World
-     */
     public boolean isChunkLoaded;
-    /**
-     * Reference to the World object.
-     */
     public World worldObj;
 
     public final int xPosition;
@@ -74,50 +61,25 @@ public class UChunk64
     public Map chunkTileEntityMap;
 
     public List entityLists;
-    /**
-     * Boolean value indicating if the terrain is populated.
-     */
     public boolean isTerrainPopulated;
     
     //was field_150814_l
     public boolean isLightPopulated;
     public boolean field_150815_m;
-    /**
-     * Set to true if the chunk has been modified and needs to be updated internally.
-     */
     public boolean isModified;
-    /**
-     * Whether this Chunk has any Entities and thus requires saving on every tick
-     */
     public boolean hasEntities;
-    /**
-     * The time according to World.worldTime when this chunk was last saved
-     */
     public long lastSaveTime;
     /**
      * Updates to this chunk will not be sent to clients if this is false. This field is set to true the first time the
      * chunk is sent to a client, and never set to false.
      */
     public boolean sendUpdates;
-    /**
-     * Lowest value in the heightmap.
-     */
-    public int heightMapMinimum;
-    /**
-     * the cumulative number of ticks players have been in this chunk
-     */
     public long inhabitedTime;
-    /**
-     * Contains the current round-robin relight check index, and is implied as the relight check location as well.
-     */
-    private int queuedLightChecks;
 
-    public UChunk64(World par1World, int x, int y, int z)
+    public UChunk32(World par1World, int x, int y, int z)
     {
-        this.storageArrays = new ExtendedBlockStorage[64];
-        this.updateSkylightColumns = new boolean[256];
+        this.storageArrays = new ExtendedBlockStorage[8];
         this.chunkTileEntityMap = new HashMap();
-        this.queuedLightChecks = 4096;
         this.worldObj = par1World;
         this.xPosition = x;
         this.yPosition = y;
@@ -126,62 +88,61 @@ public class UChunk64
         this.entityLists = new ArrayList();
     }
 
-    public UChunk64(World w, Block[] blockarray, int x, int y, int z)
-    { //TODO: fix this and or remove
-        this(w, x, y, z);
-        int k = blockarray.length / 256;
-        boolean flag = !w.provider.hasNoSky;
+    public UChunk32(World w, Block[] blockarray, int x, int y, int z)
+    {
+    	this(w, x, y, z);
+    	boolean flag = !w.provider.hasNoSky;
 
-        for (int l = 0; l < 16; ++l)
+        for (int bx = 0; bx < 32; ++bx)
         {
-            for (int i1 = 0; i1 < 16; ++i1)
+            for (int bz = 0; bz < 32; ++bz)
             {
-                for (int j1 = 0; j1 < k; ++j1)
+                for (int by = 0; by < 32; ++by)
                 {
-                    Block block = blockarray[l << 11 | i1 << 7 | j1];
+                    int bIndex = (bx << 10) | (bz << 5) | by;
+                    Block block = blockarray[bIndex];
 
-                    if (block != null && block.getMaterial() != Material.air)
+                    if (block != null && block != Blocks.air)
                     {
-                        int k1 = j1 >> 4;
+                        int index = (bz >> 4) << 2 | (by >> 4) << 1 | bx >> 4;
 
-                        if (this.storageArrays[k1] == null)
+                        if (this.storageArrays[index] == null)
                         {
-                            this.storageArrays[k1] = new ExtendedBlockStorage(k1 << 4, flag);
+                            this.storageArrays[index] = new ExtendedBlockStorage(0, flag);
                         }
 
-                        this.storageArrays[k1].func_150818_a(l, j1 & 15, i1, block);
+                        this.storageArrays[index].func_150818_a(bx & 15, by & 15, bz & 15, block);
                     }
                 }
             }
         }
     }
 
-    public UChunk64(World w, Block[] blockarray, byte[] p_i45447_3_, int x, int y, int z)
-    { //TODO: fix this
+    public UChunk32(World w, Block[] blockarray, byte[] dataarray, int x, int y, int z)
+    {
         this(w, x, y, z);
-        int k = blockarray.length / 256;
         boolean flag = !w.provider.hasNoSky;
 
-        for (int l = 0; l < 16; ++l)
+        for (int bx = 0; bx < 32; ++bx)
         {
-            for (int i1 = 0; i1 < 16; ++i1)
+            for (int bz = 0; bz < 32; ++bz)
             {
-                for (int j1 = 0; j1 < k; ++j1)
+                for (int by = 0; by < 32; ++by)
                 {
-                    int k1 = l * k * 16 | i1 * k | j1;
-                    Block block = blockarray[k1];
+                    int bIndex = (bx << 10) | (bz << 5) | by;
+                    Block block = blockarray[bIndex];
 
                     if (block != null && block != Blocks.air)
                     {
-                        int l1 = j1 >> 4;
+                        int index = (bz >> 4) << 2 | (by >> 4) << 1 | bx >> 4;
 
-                        if (this.storageArrays[l1] == null)
+                        if (this.storageArrays[index] == null)
                         {
-                            this.storageArrays[l1] = new ExtendedBlockStorage(l1 << 4, flag);
+                            this.storageArrays[index] = new ExtendedBlockStorage(0, flag);
                         }
 
-                        this.storageArrays[l1].func_150818_a(l, j1 & 15, i1, block);
-                        this.storageArrays[l1].setExtBlockMetadata(l, j1 & 15, i1, p_i45447_3_[k1]);
+                        this.storageArrays[index].func_150818_a(bx & 15, by & 15, bz & 15, block);
+                        this.storageArrays[index].setExtBlockMetadata(bx & 15, by & 15, bz & 15, dataarray[bIndex]);
                     }
                 }
             }
@@ -204,59 +165,18 @@ public class UChunk64
         return this.storageArrays;
     }
 
-    /**
-     * Propagates a given sky-visible block's light value downward and upward to neighboring blocks as necessary.
-     */
-    private void propagateSkylightOcclusion(int par1, int par2)
+    public int func_150808_b(int px, int py, int pz)
     {
-        this.updateSkylightColumns[par1 + par2 * 16] = true;
-        this.isGapLightingUpdated = true;
+        int x = (xPosition << 5) + px;
+        int y = (yPosition << 5) + py;
+        int z = (zPosition << 5) + pz;
+        return this.getBlock(px, py, pz).getLightOpacity(worldObj, x, y, z);
     }
 
-    /**
-     * Checks the height of a block next to a sky-visible block and schedules a lighting update as necessary.
-     */
-    private void checkSkylightNeighborHeight(int par1, int par2, int par3)
-    {
-        int l = this.worldObj.getHeightValue(par1, par2);
-
-        if (l > par3)
-        {
-            this.updateSkylightNeighborHeight(par1, par2, par3, l + 1);
-        }
-        else if (l < par3)
-        {
-            this.updateSkylightNeighborHeight(par1, par2, l, par3 + 1);
-        }
-    }
-
-    private void updateSkylightNeighborHeight(int par1, int par2, int par3, int par4)
-    {
-        if (par4 > par3 && this.worldObj.doChunksNearChunkExist(par1, 0, par2, 16))
-        {
-            for (int i1 = par3; i1 < par4; ++i1)
-            {
-                this.worldObj.updateLightByType(EnumSkyBlock.Sky, par1, i1, par2);
-            }
-
-            this.isModified = true;
-        }
-    }
-
-    public int func_150808_b(int p_150808_1_, int p_150808_2_, int p_150808_3_)
-    { //TODO: should not use world q
-        int x = (xPosition << 4) + p_150808_1_;
-        int z = (zPosition << 4) + p_150808_3_;
-        return this.getBlock(p_150808_1_, p_150808_2_, p_150808_3_).getLightOpacity(worldObj, x, p_150808_2_, p_150808_3_);
-    }
-
-    /**
-     * func_150810_a
-     */
     public Block getBlock(final int x, final int y, final int z)
     {
         Block block = Blocks.air;
-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(y >> 4) << 4 | (z >> 4) << 2 | x >> 4];
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(z >> 4) << 2 | (y >> 4) << 1 | x >> 4];
 
         if (extendedblockstorage != null)
         {
@@ -287,12 +207,13 @@ public class UChunk64
      */
     public int getBlockMetadata(int x, int y, int z)
     {
-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(y >> 4) << 4 | (z >> 4) << 2 | x >> 4];
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(z >> 4) << 2 | (y >> 4) << 1 | x >> 4];
         return extendedblockstorage != null ? extendedblockstorage.getExtBlockMetadata(x & 15, y & 15, z & 15) : 0;
     }
 
     public boolean setBlockAndMetadata(int x, int y, int z, Block block, int data)
-    {//TODO: fix light updating
+    {//TODO: fix stuff
+     //TODO: link to new lighting system
         int i1 = z << 4 | x;
 
         /*if (y >= this.precipitationHeightMap[i1] - 1)
@@ -302,15 +223,15 @@ public class UChunk64
 
         int j1 = this.heightMap[i1];*/
         Block block1 = this.getBlock(x, y, z);
-        int k1 = this.getBlockMetadata(x, y, z);
+        int data1 = this.getBlockMetadata(x, y, z);
 
-        if (block1 == block && k1 == data)
+        if (block1 == block && data1 == data)
         {
             return false;
         }
         else
         {
-        	int index = (y >> 4) << 4 | (z >> 4) << 2 | x >> 4;
+        	int index = (z >> 4) << 2 | (y >> 4) << 1 | x >> 4;
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[index];
             //boolean flag = false;
 
@@ -321,17 +242,17 @@ public class UChunk64
                     return false;
                 }
 
-                extendedblockstorage = this.storageArrays[index] = new ExtendedBlockStorage(y >> 4 << 4, !this.worldObj.provider.hasNoSky);
+                extendedblockstorage = this.storageArrays[index] = new ExtendedBlockStorage(0, !this.worldObj.provider.hasNoSky);
                 //flag = y >= j1;
             }
 
-            int l1 = this.xPosition * 64 + x;
-            int wy = this.yPosition * 64 + x;
-            int i2 = this.zPosition * 64 + z;
+            int wx = (this.xPosition << 5) + x;
+            int wy = (this.yPosition << 5) + x;
+            int wz = (this.zPosition << 5) + z;
 
             if (!this.worldObj.isRemote)
             {
-                block1.onBlockPreDestroy(this.worldObj, l1, wy, i2, k1);
+                block1.onBlockPreDestroy(this.worldObj, wx, wy, wz, data1);
             }
 
             extendedblockstorage.func_150818_a(x & 15, y & 15, z & 15, block);
@@ -339,14 +260,14 @@ public class UChunk64
 
             if (!this.worldObj.isRemote)
             {
-                block1.breakBlock(this.worldObj, l1, wy, i2, block1, k1);
+                block1.breakBlock(this.worldObj, wx, wy, wz, block1, data1);
             }
-            else if (block1.hasTileEntity(k1))
+            else if (block1.hasTileEntity(data1))
             {
-                TileEntity te = this.getTileEntityUnsafe(x & 0x40, y & 0x40, z & 0x40); //note: dont know why check > 64
-                if (te != null && te.shouldRefresh(block1, block, k1, data, worldObj, l1, wy, i2))
+                TileEntity te = this.getTileEntityUnsafe(x & 31, y & 31, z & 31); //note: dont know why check > 64
+                if (te != null && te.shouldRefresh(block1, block, data1, data, worldObj, wx, wy, wz))
                 {
-                    this.worldObj.removeTileEntity(l1, wy, i2);
+                    this.worldObj.removeTileEntity(wx, wy, wz);
                 }
             }
 
@@ -387,7 +308,7 @@ public class UChunk64
 
                 if (!this.worldObj.isRemote)
                 {
-                    block.onBlockAdded(this.worldObj, l1, wy, i2);
+                    block.onBlockAdded(this.worldObj, wx, wy, wz);
                 }
 
                 if (block.hasTileEntity(data))
@@ -412,7 +333,7 @@ public class UChunk64
      */
     public boolean setBlockMetadata(int x, int y, int z, int data)
     {
-        ExtendedBlockStorage blockarray = this.storageArrays[(y >> 4) << 4 | (z >> 4) << 2 | x >> 4];
+        ExtendedBlockStorage blockarray = this.storageArrays[(z >> 4) << 2 | (y >> 4) << 1 | x >> 4];
 
         if (blockarray == null)
         {
@@ -450,11 +371,24 @@ public class UChunk64
     /**
      * Gets the amount of light saved in this block (doesn't adjust for daylight)
      */
-    public int getSavedLightValue(EnumSkyBlock par1EnumSkyBlock, int x, int y, int z)
-    {//TODO: new Lighting System?
-        //ExtendedBlockStorage extendedblockstorage = this.storageArrays[(y >> 4) << 4 | (z >> 4) << 2 | x >> 4];
-        //return extendedblockstorage == null ? (this.canBlockSeeTheSky(x, y, z) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : extendedblockstorage.getExtSkylightValue(x & 15, y & 15, z & 15)) : (par1EnumSkyBlock == EnumSkyBlock.Block ? extendedblockstorage.getExtBlocklightValue(x & 15, y & 15, z & 15) : par1EnumSkyBlock.defaultLightValue));
-        return 0;
+    public int getSavedLightValue(EnumSkyBlock type, int x, int y, int z)
+    {
+        ExtendedBlockStorage storage = this.storageArrays[(z >> 4) << 2 | (y >> 4) << 1 | x >> 4];
+        if(storage == null){
+        	if(type == EnumSkyBlock.Sky){
+        		return worldObj.canBlockSeeTheSky(x, y, z) ? type.defaultLightValue : 0;
+        	}else{
+        		return 0;
+        	}
+        }else{
+        	if(type == EnumSkyBlock.Block){
+        		return this.worldObj.provider.hasNoSky ? 0 : storage.getExtSkylightValue(x & 15, y & 15, z & 15);
+        	}else{
+        		return type == EnumSkyBlock.Block ? storage.getExtBlocklightValue(x & 15, y & 15, z & 15) : type.defaultLightValue;
+        	}
+        }
+        //was
+        //return storage == null ? (worldObj.canBlockSeeTheSky(x, y, z) ? type.defaultLightValue : 0) : (type == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : storage.getExtSkylightValue(x & 15, y & 15, z & 15)) : (type == EnumSkyBlock.Block ? storage.getExtBlocklightValue(x & 15, y & 15, z & 15) : type.defaultLightValue));
     }
 
     /**
@@ -463,11 +397,11 @@ public class UChunk64
      */
     public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int x, int y, int z, int value)
     {
-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(y >> 4) << 4 | (z >> 4) << 2 | x >> 4];
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(z >> 4) << 2 | (y >> 4) << 1 | x >> 4];
 
         if (extendedblockstorage == null)
         {
-            extendedblockstorage = this.storageArrays[(y >> 4) << 4 | (z >> 4) << 2 | x >> 4] = new ExtendedBlockStorage(y >> 4 << 4, !this.worldObj.provider.hasNoSky);
+            extendedblockstorage = this.storageArrays[(z >> 4) << 2 | (y >> 4) << 1 | x >> 4] = new ExtendedBlockStorage(0, !this.worldObj.provider.hasNoSky);
             //this.generateSkylightMap();
             //TODO: new lighting system
         } 
@@ -492,7 +426,7 @@ public class UChunk64
      */
     public int getBlockLightValue(int x, int y, int z, int somenumber)
     {
-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(y >> 4) << 4 | (z >> 4) << 2 | x >> 4];
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[(z >> 4) << 2 | (y >> 4) << 1 | x >> 4];
 
         if (extendedblockstorage == null)
         {
@@ -525,16 +459,16 @@ public class UChunk64
     public void addEntity(Entity par1Entity)
     {
         this.hasEntities = true;
-        int i = MathHelper.floor_double(par1Entity.posX / 64.0D);
-        int ey = MathHelper.floor_double(par1Entity.posY / 64.0D);
-        int j = MathHelper.floor_double(par1Entity.posZ / 64.0D);
+        int ex = MathHelper.floor_double(par1Entity.posX / 32.0D);
+        int ey = MathHelper.floor_double(par1Entity.posY / 32.0D);
+        int ez = MathHelper.floor_double(par1Entity.posZ / 32.0D);
 
-        if (i != this.xPosition || ey != this.yPosition || j != this.zPosition)
+        if (ex != this.xPosition || ey != this.yPosition || ez != this.zPosition)
         {
             field_150817_t.error("Wrong location! " + par1Entity);
             Thread.dumpStack();
         }
-
+        //TODO: do somthing?
         //MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringChunk(par1Entity, this.xPosition, this.zPosition, par1Entity.chunkCoordX, par1Entity.chunkCoordZ));
         par1Entity.addedToChunk = true;
         //TODO: old... use for emulation
@@ -578,7 +512,7 @@ public class UChunk64
             }
 
             tileentity = block.createTileEntity(worldObj, meta);
-            this.worldObj.setTileEntity(this.xPosition * 64 + x, this.yPosition * 64 + y, this.zPosition * 64 + z, tileentity);
+            this.worldObj.setTileEntity((this.xPosition << 5) + x, (this.yPosition << 5) + y, (this.zPosition << 5) + z, tileentity);
         }
 
         return tileentity;
@@ -587,29 +521,29 @@ public class UChunk64
     /**
      * chunk & world add tileentity
      */
-    public void func_150813_a(TileEntity p_150813_1_)
+    public void func_150813_a(TileEntity tilee)
     {
-        int i = p_150813_1_.xCoord - this.xPosition * 64;
-        int j = p_150813_1_.yCoord - this.yPosition * 64;
-        int k = p_150813_1_.zCoord - this.zPosition * 64;
-        this.func_150812_a(i, j, k, p_150813_1_);
+        int i = tilee.xCoord - (this.xPosition << 5);
+        int j = tilee.yCoord - (this.yPosition << 5);
+        int k = tilee.zCoord - (this.zPosition << 5);
+        this.func_150812_a(i, j, k, tilee);
 
         if (this.isChunkLoaded)
         {
-            this.worldObj.addTileEntity(p_150813_1_);
+            this.worldObj.addTileEntity(tilee);
         }
     }
 
     /**
      * chunk add tileentity
      */
-    public void func_150812_a(int x, int y, int z, TileEntity p_150812_4_)
+    public void func_150812_a(int x, int y, int z, TileEntity tilee)
     {
         ChunkPosition chunkposition = new ChunkPosition(x, y, z);
-        p_150812_4_.setWorldObj(this.worldObj);
-        p_150812_4_.xCoord = this.xPosition * 64 + x;
-        p_150812_4_.yCoord = this.yPosition * 64 + y;
-        p_150812_4_.zCoord = this.zPosition * 64 + z;
+        tilee.setWorldObj(this.worldObj);
+        tilee.xCoord = (this.xPosition << 5) + x;
+        tilee.yCoord = (this.yPosition << 5) + y;
+        tilee.zCoord = (this.zPosition << 5) + z;
 
         int metadata = getBlockMetadata(x, y, z);
         if (this.getBlock(x, y, z).hasTileEntity(metadata))
@@ -619,14 +553,14 @@ public class UChunk64
                 ((TileEntity)this.chunkTileEntityMap.get(chunkposition)).invalidate();
             }
 
-            p_150812_4_.validate();
-            this.chunkTileEntityMap.put(chunkposition, p_150812_4_);
+            tilee.validate();
+            this.chunkTileEntityMap.put(chunkposition, tilee);
         }
     }
 
-    public void removeTileEntity(int p_150805_1_, int p_150805_2_, int p_150805_3_)
+    public void removeTileEntity(int x, int y, int z)
     {
-        ChunkPosition chunkposition = new ChunkPosition(p_150805_1_, p_150805_2_, p_150805_3_);
+        ChunkPosition chunkposition = new ChunkPosition(x, y, z);
 
         if (this.isChunkLoaded)
         {
@@ -807,15 +741,15 @@ public class UChunk64
      * (true) or not (false).
      */
     public boolean getAreLevelsEmpty(int minY, int maxY)
-    {
+    {//TODO: this does not work well
         if (minY < 0)
         {
             minY = 0;
         }
 
-        if (maxY >= 64)
+        if (maxY >= 32)
         {
-            maxY = 63;
+            maxY = 31;
         }
         
         minY = minY >> 4;
@@ -835,16 +769,16 @@ public class UChunk64
         return true;
     }
 
-    public void setStorageArrays(ExtendedBlockStorage[] par1ArrayOfExtendedBlockStorage)
+    public void setStorageArrays(ExtendedBlockStorage[] array)
     {
-        this.storageArrays = par1ArrayOfExtendedBlockStorage;
+        this.storageArrays = array;
     }
 
     /**
      * Initialise this chunk with new binary data
      */
     @SideOnly(Side.CLIENT)
-    public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
+    public void fillChunk(byte[] par1ArrayOfByte, int hasstorageBits, int hasmsbBits, boolean par4)
     {
         Iterator iterator = chunkTileEntityMap.values().iterator();
         while(iterator.hasNext())
@@ -861,7 +795,7 @@ public class UChunk64
 
         for (l = 0; l < this.storageArrays.length; ++l)
         {
-            if ((par2 & 1 << l) != 0)
+            if ((hasstorageBits & 1 << l) != 0)
             {
                 if (this.storageArrays[l] == null)
                 {
@@ -882,7 +816,7 @@ public class UChunk64
 
         for (l = 0; l < this.storageArrays.length; ++l)
         {
-            if ((par2 & 1 << l) != 0 && this.storageArrays[l] != null)
+            if ((hasstorageBits & 1 << l) != 0 && this.storageArrays[l] != null)
             {
                 nibblearray = this.storageArrays[l].getMetadataArray();
                 System.arraycopy(par1ArrayOfByte, k, nibblearray.data, 0, nibblearray.data.length);
@@ -892,7 +826,7 @@ public class UChunk64
 
         for (l = 0; l < this.storageArrays.length; ++l)
         {
-            if ((par2 & 1 << l) != 0 && this.storageArrays[l] != null)
+            if ((hasstorageBits & 1 << l) != 0 && this.storageArrays[l] != null)
             {
                 nibblearray = this.storageArrays[l].getBlocklightArray();
                 System.arraycopy(par1ArrayOfByte, k, nibblearray.data, 0, nibblearray.data.length);
@@ -904,7 +838,7 @@ public class UChunk64
         {
             for (l = 0; l < this.storageArrays.length; ++l)
             {
-                if ((par2 & 1 << l) != 0 && this.storageArrays[l] != null)
+                if ((hasstorageBits & 1 << l) != 0 && this.storageArrays[l] != null)
                 {
                     nibblearray = this.storageArrays[l].getSkylightArray();
                     System.arraycopy(par1ArrayOfByte, k, nibblearray.data, 0, nibblearray.data.length);
@@ -915,7 +849,7 @@ public class UChunk64
 
         for (l = 0; l < this.storageArrays.length; ++l)
         {
-            if ((par3 & 1 << l) != 0)
+            if ((hasmsbBits & 1 << l) != 0)
             {
                 if (this.storageArrays[l] == null)
                 {
@@ -949,7 +883,7 @@ public class UChunk64
 
         for (l = 0; l < this.storageArrays.length; ++l)
         {
-            if (this.storageArrays[l] != null && (par2 & 1 << l) != 0)
+            if (this.storageArrays[l] != null && (hasstorageBits & 1 << l) != 0)
             {
                 this.storageArrays[l].removeInvalidBlocks();
             }
@@ -964,9 +898,9 @@ public class UChunk64
         while (iterator.hasNext())
         {
             TileEntity tileentity = (TileEntity)iterator.next();
-            int x = tileentity.xCoord & 63;
-            int y = tileentity.yCoord & 63;
-            int z = tileentity.zCoord & 63;
+            int x = tileentity.xCoord & 31;
+            int y = tileentity.yCoord & 31;
+            int z = tileentity.zCoord & 31;
             Block block = tileentity.getBlockType();
             if (block != getBlock(x, y, z) || tileentity.blockMetadata != this.getBlockMetadata(x, y, z))
             {
@@ -1010,14 +944,6 @@ public class UChunk64
     {
         this.blockBiomeArray = par1ArrayOfByte;
     }*/
-
-    /**
-     * Resets the relight check index to 0 for this Chunk.
-     */
-    public void resetRelightChecks()
-    {
-        this.queuedLightChecks = 0;
-    }
 
     /**
      * Retrieves the tile entity, WITHOUT creating it.

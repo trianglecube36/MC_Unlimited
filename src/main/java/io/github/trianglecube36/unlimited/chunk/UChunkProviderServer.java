@@ -323,12 +323,13 @@ public class UChunkProviderServer implements IUChunkProvider
      */
     public boolean unloadQueuedChunks()
     {
-        if (!this.worldObj.canNotSave)
+        if (!this.worldObj.levelSaving)
         {
-            for (UChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
-            {
-                this.chunksToUnload.remove(new ChunkCoordinates(forced.chunkXPos, forced.chunkYPos, forced.chunkZPos));
-            }
+        	//TODO: fined a way to support
+            //for (UChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
+            //{
+            //    this.chunksToUnload.remove(new ChunkCoordinates(forced.chunkXPos, forced.chunkYPos, forced.chunkZPos));
+            //}
 
             for (int i = 0; i < 100; ++i)
             {
@@ -343,7 +344,7 @@ public class UChunkProviderServer implements IUChunkProvider
                     this.loadedChunkHashMap.remove(loc.posX, loc.posY, loc.posZ);
                     this.loadedChunks.remove(chunk);
                     /*
-                    TODO: dont know how I am going to get this to work :\
+                    TODO: fix this
                     ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
                     */
                     if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)){
@@ -367,7 +368,7 @@ public class UChunkProviderServer implements IUChunkProvider
      */
     public boolean canSave()
     {
-        return !this.worldObj.canNotSave;
+        return !this.worldObj.levelSaving;//was canNotSave... there is some noob messing up MCP >:(
     }
 
     /**

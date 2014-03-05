@@ -2,8 +2,11 @@ package net.minecraft.world;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
+import io.github.trianglecube36.unlimited.chunk.UChunk2D;
 import io.github.trianglecube36.unlimited.chunk.UChunk64;
 import io.github.trianglecube36.unlimited.chunk.UChunkCoordIntPair;
+import io.github.trianglecube36.unlimited.light.LightingEngine;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -146,7 +149,7 @@ public abstract class World implements IBlockAccess
     /**
      * Handles chunk operations and caching
      */
-    protected IChunkProvider chunkProvider;
+    protected IUChunkProvider chunkProvider;
     protected final ISaveHandler saveHandler;
     /**
      * holds information about a world (size on disk, time, spawn point, seed, ...)
@@ -188,13 +191,12 @@ public abstract class World implements IBlockAccess
     protected boolean spawnPeacefulMobs;
     private ArrayList collidingBoundingBoxes;
     private boolean field_147481_N;
+    
     /**
-     * is a temporary list of blocks and light values used when updating light levels. Holds up to 32x32x32 blocks (the
-     * maximum influence of a light source.) Every element is a packed bit value: 0000000000LLLLzzzzzzyyyyyyxxxxxx. The
-     * 4-bit L is a light level used when darkening blocks. 6-bit numbers x, y and z represent the block's offset from
-     * the original block, plus 32 (i.e. value of 31 would mean a -1 offset
+     * no more messy lighting system
      */
-    int[] lightUpdateBlockList;
+    public LightingEngine le;
+    
     private static final String __OBFID = "CL_00000140";
 
     /**
@@ -209,7 +211,7 @@ public abstract class World implements IBlockAccess
     {
         if (this.blockExists(par1, 0, par2))
         {
-            Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
+            UChunk2D chunk = this.get2DChunk(par1, par2);
 
             try
             {
@@ -1041,7 +1043,7 @@ public abstract class World implements IBlockAccess
             else
             {
                 UChunk64 chunk = this.getChunkFromChunkCoords(cx, cy, cz);
-                return chunk.getSavedLightValue(par1EnumSkyBlock, x & 15, y, z & 15);
+                return chunk.getSavedLightValue(par1EnumSkyBlock, x & 63, y & 63, z & 63);
             }
         }
         else
@@ -3936,7 +3938,7 @@ public abstract class World implements IBlockAccess
     /**
      * gets the IChunkProvider this world uses.
      */
-    public IChunkProvider getChunkProvider()
+    public IUChunkProvider getChunkProvider()
     {
         return this.chunkProvider;
     }

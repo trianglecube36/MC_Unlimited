@@ -17,12 +17,12 @@ public interface IUChunkProvider {
      * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
      * specified chunk from the map seed and chunk seed
      */
-    UChunk64 provideChunk(int x, int y, int z);
+    UChunk32 provideChunk(int x, int y, int z);
 
     /**
      * loads or generates the chunk at the chunk location specified
      */
-    UChunk64 loadChunk(int x, int y, int z);
+    UChunk32 loadChunk(int x, int y, int z);
 
     /**
      * Populates chunk with ores etc etc

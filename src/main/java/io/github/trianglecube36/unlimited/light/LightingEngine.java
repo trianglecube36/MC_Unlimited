@@ -56,11 +56,11 @@ public class LightingEngine {
 		lightUpdateBlockList = new int[32768];
 	}
 	
-	public void populateLight(UChunk64 chunk, UChunk2D c2D){
+	public void populateLight(UChunk32 chunk, UChunk2D c2D){
 		
 	}
 	
-	public void rePopulateLight(UChunk64 chunk, UChunk2D c2D){
+	public void rePopulateLight(UChunk23 chunk, UChunk2D c2D){
 		int topblock = (chunk.yPosition << 6) + 63;
 		int skyvalue;
 		int hieght;

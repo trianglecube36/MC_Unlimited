@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -18,9 +19,9 @@ public class URegionFile
     private static final byte[] emptySector = new byte[4096];
     private final File fileName;
     private RandomAccessFile dataFile;
-    private final int[] offsets = new int[512]; //note: pigs cant fly... o and, the last 12 bits are the sector count
-    private final int[] chunkTimestamps = new int[512];
-    private ArrayList sectorFree;
+    private final int[] offsets = new int[4096]; //note: pigs can't fly... o and, the last 12 bits are the sector count
+    private final int[] chunkTimestamps = new int[4096];
+    private BitSet sectorFree;
     private int sizeDelta;
     private long lastModified;
 
@@ -39,19 +40,19 @@ public class URegionFile
             this.dataFile = new RandomAccessFile(par1File, "rw");
             int i;
 
-            if (this.dataFile.length() < 4096L)
+            if (this.dataFile.length() < 32768L)
             {
-                for (i = 0; i < 512; ++i)
+                for (i = 0; i < 4096; ++i)
                 {
                     this.dataFile.writeInt(0);
                 }
 
-                for (i = 0; i < 512; ++i)
+                for (i = 0; i < 4096; ++i)
                 {
                     this.dataFile.writeInt(0);
                 }
 
-                this.sizeDelta += 4096;
+                this.sizeDelta += 32768;
             }
 
             if ((this.dataFile.length() & 4095L) != 0L)
@@ -63,19 +64,13 @@ public class URegionFile
             }
 
             i = (int)this.dataFile.length() / 4096;
-            this.sectorFree = new ArrayList(i);
-            int j;
+            this.sectorFree = new BitSet(i);
+            this.sectorFree.set(8, i); // 8 false's , true's ...
 
-            for (j = 0; j < i; ++j)
-            {
-                this.sectorFree.add(Boolean.valueOf(true));
-            }
-
-            this.sectorFree.set(0, Boolean.valueOf(false));
             this.dataFile.seek(0L);
             int k;
-
-            for (j = 0; j < 512; ++j)
+            int j;
+            for (j = 0; j < 4096; ++j)
             {
                 k = this.dataFile.readInt();
                 this.offsets[j] = k;
@@ -85,7 +80,7 @@ public class URegionFile
                 {
                     for (int l = 0; l < i; ++l)
                     {
-                        this.sectorFree.set((k >> 12) + l, Boolean.valueOf(false));
+                        this.sectorFree.clear((k >> 12) + l);
                     }
                 }
             }
@@ -178,6 +173,15 @@ public class URegionFile
         return this.outOfBounds(x, y, z) ? null : new DataOutputStream(new DeflaterOutputStream(new URegionFile.ChunkBuffer(x, y, z)));
     }
     
+    private int freeIndex(){
+    	for(int i = 0;i < this.sectorFree.size();i++){
+    		if(this.sectorFree.get(i)){
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
+    
     protected synchronized void write(int x, int y, int z, byte[] dataArray, int numbites)
     {
         try
@@ -202,10 +206,10 @@ public class URegionFile
 
                 for (firstTrue = 0; firstTrue < count; ++firstTrue)
                 {
-                    this.sectorFree.set(off + firstTrue, Boolean.valueOf(true));
+                    this.sectorFree.set(off + firstTrue);
                 }
 
-                firstTrue = this.sectorFree.indexOf(Boolean.valueOf(true));
+                firstTrue = freeIndex();
                 int sNewCount = 0;
                 int iteration;
 
@@ -215,7 +219,7 @@ public class URegionFile
                     {
                         if (sNewCount != 0)
                         {
-                            if (((Boolean)this.sectorFree.get(iteration)).booleanValue())
+                            if (this.sectorFree.get(iteration))
                             {
                                 ++sNewCount;
                             }
@@ -224,7 +228,7 @@ public class URegionFile
                                 sNewCount = 0;
                             }
                         }
-                        else if (((Boolean)this.sectorFree.get(iteration)).booleanValue()) //note: slides us up to the new first true if last one there was not enuf space
+                        else if (this.sectorFree.get(iteration)) //note: slides us up to the new first true if last one there was not enough space
                         {
                             firstTrue = iteration;
                             sNewCount = 1;
@@ -244,7 +248,7 @@ public class URegionFile
 
                     for (iteration = 0; iteration < newcount; ++iteration)
                     {
-                        this.sectorFree.set(off + iteration, Boolean.valueOf(false));
+                        this.sectorFree.clear(off + iteration);
                     }
 
                     this.write(off, dataArray, numbites);
@@ -284,7 +288,7 @@ public class URegionFile
 
     private boolean outOfBounds(int x, int y, int z)
     {
-        return x < 0 || x >= 8 || y < 0 || y >= 8 || z < 0 || z >= 8;
+        return x < 0 || x >= 16 || y < 0 || y >= 16 || z < 0 || z >= 16;
     }
 
     private int getOffset(int x, int y, int z)
@@ -327,7 +331,7 @@ public class URegionFile
 
         public ChunkBuffer(int x, int y, int z)
         {
-            super(8096);
+            super(2048);
             this.chunkX = x;
             this.chunkY = y;
             this.chunkZ = z;

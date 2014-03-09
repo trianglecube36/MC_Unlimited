@@ -8,15 +8,15 @@ public interface IUChunkLoader {
     /**
      * Loads the specified(XZ) chunk into the specified world.
      */
-    UChunk64 loadChunk(World world, int x, int y, int z) throws IOException;
+    UChunk32 loadChunk(World world, int x, int y, int z) throws IOException;
 
-    void saveChunk(World world, UChunk64 chunk) throws MinecraftException, IOException;
+    void saveChunk(World world, UChunk32 chunk) throws MinecraftException, IOException;
 
     /**
      * Save extra data associated with this Chunk not normally saved during autosave, only during chunk unload.
      * Currently unused.
      */
-    void saveExtraChunkData(World world, UChunk64 chunk);
+    void saveExtraChunkData(World world, UChunk32 chunk);
 
     /**
      * Called every World.tick()

@@ -14,8 +14,8 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EmptyUChunk64 extends UChunk64 {
-    public EmptyUChunk64(World par1World, int x, int y, int z)
+public class EmptyUChunk32 extends UChunk32 {
+    public EmptyUChunk32(World par1World, int x, int y, int z)
     {
         super(par1World, z, y, z);
     }

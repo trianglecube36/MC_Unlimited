@@ -40,7 +40,7 @@ public class UChunkProviderServer implements IUChunkProvider
      * first out)
      */
     private Set chunksToUnload = new HashSet();
-    private UChunk64 defaultEmptyChunk;
+    private UChunk32 defaultEmptyChunk;
     private IUChunkProvider currentChunkProvider;
     public IUChunkLoader currentChunkLoader;
     /**
@@ -53,7 +53,7 @@ public class UChunkProviderServer implements IUChunkProvider
 
     public UChunkProviderServer(WorldServer par1WorldServer, IUChunkLoader par2IChunkLoader, IUChunkProvider par3IChunkProvider)
     {
-        this.defaultEmptyChunk = new EmptyUChunk64(par1WorldServer, 0, 0, 0);
+        this.defaultEmptyChunk = new EmptyUChunk32(par1WorldServer, 0, 0, 0);
         this.worldObj = par1WorldServer;
         this.currentChunkLoader = par2IChunkLoader;
         this.currentChunkProvider = par3IChunkProvider;
@@ -76,9 +76,9 @@ public class UChunkProviderServer implements IUChunkProvider
         if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
         {
             ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
-            int k = x * 64 + 32 - chunkcoordinates.posX;
-            int m = y * 64 + 32 - chunkcoordinates.posY;
-            int l = z * 64 + 32 - chunkcoordinates.posZ;
+            int k = x * 32 + 16 - chunkcoordinates.posX;
+            int m = y * 32 + 16 - chunkcoordinates.posY;
+            int l = z * 32 + 16 - chunkcoordinates.posZ;
             short short1 = 128;
 
             if (k < -short1 || k > short1 || m < -short1 || m > short1 || l < -short1 || l > short1)
@@ -101,7 +101,7 @@ public class UChunkProviderServer implements IUChunkProvider
 
         while (iterator.hasNext())
         {
-            UChunk64 chunk = (UChunk64)iterator.next();
+            UChunk32 chunk = (UChunk32)iterator.next();
             this.unloadChunksIfNotNearSpawn(chunk.xPosition, chunk.yPosition, chunk.zPosition);
         }
     }
@@ -109,11 +109,11 @@ public class UChunkProviderServer implements IUChunkProvider
     /**
      * loads or generates the chunk at the chunk location specified
      */
-    public UChunk64 loadChunk(int x, int y, int z)
+    public UChunk32 loadChunk(int x, int y, int z)
     {
     	ChunkCoordinates k = new ChunkCoordinates(x, y, z);
         this.chunksToUnload.remove(k);
-        UChunk64 chunk = (UChunk64)this.loadedChunkHashMap.getValueByKey(x, y, z);
+        UChunk32 chunk = (UChunk32)this.loadedChunkHashMap.getValueByKey(x, y, z);
 
         if (chunk == null)
         {
@@ -144,7 +144,7 @@ public class UChunkProviderServer implements IUChunkProvider
                     {
                         CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception generating new chunk");
                         CrashReportCategory crashreportcategory = crashreport.makeCategory("Chunk to be generated");
-                        crashreportcategory.addCrashSection("Location", String.format("%d,%d", new Object[] {Integer.valueOf(x), Integer.valueOf(y)}));
+                        crashreportcategory.addCrashSection("Location", String.format("%d,%d,%d", new Object[] {Integer.valueOf(x), Integer.valueOf(y), Integer.valueOf(z)}));
                         crashreportcategory.addCrashSection("Position hash", k);
                         crashreportcategory.addCrashSection("Generator", this.currentChunkProvider.makeString());
                         throw new ReportedException(crashreport);
@@ -154,8 +154,11 @@ public class UChunkProviderServer implements IUChunkProvider
 
             this.loadedChunkHashMap.add(x, y, z, chunk);
             this.loadedChunks.add(chunk);
+            UChunk2D chunk2d = this.provideChunk2D(x, z);
+            chunk2d.chunkLoad(chunk);
             chunk.onChunkLoad();
             chunk.populateChunk(this, this, x, y, z);
+            worldObj.le.populateLight(chunk, chunk2d);
         }
 
         return chunk;
@@ -165,16 +168,16 @@ public class UChunkProviderServer implements IUChunkProvider
      * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
      * specified chunk from the map seed and chunk seed
      */
-    public UChunk64 provideChunk(int x, int y, int z)
+    public UChunk32 provideChunk(int x, int y, int z)
     {
-        UChunk64 chunk = (UChunk64)this.loadedChunkHashMap.getValueByKey(x, y, z);
+        UChunk32 chunk = (UChunk32)this.loadedChunkHashMap.getValueByKey(x, y, z);
         return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(x, y, z)) : chunk;
     }
 
     /**
      * used by loadChunk, but catches any exceptions if the load fails.
      */
-    private UChunk64 safeLoadChunk(int x, int y, int z)
+    private UChunk32 safeLoadChunk(int x, int y, int z)
     {
         if (this.currentChunkLoader == null)
         {
@@ -184,7 +187,7 @@ public class UChunkProviderServer implements IUChunkProvider
         {
             try
             {
-                UChunk64 chunk = this.currentChunkLoader.loadChunk(this.worldObj, x, y, z);
+                UChunk32 chunk = this.currentChunkLoader.loadChunk(this.worldObj, x, y, z);
 
                 if (chunk != null)
                 {
@@ -209,7 +212,7 @@ public class UChunkProviderServer implements IUChunkProvider
     /**
      * used by saveChunks, but catches any exceptions if the save fails.
      */
-    private void safeSaveExtraChunkData(UChunk64 par1Chunk)
+    private void safeSaveExtraChunkData(UChunk32 par1Chunk)
     {
         if (this.currentChunkLoader != null)
         {
@@ -227,7 +230,7 @@ public class UChunkProviderServer implements IUChunkProvider
     /**
      * used by saveChunks, but catches any exceptions if the save fails.
      */
-    private void safeSaveChunk(UChunk64 par1Chunk)
+    private void safeSaveChunk(UChunk32 par1Chunk)
     {
         if (this.currentChunkLoader != null)
         {
@@ -252,7 +255,7 @@ public class UChunkProviderServer implements IUChunkProvider
      */
     public void populate(IUChunkProvider par1IChunkProvider, int x, int y, int z)
     {
-        UChunk64 chunk = this.provideChunk(x, y, z);
+        UChunk32 chunk = this.provideChunk(x, y, z);
 
         if (!chunk.isTerrainPopulated)
         {
@@ -283,7 +286,7 @@ public class UChunkProviderServer implements IUChunkProvider
 
         for (int j = 0; j < this.loadedChunks.size(); ++j)
         {
-            UChunk64 chunk = (UChunk64)this.loadedChunks.get(j);
+            UChunk32 chunk = (UChunk32)this.loadedChunks.get(j);
 
             if (par1)
             {
@@ -336,7 +339,7 @@ public class UChunkProviderServer implements IUChunkProvider
                 if (!this.chunksToUnload.isEmpty())
                 {
                 	ChunkCoordinates loc = (ChunkCoordinates)this.chunksToUnload.iterator().next();
-                    UChunk64 chunk = (UChunk64)this.loadedChunkHashMap.getValueByKey(loc.posX, loc.posY, loc.posZ);
+                    UChunk32 chunk = (UChunk32)this.loadedChunkHashMap.getValueByKey(loc.posX, loc.posY, loc.posZ);
                     chunk.onChunkUnload();
                     this.safeSaveChunk(chunk);
                     this.safeSaveExtraChunkData(chunk);

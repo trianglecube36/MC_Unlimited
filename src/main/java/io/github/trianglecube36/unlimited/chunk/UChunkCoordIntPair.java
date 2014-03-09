@@ -54,17 +54,17 @@ public class UChunkCoordIntPair
 
     public int getCenterXPos()
     {
-        return (this.chunkXPos << 6) + 32;
+        return (this.chunkXPos << 5) + 16;
     }
     
     public int getCenterYPos()
     {
-        return (this.chunkYPos << 6) + 32;
+        return (this.chunkYPos << 5) + 16;
     }
 
     public int getCenterZPosition()
     {
-        return (this.chunkZPos << 6) + 32;
+        return (this.chunkZPos << 5) + 16;
     }
 
     public ChunkPosition func_151349_a(int p_151349_1_)

@@ -41,7 +41,7 @@ import cpw.mods.fml.common.FMLLog;
 public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     private static final Logger logger = LogManager.getLogger();
     private List chunksToRemove = new ArrayList();
-    private Set pendingU64ChunksCoordinates = new HashSet();
+    private Set pendingU32ChunksCoordinates = new HashSet();
     private Object syncLockObject = new Object();
     /**
      * Save directory for chunks using the cool new epic save format
@@ -56,14 +56,14 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     /**
      * Loads the specified(XZ) chunk into the specified world.
      */
-    public UChunk64 loadChunk(World world, int x, int y, int z) throws IOException
+    public UChunk32 loadChunk(World world, int x, int y, int z) throws IOException
     {
         NBTTagCompound nbttagcompound = null;
         UChunkCoordIntPair location = new UChunkCoordIntPair(x, y ,z);
         
         synchronized (this.syncLockObject)
         {
-            if (this.pendingU64ChunksCoordinates.contains(location))
+            if (this.pendingU32ChunksCoordinates.contains(location))
             {
                 for (int k = 0; k < this.chunksToRemove.size(); ++k)
                 {
@@ -94,7 +94,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     /**
      * Wraps readChunkFromNBT. Checks the coordinates and several NBT tags.
      */
-    protected UChunk64 checkedReadChunkFromNBT(World world, int x, int y, int z, NBTTagCompound tag)
+    protected UChunk32 checkedReadChunkFromNBT(World world, int x, int y, int z, NBTTagCompound tag)
     {
         if (!tag.hasKey("Level", 10))
         {
@@ -108,7 +108,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
         }
         else
         {
-            UChunk64 chunk = this.readChunkFromNBT(world, tag.getCompoundTag("Level"));
+            UChunk32 chunk = this.readChunkFromNBT(world, tag.getCompoundTag("Level"));
 
             if (!chunk.isAtLocation(x, y, z))
             {
@@ -124,7 +124,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
         }
     }
 
-    public void saveChunk(World world, UChunk64 chunk) throws MinecraftException, IOException
+    public void saveChunk(World world, UChunk32 chunk) throws MinecraftException, IOException
     {
         world.checkSessionLock();
 
@@ -147,7 +147,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     {
         synchronized (this.syncLockObject)
         {
-            if (this.pendingU64ChunksCoordinates.contains(location))
+            if (this.pendingU32ChunksCoordinates.contains(location))
             {
                 for (int i = 0; i < this.chunksToRemove.size(); ++i)
                 {
@@ -160,7 +160,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
             }
 
             this.chunksToRemove.add(new ChunkIO.PendingChunk(location, tag));
-            this.pendingU64ChunksCoordinates.add(location);
+            this.pendingU32ChunksCoordinates.add(location);
             ThreadedFileIOBase.threadedIOInstance.queueIO(this);
         }
     }
@@ -181,7 +181,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
             }
 
             pendingchunk = (ChunkIO.PendingChunk)this.chunksToRemove.remove(0);
-            this.pendingU64ChunksCoordinates.remove(pendingchunk.chunkCoordinate);
+            this.pendingU32ChunksCoordinates.remove(pendingchunk.chunkCoordinate);
         }
 
         if (pendingchunk != null)
@@ -210,7 +210,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
      * Save extra data associated with this Chunk not normally saved during autosave, only during chunk unload.
      * Currently unused.
      */
-    public void saveExtraChunkData(World world, UChunk64 chunk) {}
+    public void saveExtraChunkData(World world, UChunk32 chunk) {}
 
     /**
      * Called every World.tick()
@@ -233,7 +233,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
      * Writes the Chunk passed as an argument to the NBTTagCompound also passed, using the World argument to retrieve
      * the Chunk's last update time.
      */
-    private void writeChunkToNBT(UChunk64 chunk, World world, NBTTagCompound tag)
+    private void writeChunkToNBT(UChunk32 chunk, World world, NBTTagCompound tag)
     {
         tag.setByte("V", (byte)1); //TODO: what is this used for?
         tag.setInteger("xPos", chunk.xPosition);
@@ -355,12 +355,12 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
      * Reads the data stored in the passed NBTTagCompound and creates a Chunk with that data in the passed World.
      * Returns the created Chunk.
      */
-    private UChunk64 readChunkFromNBT(World par1World, NBTTagCompound tag)
+    private UChunk32 readChunkFromNBT(World par1World, NBTTagCompound tag)
     {
         int x = tag.getInteger("xPos");
         int y = tag.getInteger("yPos");
         int z = tag.getInteger("zPos");
-        UChunk64 chunk = new UChunk64(par1World, x, y ,z);
+        UChunk32 chunk = new UChunk32(par1World, x, y ,z);
         chunk.isTerrainPopulated = tag.getBoolean("TerrainPopulated");
         chunk.isLightPopulated = tag.getBoolean("LightPopulated");
         chunk.inhabitedTime = tag.getLong("InhabitedTime");

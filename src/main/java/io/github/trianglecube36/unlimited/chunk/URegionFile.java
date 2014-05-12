@@ -85,7 +85,7 @@ public class URegionFile
                 }
             }
 
-            for (j = 0; j < 512; ++j)
+            for (j = 0; j < 4096; ++j)
             {
                 k = this.dataFile.readInt();
                 this.chunkTimestamps[j] = k;
@@ -261,7 +261,7 @@ public class URegionFile
                     for (iteration = 0; iteration < newcount; ++iteration)
                     {
                         this.dataFile.write(emptySector);
-                        this.sectorFree.add(Boolean.valueOf(false));
+                        this.sectorFree.set(this.sectorFree.size());
                     }
 
                     this.sizeDelta += 4096 * newcount;
@@ -293,7 +293,7 @@ public class URegionFile
 
     private int getOffset(int x, int y, int z)
     {
-        return this.offsets[x + y * 8 + z * 64];
+        return this.offsets[x + y * 16 + z * 256];
     }
 
     public boolean isChunkSaved(int x, int y, int z)
@@ -303,15 +303,15 @@ public class URegionFile
 
     private void setOffset(int x, int y, int z, int offset) throws IOException
     {
-        this.offsets[x + y * 8 + z * 64] = offset;
-        this.dataFile.seek((long)((x + y * 8 + z * 64) * 4));
+        this.offsets[x + y * 16 + z * 256] = offset;
+        this.dataFile.seek((long)((x + y * 16 + z * 256) * 4));
         this.dataFile.writeInt(offset);
     }
 
     private void setChunkTimestamp(int x, int y, int z, int timeStamp) throws IOException
     {
-        this.chunkTimestamps[x + y * 8 + z * 64] = timeStamp;
-        this.dataFile.seek((long)(2048 + (x + y * 8 + z * 64) * 4));
+        this.chunkTimestamps[x + y * 16 + z * 256] = timeStamp;
+        this.dataFile.seek((long)(16384 + (x + y * 16 + z * 256) * 4));
         this.dataFile.writeInt(timeStamp);
     }
 
@@ -331,7 +331,7 @@ public class URegionFile
 
         public ChunkBuffer(int x, int y, int z)
         {
-            super(2048);
+            super(4096);
             this.chunkX = x;
             this.chunkY = y;
             this.chunkZ = z;

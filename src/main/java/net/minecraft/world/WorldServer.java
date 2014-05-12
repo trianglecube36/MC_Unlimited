@@ -2,6 +2,13 @@ package net.minecraft.world;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.github.trianglecube36.unlimited.chunk.IUChunkLoader;
+import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
+import io.github.trianglecube36.unlimited.chunk.UChunk2D;
+import io.github.trianglecube36.unlimited.chunk.UChunk32;
+import io.github.trianglecube36.unlimited.chunk.UChunkCoordIntPair;
+import io.github.trianglecube36.unlimited.chunk.UChunkProviderServer;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEventData;
 import net.minecraft.block.material.Material;
@@ -48,7 +56,6 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -77,7 +84,7 @@ public class WorldServer extends World
      * All work to do in future ticks.
      */
     private TreeSet pendingTickListEntriesTreeSet;
-    public ChunkProviderServer theChunkProviderServer;
+    public UChunkProviderServer theChunkProviderServer;
     /**
      * Whether or not level saving is enabled
      */
@@ -340,68 +347,15 @@ public class WorldServer extends World
 
         while (iterator.hasNext())
         {
-            ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
-            int k = chunkcoordintpair.chunkXPos * 16;
-            int l = chunkcoordintpair.chunkZPos * 16;
+            UChunkCoordIntPair chunkcoordintpair = (UChunkCoordIntPair)iterator.next();
+            int x = chunkcoordintpair.chunkXPos * 32;
+            int y = chunkcoordintpair.chunkZPos * 32;
+            int z = chunkcoordintpair.chunkZPos * 32;
             this.theProfiler.startSection("getChunk");
-            Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
-            this.func_147467_a(k, l, chunk);
-            this.theProfiler.endStartSection("tickChunk");
-            //Limits and evenly distributes the lighting update time
-            if (System.nanoTime() - startTime <= 4000000 && doneChunks.add(chunkcoordintpair))
-            {
-                chunk.func_150804_b(false);
-            }
-            this.theProfiler.endStartSection("thunder");
-            int i1;
+            UChunk32 chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkYPos, chunkcoordintpair.chunkZPos);
+            this.func_147467_a(x, y, z, chunk);
             int j1;
             int k1;
-            int l1;
-
-            if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
-            {
-                this.updateLCG = this.updateLCG * 3 + 1013904223;
-                i1 = this.updateLCG >> 2;
-                j1 = k + (i1 & 15);
-                k1 = l + (i1 >> 8 & 15);
-                l1 = this.getPrecipitationHeight(j1, k1);
-
-                if (this.canLightningStrikeAt(j1, l1, k1))
-                {
-                    this.addWeatherEffect(new EntityLightningBolt(this, (double)j1, (double)l1, (double)k1));
-                }
-            }
-
-            this.theProfiler.endStartSection("iceandsnow");
-
-            if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0)
-            {
-                this.updateLCG = this.updateLCG * 3 + 1013904223;
-                i1 = this.updateLCG >> 2;
-                j1 = i1 & 15;
-                k1 = i1 >> 8 & 15;
-                l1 = this.getPrecipitationHeight(j1 + k, k1 + l);
-
-                if (this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l))
-                {
-                    this.setBlock(j1 + k, l1 - 1, k1 + l, Blocks.ice);
-                }
-
-                if (this.isRaining() && this.func_147478_e(j1 + k, l1, k1 + l, true))
-                {
-                    this.setBlock(j1 + k, l1, k1 + l, Blocks.snow_layer);
-                }
-
-                if (this.isRaining())
-                {
-                    BiomeGenBase biomegenbase = this.getBiomeGenForCoords(j1 + k, k1 + l);
-
-                    if (biomegenbase.canSpawnLightningBolt())
-                    {
-                        this.getBlock(j1 + k, l1 - 1, k1 + l).fillWithRain(this, j1 + k, l1 - 1, k1 + l);
-                    }
-                }
-            }
 
             this.theProfiler.endStartSection("tickBlocks");
             ExtendedBlockStorage[] aextendedblockstorage = chunk.getBlockStorageArray();
@@ -426,12 +380,74 @@ public class WorldServer extends World
                         if (block.getTickRandomly())
                         {
                             ++i;
-                            block.updateTick(this, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l, this.rand);
+                            block.updateTick(this, j2 + x, l2 + extendedblockstorage.getYLocation(), k2 + z, this.rand);
                         }
                     }
                 }
             }
 
+            this.theProfiler.endSection();
+        }
+        
+        Iterator iterator2 = this.activeChunk2DSet.iterator();
+
+        while (iterator2.hasNext()){
+        	ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
+            int x = chunkcoordintpair.chunkXPos * 32;
+            int z = chunkcoordintpair.chunkZPos * 32;
+            this.theProfiler.startSection("getChunk");
+            UChunk2D chunk = this.get2DChunk(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
+        	
+            this.theProfiler.startSection("thunder");
+            int i1;
+            int j1;
+            int k1;
+            int l1;
+                                                              //was 100000
+            if (provider.canDoLightning(chunk) && this.rand.nextInt(25000) == 0 && this.isRaining() && this.isThundering())
+            {
+                this.updateLCG = this.updateLCG * 3 + 1013904223;
+                i1 = this.updateLCG >> 2;
+                j1 = x + (i1 & 31);
+                k1 = z + (i1 >> 8 & 31);
+                l1 = this.getPrecipitationHeight(j1, k1);
+
+                if (this.canLightningStrikeAt(j1, l1, k1)) //TODO: modify canLightningStrikeAt! check if chunk32 is loaded
+                {
+                    this.addWeatherEffect(new EntityLightningBolt(this, (double)j1, (double)l1, (double)k1));
+                }
+            }
+
+            this.theProfiler.endStartSection("iceandsnow");
+
+            if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0)
+            {
+                this.updateLCG = this.updateLCG * 3 + 1013904223;
+                i1 = this.updateLCG >> 2;
+                j1 = i1 & 31;
+                k1 = i1 >> 8 & 31;
+                l1 = this.getPrecipitationHeight(j1 + x, k1 + z);
+
+                if (this.isBlockFreezableNaturally(j1 + x, l1 - 1, k1 + z))
+                {
+                    this.setBlock(j1 + x, l1 - 1, k1 + z, Blocks.ice);
+                }
+
+                if (this.isRaining() && this.func_147478_e(j1 + x, l1, k1 + z, true))
+                {
+                    this.setBlock(j1 + x, l1, k1 + z, Blocks.snow_layer);
+                }
+
+                if (this.isRaining())
+                {
+                    BiomeGenBase biomegenbase = this.getBiomeGenForCoords(j1 + x, k1 + z);
+
+                    if (biomegenbase.canSpawnLightningBolt())
+                    {
+                        this.getBlock(j1 + x, l1 - 1, k1 + z).fillWithRain(this, j1 + x, l1 - 1, k1 + z);
+                    }
+                }
+            }
             this.theProfiler.endSection();
         }
     }
@@ -453,17 +469,17 @@ public class WorldServer extends World
         this.scheduleBlockUpdateWithPriority(p_147464_1_, p_147464_2_, p_147464_3_, p_147464_4_, p_147464_5_, 0);
     }
 
-    public void scheduleBlockUpdateWithPriority(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
+    public void scheduleBlockUpdateWithPriority(int x, int y, int z, Block block, int p_147454_5_, int p_147454_6_)
     {
-        NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
+        NextTickListEntry nextticklistentry = new NextTickListEntry(x, y, z, block);
         //Keeping here as a note for future when it may be restored.
         //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
         //byte b0 = isForced ? 0 : 8;
         byte b0 = 0;
 
-        if (this.scheduledUpdatesAreImmediate && p_147454_4_.getMaterial() != Material.air)
+        if (this.scheduledUpdatesAreImmediate && block.getMaterial() != Material.air)
         {
-            if (p_147454_4_.func_149698_L())
+            if (block.func_149698_L())
             {
                 b0 = 8;
 
@@ -483,9 +499,9 @@ public class WorldServer extends World
             p_147454_5_ = 1;
         }
 
-        if (this.checkChunksExist(p_147454_1_ - b0, p_147454_2_ - b0, p_147454_3_ - b0, p_147454_1_ + b0, p_147454_2_ + b0, p_147454_3_ + b0))
+        if (this.checkChunksExist(x - b0, y - b0, z - b0, x + b0, y + b0, z + b0))
         {
-            if (p_147454_4_.getMaterial() != Material.air)
+            if (block.getMaterial() != Material.air)
             {
                 nextticklistentry.setScheduledTime((long)p_147454_5_ + this.worldInfo.getWorldTotalTime());
                 nextticklistentry.setPriority(p_147454_6_);
@@ -634,14 +650,16 @@ public class WorldServer extends World
         }
     }
 
-    public List getPendingBlockUpdates(Chunk par1Chunk, boolean par2)
+    public List getPendingBlockUpdates(UChunk32 par1Chunk, boolean par2)
     {
         ArrayList arraylist = null;
-        ChunkCoordIntPair chunkcoordintpair = par1Chunk.getChunkCoordIntPair();
-        int i = (chunkcoordintpair.chunkXPos << 4) - 2;
-        int j = i + 16 + 2;
-        int k = (chunkcoordintpair.chunkZPos << 4) - 2;
-        int l = k + 16 + 2;
+        UChunkCoordIntPair chunkcoordintpair = par1Chunk.getChunkCoordIntPair();
+        int xl = (chunkcoordintpair.chunkXPos << 5) - 2;
+        int xm = xl + 32 + 2;
+        int yl = (chunkcoordintpair.chunkXPos << 5) - 2;
+        int ym = yl + 32 + 2;
+        int zl = (chunkcoordintpair.chunkZPos << 5) - 2;
+        int zm = zl + 32 + 2;
 
         for (int i1 = 0; i1 < 2; ++i1)
         {
@@ -665,7 +683,7 @@ public class WorldServer extends World
             {
                 NextTickListEntry nextticklistentry = (NextTickListEntry)iterator.next();
 
-                if (nextticklistentry.xCoord >= i && nextticklistentry.xCoord < j && nextticklistentry.zCoord >= k && nextticklistentry.zCoord < l)
+                if (nextticklistentry.xCoord >= xl && nextticklistentry.xCoord < xm && nextticklistentry.yCoord >= yl && nextticklistentry.yCoord < ym && nextticklistentry.zCoord >= zl && nextticklistentry.zCoord < zm)
                 {
                     if (par2)
                     {
@@ -708,38 +726,40 @@ public class WorldServer extends World
     /**
      * Creates the chunk provider for this world. Called in the constructor. Retrieves provider from worldProvider?
      */
-    protected IChunkProvider createChunkProvider()
+    protected IUChunkProvider createChunkProvider()
     {
-        IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
-        this.theChunkProviderServer = new ChunkProviderServer(this, ichunkloader, this.provider.createChunkGenerator());
+        IUChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
+        this.theChunkProviderServer = new UChunkProviderServer(this, ichunkloader, this.provider.createChunkGenerator());
         return this.theChunkProviderServer;
     }
 
-    public List func_147486_a(int p_147486_1_, int p_147486_2_, int p_147486_3_, int p_147486_4_, int p_147486_5_, int p_147486_6_)
+    public List func_147486_a(int parx, int pary, int parz, int parx2, int pary2, int parz2)
     {
         ArrayList arraylist = new ArrayList();
 
-        for(int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
+        for(int x = (parx >> 4); x <= (parx2 >> 4); x++)
         {
-            for(int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
-            {
-                Chunk chunk = getChunkFromChunkCoords(x, z);
-                if (chunk != null)
-                {
-                    for(Object obj : chunk.chunkTileEntityMap.values())
-                    {
-                        TileEntity entity = (TileEntity)obj;
-                        if (!entity.isInvalid())
-                        {
-                            if (entity.xCoord >= p_147486_1_ && entity.yCoord >= p_147486_2_ && entity.zCoord >= p_147486_3_ &&
-                                entity.xCoord <= p_147486_4_ && entity.yCoord <= p_147486_5_ && entity.zCoord <= p_147486_6_)
-                            {
-                                arraylist.add(entity);
-                            }
-                        }
-                    }
-                }
-            }
+        	for(int y = (pary >> 4); y <= (pary2 >> 4); y++){
+        		for(int z = (parz >> 4); z <= (parz2 >> 4); z++)
+        		{
+        			UChunk32 chunk = getChunkFromChunkCoords(x, y, z);
+                	if (chunk != null)
+                	{
+                    	for(Object obj : chunk.chunkTileEntityMap.values())
+                    	{
+                        	TileEntity entity = (TileEntity)obj;
+                        	if (!entity.isInvalid())
+                        	{
+                            	if (entity.xCoord >= parx && entity.yCoord >= pary && entity.zCoord >= parz &&
+                            			entity.xCoord <= parx2 && entity.yCoord <= pary2 && entity.zCoord <= parz2)
+                            	{
+                                	arraylist.add(entity);
+                            	}
+                        	}
+                    	}
+                	}
+        		}
+        	}
         }
 
         return arraylist;
@@ -1143,8 +1163,6 @@ public class WorldServer extends World
 
     static class ServerBlockEventList extends ArrayList
         {
-            private static final String __OBFID = "CL_00001439";
-
             private ServerBlockEventList() {}
 
             ServerBlockEventList(Object par1ServerBlockEvent)

@@ -18,7 +18,7 @@ public class URegionFileCache
     public static synchronized URegionFile createOrLoadRegionFile(File par0File, int x, int y, int z)
     {
         File file2 = new File(par0File, "region");
-        File file3 = new File(file2, "r." + (x >> 3) + "." + (y >> 3) + "." + (z >> 3) + ".mcu");
+        File file3 = new File(file2, "r." + (x >> 4) + "." + (y >> 4) + "." + (z >> 4) + ".mcu");
         URegionFile regionfile = (URegionFile)regionsByFilename.get(file3);
 
         if (regionfile != null)
@@ -76,7 +76,7 @@ public class URegionFileCache
     public static DataInputStream getChunkInputStream(File par0File, int x, int y, int z)
     {
         URegionFile regionfile = createOrLoadRegionFile(par0File, x, y, z);
-        return regionfile.getChunkDataInputStream(x & 7, y & 7, z & 7);
+        return regionfile.getChunkDataInputStream(x & 4, y & 4, z & 4);
     }
 
     /**
@@ -85,6 +85,6 @@ public class URegionFileCache
     public static DataOutputStream getChunkOutputStream(File par0File, int x, int y, int z)
     {
         URegionFile regionfile = createOrLoadRegionFile(par0File, x, y, z);
-        return regionfile.getChunkDataOutputStream(x & 7, y & 7, z & 7);
+        return regionfile.getChunkDataOutputStream(x & 4, y & 4, z & 4);
     }
 }

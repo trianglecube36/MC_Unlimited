@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.WorldChunkManager;
 
 public class UChunk2D {
 	public World worldObj;
@@ -12,6 +14,7 @@ public class UChunk2D {
 	
 	public StackArray pHeightMap;
     public StackArray heightMap;
+    public StackArray solidMap;
     public int heightMapMin;
     
     public final int xPosition;
@@ -24,6 +27,7 @@ public class UChunk2D {
     	zPosition = z;
     	heightMap = new StackArray();
     	pHeightMap = new StackArray();
+    	solidMap = new StackArray();
     	columnChunks = new ArrayList();
     }
     
@@ -42,6 +46,7 @@ public class UChunk2D {
     				iy = 31;
     				while(iy >= 0){
     					if(!canBeTop(chunk, ix, iy, iz)){
+    						iy--;
     						continue;
     					}
     					heightMap.set(ix, iz, iy + (chunk.yPosition << 5));
@@ -58,4 +63,37 @@ public class UChunk2D {
     public boolean canBeTop(UChunk32 chunk, int x, int y, int z){
     	return chunk.getBlock(x, y, z).getLightOpacity(worldObj, x + (chunk.xPosition << 5), y + (chunk.yPosition << 5), z + (chunk.zPosition << 5)) != 0;
     }
+    
+    public int getTopSolidBlock(int x, int z){
+    	//TODO: this is not like hieght map or presip map... it is needed for genoration...
+    	//DONT WANT TO FINED TREES UNDER GROUND... data MUST sort of come form genorator!
+    	return 64;
+    }
+
+    public BiomeGenBase getBiomeGenForWorldCoords(int x, int z, WorldChunkManager cm)
+    {
+        int k = this.blockBiomeArray[z << 4 | x] & 255;
+
+        if (k == 255)
+        {
+            BiomeGenBase biomegenbase = cm.getBiomeGenAt((this.xPosition << 5) + x, (this.zPosition << 5) + z);
+            k = biomegenbase.biomeID;
+            this.blockBiomeArray[z << 4 | x] = (byte)(k & 255);
+        }
+
+        return BiomeGenBase.getBiome(k) == null ? BiomeGenBase.plains : BiomeGenBase.getBiome(k);
+    }
+
+	public boolean canBlockSeeTheSky(int x, int y, int z)
+    {
+        return y >= this.heightMap.get(x, z);
+    }
+
+	public int getHeightValue(int x, int z) {
+		return this.heightMap.get(x, z);
+	}
+
+	public int getPrecipitationHeight(int x, int z) {
+		return this.pHeightMap.get(x, z);
+	}
 }

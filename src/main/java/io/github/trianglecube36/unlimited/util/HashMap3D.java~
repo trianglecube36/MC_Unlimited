@@ -89,7 +89,7 @@ public class HashMap3D
     /**
      * Add a key-value pair.
      */
-    public void add(int i, int j, int k, Object par3Obj)
+    public void add(int i, int k, int j, Object par3Obj)
     {
         int H = getHashedKey(i, j, k);
         int I = getHashIndex(H, this.hashArray.length);

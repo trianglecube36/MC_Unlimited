@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
 import io.github.trianglecube36.unlimited.chunk.UChunk2D;
-import io.github.trianglecube36.unlimited.chunk.UChunk64;
+import io.github.trianglecube36.unlimited.chunk.UChunk32;
 import io.github.trianglecube36.unlimited.chunk.UChunkCoordIntPair;
 import io.github.trianglecube36.unlimited.light.LightingEngine;
 
@@ -215,7 +215,7 @@ public abstract class World implements IBlockAccess
 
             try
             {
-                return chunk.getBiomeGenForWorldCoords(par1 & 15, par2 & 15, this.provider.worldChunkMgr);
+                return chunk.getBiomeGenForWorldCoords(par1 & 31, par2 & 31, this.provider.worldChunkMgr);
             }
             catch (Throwable throwable)
             {
@@ -250,7 +250,6 @@ public abstract class World implements IBlockAccess
         this.spawnHostileMobs = true;
         this.spawnPeacefulMobs = true;
         this.collidingBoundingBoxes = new ArrayList();
-        this.lightUpdateBlockList = new int[32768];
         this.saveHandler = p_i45368_1_;
         this.theProfiler = p_i45368_5_;
         this.worldInfo = new WorldInfo(p_i45368_4_, p_i45368_2_);
@@ -290,7 +289,6 @@ public abstract class World implements IBlockAccess
         this.spawnHostileMobs = true;
         this.spawnPeacefulMobs = true;
         this.collidingBoundingBoxes = new ArrayList();
-        this.lightUpdateBlockList = new int[32768];
         this.saveHandler = p_i45369_1_;
         this.theProfiler = p_i45369_5_;
         this.mapStorage = getMapStorage(p_i45369_1_);
@@ -389,7 +387,7 @@ public abstract class World implements IBlockAccess
     /**
      * Creates the chunk provider for this world. Called in the constructor. Retrieves provider from worldProvider?
      */
-    protected abstract IChunkProvider createChunkProvider();
+    protected abstract IUChunkProvider createChunkProvider();
 
     protected void initialize(WorldSettings par1WorldSettings)
     {
@@ -406,7 +404,7 @@ public abstract class World implements IBlockAccess
     }
 
     public Block getTopBlock(int p_147474_1_, int p_147474_2_)
-    {
+    {//TODO: WARNING! this does not look good...
         int k;
 
         for (k = 63; !this.isAirBlock(p_147474_1_, k + 1, p_147474_2_); ++k)
@@ -421,12 +419,12 @@ public abstract class World implements IBlockAccess
     {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
         {
-            UChunk64 chunk = null;
+            UChunk32 chunk = null;
 
             try
             {
-                chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
-                return chunk.getBlock(x & 63, y & 63, z & 63);
+                chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
+                return chunk.getBlock(x & 31, y & 31, z & 31);
             }
             catch (Throwable throwable)
             {
@@ -457,7 +455,7 @@ public abstract class World implements IBlockAccess
      */
     public boolean blockExists(int x, int y, int z)
     {
-        return this.chunkExists(x >> 6, y >> 6, z >> 6);
+        return this.chunkExists(x >> 5, y >> 5, z >> 5);
     }
 
     /**
@@ -473,12 +471,12 @@ public abstract class World implements IBlockAccess
      */
     public boolean checkChunksExist(int x1, int y1, int z1, int x2, int y2, int z2)
     {
-        x1 >>= 6;
-        y1 >>= 6;
-        z1 >>= 6;
-        x2 >>= 6;
-        y2 >>= 6;
-        z2 >>= 6;
+        x1 >>= 5;
+        y1 >>= 5;
+        z1 >>= 5;
+        x2 >>= 5;
+        y2 >>= 5;
+        z2 >>= 5;
 
         for (int xc = x1; xc <= x2; ++xc)
         {
@@ -504,21 +502,30 @@ public abstract class World implements IBlockAccess
     {
         return this.chunkProvider.chunkExists(x, y, z);
     }
+    
+    protected boolean chunk2DExists(int x, int z)
+    {
+        return this.chunkProvider.chunk2DExists(x, z);
+    }
 
     /**
      * Returns a chunk looked up by block coordinates. Args: x, z
      */
-    public UChunk64 getChunkFromBlockCoords(int x, int y, int z)
+    public UChunk32 getChunkFromBlockCoords(int x, int y, int z)
     {
-        return this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
+        return this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
     }
 
     /**
      * Returns back a chunk looked up by chunk coordinates Args: x, y
      */
-    public UChunk64 getChunkFromChunkCoords(int x, int y, int z)
+    public UChunk32 getChunkFromChunkCoords(int x, int y, int z)
     {
         return this.chunkProvider.provideChunk(x, y, z);
+    }
+    
+    public UChunk2D get2DChunk(int x, int z){
+    	this.chunkProvider.provide2DChunk(x, z);
     }
 
     /**
@@ -530,15 +537,15 @@ public abstract class World implements IBlockAccess
     {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
         {
-            UChunk64 chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
+            UChunk32 chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
             Block block1 = null;
 
             if ((uinfo & 1) != 0)
             {
-                block1 = chunk.getBlock(x & 63, y & 63, z & 63);
+                block1 = chunk.getBlock(x & 31, y & 31, z & 31);
             }
 
-            boolean flag = chunk.setBlockAndMetadata(x & 63, y & 63, z & 63, block, data);
+            boolean flag = chunk.setBlockAndMetadata(x & 31, y & 31, z & 31, block, data);
             this.theProfiler.startSection("checkLight");
             this.func_147451_t(x, y, z);
             this.theProfiler.endSection();
@@ -576,10 +583,10 @@ public abstract class World implements IBlockAccess
     {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
         {
-            UChunk64 chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
-            x &= 63;
-            y &= 63;
-            z &= 63;
+            UChunk32 chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
+            x &= 31;
+            y &= 31;
+            z &= 31;
             return chunk.getBlockMetadata(x, y, z);
         }
         else
@@ -596,10 +603,10 @@ public abstract class World implements IBlockAccess
     {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
         {
-            UChunk64 chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
-            int cx = x & 63;
-            int cy = x & 63;
-            int cz = z & 63;
+            UChunk32 chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
+            int cx = x & 31;
+            int cy = x & 31;
+            int cz = z & 31;
             boolean flag = chunk.setBlockMetadata(cx, cy, cz, data);
 
             if (flag)
@@ -682,31 +689,6 @@ public abstract class World implements IBlockAccess
     public void notifyBlockChange(int p_147444_1_, int p_147444_2_, int p_147444_3_, Block p_147444_4_)
     {
         this.notifyBlocksOfNeighborChange(p_147444_1_, p_147444_2_, p_147444_3_, p_147444_4_);
-    }
-
-    /**
-     * marks a vertical line of blocks as dirty
-     */
-    public void markBlocksDirtyVertical(int par1, int par2, int par3, int par4)
-    { //TODO: new lighting system
-        int i1;
-
-        if (par3 > par4)
-        {
-            i1 = par4;
-            par4 = par3;
-            par3 = i1;
-        }
-
-        if (!this.provider.hasNoSky)
-        {
-            for (i1 = par3; i1 <= par4; ++i1)
-            {
-                this.updateLightByType(EnumSkyBlock.Sky, par1, i1, par2);
-            }
-        }
-
-        this.markBlockRangeForRenderUpdate(par1, par3, par2, par1, par4, par2);
     }
 
     public void markBlockRangeForRenderUpdate(int p_147458_1_, int p_147458_2_, int p_147458_3_, int p_147458_4_, int p_147458_5_, int p_147458_6_)
@@ -821,8 +803,8 @@ public abstract class World implements IBlockAccess
      * Checks if the specified block is able to see the sky
      */
     public boolean canBlockSeeTheSky(int x, int y, int z)
-    { //TODO: move use UChunk2D
-        return this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6).canBlockSeeTheSky(x & 63, y & 63, z & 63);
+    {
+        return this.get2DChunk(x >> 5, z >> 5).canBlockSeeTheSky(x & 31, y & 31, z & 31);
     }
 
     /**
@@ -830,18 +812,18 @@ public abstract class World implements IBlockAccess
      */
     public int getFullBlockLightValue(int x, int y, int z)
     {
-        if (y < 0)
+        if (y < -30000000)
         {
-            return 0;
+            return -30000000;
         }
         else
         {
-            if (y >= 256)
+            if (y >= 30000000)
             {
-                y = 255;
+                y = 39999999;
             }
 
-            return this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6).getBlockLightValue(x & 63, y & 63, z & 63, 0);
+            return this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5).getBlockLightValue(x & 31, y & 31, z & 31, 0);
         }
     }
 
@@ -892,16 +874,12 @@ public abstract class World implements IBlockAccess
 
                 return l1;
             }
-            else if (y < 0)
-            {
-                return 0;
-            }
             else
             {
-                UChunk64 chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
-                x &= 63;
-                y &= 63;
-                z &= 63;
+                UChunk32 chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
+                x &= 31;
+                y &= 31;
+                z &= 31;
                 return chunk.getBlockLightValue(x, y, z, this.skylightSubtracted);
             }
         }
@@ -915,41 +893,17 @@ public abstract class World implements IBlockAccess
      * Returns the y coordinate with a block in it at this x, z coordinate
      */
     public int getHeightValue(int x, int z)
-    { //TODO: use UChunk2D
+    {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000)
         {
-            if (!this.chunkExists(x >> 6, z >> 6))
+            if (!this.chunk2DExists(x >> 5, z >> 5))
             {
-                return 0;
+                return -30000000;
             }
             else
             {
-                Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
-                return chunk.getHeightValue(x & 15, z & 15);
-            }
-        }
-        else
-        {
-            return 64;
-        }
-    }
-
-    /**
-     * Gets the heightMapMinimum field of the given chunk, or 0 if the chunk is not loaded. Coords are in blocks. Args:
-     * X, Z
-     */
-    public int getChunkHeightMapMinimum(int par1, int par2)
-    {
-        if (par1 >= -30000000 && par2 >= -30000000 && par1 < 30000000 && par2 < 30000000)
-        {
-            if (!this.chunkExists(par1 >> 4, par2 >> 4))
-            {
-                return 0;
-            }
-            else
-            {
-                Chunk chunk = this.getChunkFromChunkCoords(par1 >> 4, par2 >> 4);
-                return chunk.heightMapMinimum;
+                UChunk2D chunk = this.get2DChunk(x >> 5, z >> 5);
+                return chunk.getHeightValue(x & 31, z & 31);
             }
         }
         else
@@ -973,9 +927,9 @@ public abstract class World implements IBlockAccess
         {
         	if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
             {
-                int cx = x >> 6;
-        		int cy = x >> 6;
-                int cz = z >> 6;
+                int cx = x >> 5;
+        		int cy = x >> 5;
+                int cz = z >> 5;
 
                 if (!this.chunkExists(cx, cz, cz))
                 {
@@ -1013,8 +967,8 @@ public abstract class World implements IBlockAccess
                 }
                 else
                 {
-                    UChunk64 chunk = this.getChunkFromChunkCoords(cx, cy, cz);
-                    return chunk.getSavedLightValue(par1EnumSkyBlock, x & 63, y & 63, z & 63);
+                    UChunk32 chunk = this.getChunkFromChunkCoords(cx, cy, cz);
+                    return chunk.getSavedLightValue(par1EnumSkyBlock, x & 31, y & 31, z & 31);
                 }
             }
             else
@@ -1032,9 +986,9 @@ public abstract class World implements IBlockAccess
     {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
         {
-            int cx = x >> 6;
-        	int cy = z >> 6;
-            int cz = z >> 6;
+            int cx = x >> 5;
+        	int cy = z >> 5;
+            int cz = z >> 5;
 
             if (!this.chunkExists(cx, cy, cz))
             {
@@ -1042,8 +996,8 @@ public abstract class World implements IBlockAccess
             }
             else
             {
-                UChunk64 chunk = this.getChunkFromChunkCoords(cx, cy, cz);
-                return chunk.getSavedLightValue(par1EnumSkyBlock, x & 63, y & 63, z & 63);
+                UChunk32 chunk = this.getChunkFromChunkCoords(cx, cy, cz);
+                return chunk.getSavedLightValue(par1EnumSkyBlock, x & 31, y & 31, z & 31);
             }
         }
         else
@@ -1060,10 +1014,10 @@ public abstract class World implements IBlockAccess
     {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
         {
-            if (this.chunkExists(x >> 6, y >> 6, z >> 6))
+            if (this.chunkExists(x >> 5, y >> 5, z >> 5))
             {
-                UChunk64 chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
-                chunk.setLightValue(par1EnumSkyBlock, x & 63, y & 63, z & 63, value);
+                UChunk32 chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
+                chunk.setLightValue(par1EnumSkyBlock, x & 31, y & 31, z & 31, value);
 
                 for (int i1 = 0; i1 < this.worldAccesses.size(); ++i1)
                 {
@@ -1436,9 +1390,9 @@ public abstract class World implements IBlockAccess
      */
     public boolean spawnEntityInWorld(Entity par1Entity)
     {
-        int cx = MathHelper.floor_double(par1Entity.posX / 64.0D);
-        int cy = MathHelper.floor_double(par1Entity.posY / 64.0D);
-        int cz = MathHelper.floor_double(par1Entity.posZ / 64.0D);
+        int cx = MathHelper.floor_double(par1Entity.posX / 32.0D);
+        int cy = MathHelper.floor_double(par1Entity.posY / 32.0D);
+        int cz = MathHelper.floor_double(par1Entity.posZ / 32.0D);
         boolean flag = par1Entity.forceSpawn;
 
         if (par1Entity instanceof EntityPlayer)
@@ -1875,33 +1829,18 @@ public abstract class World implements IBlockAccess
     /**
      * Gets the height to which rain/snow will fall. Calculates it if not already stored.
      */
-    public int getPrecipitationHeight(int par1, int par2)
-    {//TODO: use UChunk2D
-        return this.getChunkFromBlockCoords(par1, par2).getPrecipitationHeight(par1 & 15, par2 & 15);
+    public int getPrecipitationHeight(int x, int z)
+    {
+        return this.get2DChunk(x >> 5, z >> 5).getPrecipitationHeight(x & 31, z & 31);
     }
 
     /**
      * Finds the highest block on the x, z coordinate that is solid and returns its y coord. Args x, z
      */
-    public int getTopSolidOrLiquidBlock(int par1, int par2)
-    {//TODO: use UChunk2D
-        Chunk chunk = this.getChunkFromBlockCoords(par1, par2);
-        int x = par1;
-        int z = par2;
-        int k = chunk.getTopFilledSegment() + 15;
-        par1 &= 15;
-
-        for (par2 &= 15; k > 0; --k)
-        {
-            Block block = chunk.getBlock(par1, k, par2);
-
-            if (block.getMaterial().blocksMovement() && block.getMaterial() != Material.leaves && !block.isFoliage(this, x, k, z))
-            {
-                return k + 1;
-            }
-        }
-
-        return -1;
+    public int getTopSolidOrLiquidBlock(int x, int z)
+    {
+        UChunk2D chunk = this.get2DChunk(x >> 5, z >> 5);
+        return chunk.getTopSolidBlock(x & 31, z & 31);
     }
 
     /**
@@ -2118,13 +2057,13 @@ public abstract class World implements IBlockAccess
             {
                 iterator.remove();
 
-                if (this.chunkExists(tileentity.xCoord >> 6, tileentity.yCoord >> 6, tileentity.zCoord >> 6))
+                if (this.chunkExists(tileentity.xCoord >> 5, tileentity.yCoord >> 5, tileentity.zCoord >> 5))
                 {
-                    UChunk64 chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 6, tileentity.yCoord >> 6, tileentity.zCoord >> 6);
+                    UChunk32 chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 5, tileentity.yCoord >> 5, tileentity.zCoord >> 5);
 
                     if (chunk != null)
                     {
-                        chunk.removeInvalidTileEntity(tileentity.xCoord & 63, tileentity.yCoord & 63, tileentity.zCoord & 63);
+                        chunk.removeInvalidTileEntity(tileentity.xCoord & 31, tileentity.yCoord & 31, tileentity.zCoord & 31);
                     }
                 }
             }
@@ -2159,13 +2098,13 @@ public abstract class World implements IBlockAccess
                 }
                 else
                 {
-                    if (this.chunkExists(tileentity1.xCoord >> 6, tileentity1.yCoord >> 6, tileentity1.zCoord >> 6))
+                    if (this.chunkExists(tileentity1.xCoord >> 5, tileentity1.yCoord >> 5, tileentity1.zCoord >> 5))
                     {
-                        UChunk64 chunk1 = this.getChunkFromChunkCoords(tileentity1.xCoord >> 6, tileentity1.yCoord >> 6, tileentity1.zCoord >> 6);
+                        UChunk32 chunk1 = this.getChunkFromChunkCoords(tileentity1.xCoord >> 5, tileentity1.yCoord >> 5, tileentity1.zCoord >> 5);
 
                         if (chunk1 != null)
                         {
-                            chunk1.removeInvalidTileEntity(tileentity1.xCoord & 63, tileentity1.yCoord & 63, tileentity1.zCoord & 63);
+                            chunk1.removeInvalidTileEntity(tileentity1.xCoord & 31, tileentity1.yCoord & 31, tileentity1.zCoord & 31);
                         }
                     }
                 }
@@ -2204,7 +2143,7 @@ public abstract class World implements IBlockAccess
         int x = MathHelper.floor_double(par1Entity.posX);
         int y = MathHelper.floor_double(par1Entity.posY);
         int z = MathHelper.floor_double(par1Entity.posZ);
-        boolean isForced = getPersistentChunks().containsKey(new UChunkCoordIntPair(x >> 6, y >> 6, z >> 6));
+        boolean isForced = getPersistentChunks().containsKey(new UChunkCoordIntPair(x >> 5, y >> 5, z >> 5));
         byte b0 = isForced ? (byte)0 : 32;
         boolean canUpdate = !par2 || this.checkChunksExist(x - b0, y - b0, z - b0, x + b0, y + b0, z + b0);
 
@@ -2264,9 +2203,9 @@ public abstract class World implements IBlockAccess
                 par1Entity.rotationYaw = par1Entity.prevRotationYaw;
             }
 
-            int cx = MathHelper.floor_double(par1Entity.posX / 64.0D);
-            int cy = MathHelper.floor_double(par1Entity.posY / 64.0D);
-            int cz = MathHelper.floor_double(par1Entity.posZ / 64.0D);
+            int cx = MathHelper.floor_double(par1Entity.posX / 32.0D);
+            int cy = MathHelper.floor_double(par1Entity.posY / 32.0D);
+            int cz = MathHelper.floor_double(par1Entity.posZ / 32.0D);
 
             if (!par1Entity.addedToChunk || par1Entity.UchunkCoordX != cx || par1Entity.UchunkCoordY != cy || par1Entity.UchunkCoordZ != cz)
             {
@@ -2728,11 +2667,11 @@ public abstract class World implements IBlockAccess
 
         if (tileentity == null)
         {
-            UChunk64 chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
+            UChunk32 chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
 
             if (chunk != null)
             {
-                tileentity = chunk.createTileEntity(x & 63, y & 63, z & 63);
+                tileentity = chunk.createTileEntity(x & 31, y & 31, z & 31);
             }
         }
 
@@ -2784,10 +2723,10 @@ public abstract class World implements IBlockAccess
                 this.loadedTileEntityList.add(tilee);
             }
         }
-        UChunk64 chunk = this.getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
+        UChunk32 chunk = this.getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
         if (chunk != null)
         {
-            chunk.func_150812_a(x & 63, y & 63, z & 63, tilee);
+            chunk.func_150812_a(x & 31, y & 31, z & 31, tilee);
         }
         //notify tile changes
         func_147453_f(x, y, z, getBlock(x, y, z));
@@ -2795,8 +2734,8 @@ public abstract class World implements IBlockAccess
 
     public void removeTileEntity(int x, int y, int z)
     {
-        UChunk64 chunk = getChunkFromChunkCoords(x >> 6, y >> 6, z >> 6);
-        if (chunk != null) chunk.removeTileEntity(x & 63, y & 63, z & 63);
+        UChunk32 chunk = getChunkFromChunkCoords(x >> 5, y >> 5, z >> 5);
+        if (chunk != null) chunk.removeTileEntity(x & 31, y & 31, z & 31);
         func_147453_f(x, y, z, getBlock(x, y, z));
     }
 
@@ -2828,7 +2767,7 @@ public abstract class World implements IBlockAccess
     {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= -30000000 && y < 30000000)
         {
-            UChunk64 chunk = this.chunkProvider.provideChunk(x >> 6, y >> 6, z >> 6);
+            UChunk32 chunk = this.chunkProvider.provideChunk(x >> 5, y >> 5, z >> 5);
 
             if (chunk != null && !chunk.isEmpty())
             {
@@ -3000,10 +2939,10 @@ public abstract class World implements IBlockAccess
         for (i = 0; i < this.playerEntities.size(); ++i)
         {
             entityplayer = (EntityPlayer)this.playerEntities.get(i);
-            cx = MathHelper.floor_double(entityplayer.posX / 64.0D);
-            cy = MathHelper.floor_double(entityplayer.posZ / 64.0D);
-            cz = MathHelper.floor_double(entityplayer.posZ / 64.0D);
-            byte b0 = 2; //TODO: is good loading radius?
+            cx = MathHelper.floor_double(entityplayer.posX / 32.0D);
+            cy = MathHelper.floor_double(entityplayer.posZ / 32.0D);
+            cz = MathHelper.floor_double(entityplayer.posZ / 32.0D);
+            byte b0 = 4; // was 7
 
             for (int j = -b0; j <= b0; ++j)
             {
@@ -3026,20 +2965,20 @@ public abstract class World implements IBlockAccess
 
         this.theProfiler.startSection("playerCheckLight");
 
-        if (!this.playerEntities.isEmpty())
+        /*if (!this.playerEntities.isEmpty())
         {
             i = this.rand.nextInt(this.playerEntities.size());
             entityplayer = (EntityPlayer)this.playerEntities.get(i);
             cx = MathHelper.floor_double(entityplayer.posX) + this.rand.nextInt(11) - 5;
             cy = MathHelper.floor_double(entityplayer.posY) + this.rand.nextInt(11) - 5;
             cz = MathHelper.floor_double(entityplayer.posZ) + this.rand.nextInt(11) - 5;
-            this.func_147451_t(cx, cy, cz);
-        }
+            this.func_147451_t(cx, cy, cz); //c is no longer for chunk
+        }*/
 
         this.theProfiler.endSection();
     }
 
-    protected void func_147467_a(int x, int y, int z, UChunk64 chunk)
+    protected void func_147467_a(int x, int y, int z, UChunk32 chunk)
     {
         this.theProfiler.endStartSection("moodSound");
 
@@ -3047,9 +2986,9 @@ public abstract class World implements IBlockAccess
         {
             this.updateLCG = this.updateLCG * 3 + 1013904223;
             int k = this.updateLCG >> 2;
-            int bx = k & 63;
-            int by = k >> 8 & 63;
-            int bz = k >> 16 & 63;
+            int bx = k & 31;
+            int by = k >> 8 & 31;
+            int bz = k >> 16 & 31;
             Block block = chunk.getBlock(bx, bz, by);
             bx += x;
             by += y;
@@ -3062,7 +3001,7 @@ public abstract class World implements IBlockAccess
                 if (entityplayer != null && entityplayer.getDistanceSq((double)bx + 0.5D, (double)bz + 0.5D, (double)by + 0.5D) > 4.0D)
                 {
                     this.playSoundEffect((double)bx + 0.5D, (double)bz + 0.5D, (double)by + 0.5D, "ambient.cave.cave", 0.7F, 0.8F + this.rand.nextFloat() * 0.2F);
-                    this.ambientTickCountdown = this.rand.nextInt(3000) + 1500; //was this.rand.nextInt(12000) + 6000
+                    this.ambientTickCountdown = this.rand.nextInt(6000) + 3000; //was this.rand.nextInt(12000) + 6000
                 }
             }
         }
@@ -3100,10 +3039,10 @@ public abstract class World implements IBlockAccess
         return provider.canBlockFreeze(par1, par2, par3, par4);
     }
 
-    public boolean canBlockFreezeBody(int par1, int par2, int par3, boolean par4)
+    public boolean canBlockFreezeBody(int x, int y, int z, boolean par4)
     {
-        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
-        float f = biomegenbase.getFloatTemperature(par1, par2, par3);
+        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(x, z);
+        float f = biomegenbase.getFloatTemperature(x, y, z);
 
         if (f > 0.15F)
         {
@@ -3111,11 +3050,11 @@ public abstract class World implements IBlockAccess
         }
         else
         {
-            if (par2 >= 0 && par2 < 256 && this.getSavedLightValue(EnumSkyBlock.Block, par1, par2, par3) < 10)
+            if (this.getSavedLightValue(EnumSkyBlock.Block, x, y, z) < 10)
             {
-                Block block = this.getBlock(par1, par2, par3);
+                Block block = this.getBlock(x, y, z);
 
-                if ((block == Blocks.water || block == Blocks.flowing_water) && this.getBlockMetadata(par1, par2, par3) == 0)
+                if ((block == Blocks.water || block == Blocks.flowing_water) && this.getBlockMetadata(x, y, z) == 0)
                 {
                     if (!par4)
                     {
@@ -3124,22 +3063,22 @@ public abstract class World implements IBlockAccess
 
                     boolean flag1 = true;
 
-                    if (flag1 && this.getBlock(par1 - 1, par2, par3).getMaterial() != Material.water)
+                    if (flag1 && this.getBlock(x - 1, y, z).getMaterial() != Material.water)
                     {
                         flag1 = false;
                     }
 
-                    if (flag1 && this.getBlock(par1 + 1, par2, par3).getMaterial() != Material.water)
+                    if (flag1 && this.getBlock(x + 1, y, z).getMaterial() != Material.water)
                     {
                         flag1 = false;
                     }
 
-                    if (flag1 && this.getBlock(par1, par2, par3 - 1).getMaterial() != Material.water)
+                    if (flag1 && this.getBlock(x, y, z - 1).getMaterial() != Material.water)
                     {
                         flag1 = false;
                     }
 
-                    if (flag1 && this.getBlock(par1, par2, par3 + 1).getMaterial() != Material.water)
+                    if (flag1 && this.getBlock(x, y, z + 1).getMaterial() != Material.water)
                     {
                         flag1 = false;
                     }
@@ -3195,204 +3134,11 @@ public abstract class World implements IBlockAccess
 
         if (!this.provider.hasNoSky)
         {
-            flag |= this.updateLightByType(EnumSkyBlock.Sky, p_147451_1_, p_147451_2_, p_147451_3_);
+            flag |= this.le.updateLightByType(EnumSkyBlock.Sky, p_147451_1_, p_147451_2_, p_147451_3_);
         }
 
-        flag |= this.updateLightByType(EnumSkyBlock.Block, p_147451_1_, p_147451_2_, p_147451_3_);
+        flag |= this.le.updateLightByType(EnumSkyBlock.Block, p_147451_1_, p_147451_2_, p_147451_3_);
         return flag;
-    }
-
-    private int computeLightValue(int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock)
-    {
-        if (par4EnumSkyBlock == EnumSkyBlock.Sky && this.canBlockSeeTheSky(par1, par2, par3))
-        {
-            return 15;
-        }
-        else
-        {
-            Block block = this.getBlock(par1, par2, par3);
-            int blockLight = block.getLightValue(this, par1, par2, par3);
-            int l = par4EnumSkyBlock == EnumSkyBlock.Sky ? 0 : blockLight;
-            int i1 = block.getLightOpacity(this, par1, par2, par3);
-
-            if (i1 >= 15 && blockLight > 0)
-            {
-                i1 = 1;
-            }
-
-            if (i1 < 1)
-            {
-                i1 = 1;
-            }
-
-            if (i1 >= 15)
-            {
-                return 0;
-            }
-            else if (l >= 14)
-            {
-                return l;
-            }
-            else
-            {
-                for (int j1 = 0; j1 < 6; ++j1)
-                {
-                    int k1 = par1 + Facing.offsetsXForSide[j1];
-                    int l1 = par2 + Facing.offsetsYForSide[j1];
-                    int i2 = par3 + Facing.offsetsZForSide[j1];
-                    int j2 = this.getSavedLightValue(par4EnumSkyBlock, k1, l1, i2) - i1;
-
-                    if (j2 > l)
-                    {
-                        l = j2;
-                    }
-
-                    if (l >= 14)
-                    {
-                        return l;
-                    }
-                }
-
-                return l;
-            }
-        }
-    }
-
-    public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_)
-    { //TODO: add new Lighting system!
-        if (!this.doChunksNearChunkExist(p_147463_2_, p_147463_3_, p_147463_4_, 17))
-        {
-            return false;
-        }
-        else
-        {
-            int l = 0;
-            int i1 = 0;
-            this.theProfiler.startSection("getBrightness");
-            int j1 = this.getSavedLightValue(p_147463_1_, p_147463_2_, p_147463_3_, p_147463_4_);
-            int k1 = this.computeLightValue(p_147463_2_, p_147463_3_, p_147463_4_, p_147463_1_);
-            int l1;
-            int i2;
-            int j2;
-            int k2;
-            int l2;
-            int i3;
-            int j3;
-            int l3;
-            int k3;
-
-            if (k1 > j1)
-            {
-                this.lightUpdateBlockList[i1++] = 133152;
-            }
-            else if (k1 < j1)
-            {
-                this.lightUpdateBlockList[i1++] = 133152 | j1 << 18;
-
-                while (l < i1)
-                {
-                    l1 = this.lightUpdateBlockList[l++];
-                    i2 = (l1 & 63) - 32 + p_147463_2_;
-                    j2 = (l1 >> 6 & 63) - 32 + p_147463_3_;
-                    k2 = (l1 >> 12 & 63) - 32 + p_147463_4_;
-                    l2 = l1 >> 18 & 15;
-                    i3 = this.getSavedLightValue(p_147463_1_, i2, j2, k2);
-
-                    if (i3 == l2)
-                    {
-                        this.setLightValue(p_147463_1_, i2, j2, k2, 0);
-
-                        if (l2 > 0)
-                        {
-                            j3 = MathHelper.abs_int(i2 - p_147463_2_);
-                            k3 = MathHelper.abs_int(j2 - p_147463_3_);
-                            l3 = MathHelper.abs_int(k2 - p_147463_4_);
-
-                            if (j3 + k3 + l3 < 17)
-                            {
-                                for (int i4 = 0; i4 < 6; ++i4)
-                                {
-                                    int j4 = i2 + Facing.offsetsXForSide[i4];
-                                    int k4 = j2 + Facing.offsetsYForSide[i4];
-                                    int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    int i5 = Math.max(1, this.getBlock(j4, k4, l4).getLightOpacity(this, j4, k4, l4));
-                                    i3 = this.getSavedLightValue(p_147463_1_, j4, k4, l4);
-
-                                    if (i3 == l2 - i5 && i1 < this.lightUpdateBlockList.length)
-                                    {
-                                        this.lightUpdateBlockList[i1++] = j4 - p_147463_2_ + 32 | k4 - p_147463_3_ + 32 << 6 | l4 - p_147463_4_ + 32 << 12 | l2 - i5 << 18;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                l = 0;
-            }
-
-            this.theProfiler.endSection();
-            this.theProfiler.startSection("checkedPosition < toCheckCount");
-
-            while (l < i1)
-            {
-                l1 = this.lightUpdateBlockList[l++];
-                i2 = (l1 & 63) - 32 + p_147463_2_;
-                j2 = (l1 >> 6 & 63) - 32 + p_147463_3_;
-                k2 = (l1 >> 12 & 63) - 32 + p_147463_4_;
-                l2 = this.getSavedLightValue(p_147463_1_, i2, j2, k2);
-                i3 = this.computeLightValue(i2, j2, k2, p_147463_1_);
-
-                if (i3 != l2)
-                {
-                    this.setLightValue(p_147463_1_, i2, j2, k2, i3);
-
-                    if (i3 > l2)
-                    {
-                        j3 = Math.abs(i2 - p_147463_2_);
-                        k3 = Math.abs(j2 - p_147463_3_);
-                        l3 = Math.abs(k2 - p_147463_4_);
-                        boolean flag = i1 < this.lightUpdateBlockList.length - 6;
-
-                        if (j3 + k3 + l3 < 17 && flag)
-                        {
-                            if (this.getSavedLightValue(p_147463_1_, i2 - 1, j2, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - 1 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(p_147463_1_, i2 + 1, j2, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 + 1 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2 - 1, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 - 1 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2 + 1, k2) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 + 1 - p_147463_3_ + 32 << 6) + (k2 - p_147463_4_ + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2, k2 - 1) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 - 1 - p_147463_4_ + 32 << 12);
-                            }
-
-                            if (this.getSavedLightValue(p_147463_1_, i2, j2, k2 + 1) < i3)
-                            {
-                                this.lightUpdateBlockList[i1++] = i2 - p_147463_2_ + 32 + (j2 - p_147463_3_ + 32 << 6) + (k2 + 1 - p_147463_4_ + 32 << 12);
-                            }
-                        }
-                    }
-                }
-            }
-
-            this.theProfiler.endSection();
-            return true;
-        }
     }
 
     /**
@@ -3403,7 +3149,7 @@ public abstract class World implements IBlockAccess
         return false;
     }
 
-    public List getPendingBlockUpdates(UChunk64 par1Chunk, boolean par2)
+    public List getPendingBlockUpdates(UChunk32 par1Chunk, boolean par2)
     {
         return null;
     }
@@ -3419,13 +3165,13 @@ public abstract class World implements IBlockAccess
     public List getEntitiesWithinAABBExcludingEntity(Entity entity, AxisAlignedBB aabb, IEntitySelector selector)
     {
         ArrayList list = new ArrayList();
-        int minCx = MathHelper.floor_double((aabb.minX - MAX_ENTITY_RADIUS) / 64.0D);
-        int minCy = MathHelper.floor_double((aabb.minY - MAX_ENTITY_RADIUS) / 64.0D);
-        int minCz = MathHelper.floor_double((aabb.minZ - MAX_ENTITY_RADIUS) / 64.0D);
+        int minCx = MathHelper.floor_double((aabb.minX - MAX_ENTITY_RADIUS) / 32.0D);
+        int minCy = MathHelper.floor_double((aabb.minY - MAX_ENTITY_RADIUS) / 32.0D);
+        int minCz = MathHelper.floor_double((aabb.minZ - MAX_ENTITY_RADIUS) / 32.0D);
         
-        int maxCx = MathHelper.floor_double((aabb.maxX + MAX_ENTITY_RADIUS) / 64.0D);
-        int maxCy = MathHelper.floor_double((aabb.maxY + MAX_ENTITY_RADIUS) / 64.0D);
-        int maxCz = MathHelper.floor_double((aabb.maxZ + MAX_ENTITY_RADIUS) / 64.0D);
+        int maxCx = MathHelper.floor_double((aabb.maxX + MAX_ENTITY_RADIUS) / 32.0D);
+        int maxCy = MathHelper.floor_double((aabb.maxY + MAX_ENTITY_RADIUS) / 32.0D);
+        int maxCz = MathHelper.floor_double((aabb.maxZ + MAX_ENTITY_RADIUS) / 32.0D);
 
         for(int ix = minCx; ix <= maxCx; ++ix){
         	for(int iy = minCy; iy <= maxCy; ++iy){
@@ -3452,13 +3198,13 @@ public abstract class World implements IBlockAccess
     public List selectEntitiesWithinAABB(Class clazz, AxisAlignedBB aabb, IEntitySelector selector)
     {
         ArrayList list = new ArrayList();
-        int minCx = MathHelper.floor_double((aabb.minX - MAX_ENTITY_RADIUS) / 64.0D);
-        int minCy = MathHelper.floor_double((aabb.minY - MAX_ENTITY_RADIUS) / 64.0D);
-        int minCz = MathHelper.floor_double((aabb.minZ - MAX_ENTITY_RADIUS) / 64.0D);
+        int minCx = MathHelper.floor_double((aabb.minX - MAX_ENTITY_RADIUS) / 32.0D);
+        int minCy = MathHelper.floor_double((aabb.minY - MAX_ENTITY_RADIUS) / 32.0D);
+        int minCz = MathHelper.floor_double((aabb.minZ - MAX_ENTITY_RADIUS) / 32.0D);
         
-        int maxCx = MathHelper.floor_double((aabb.maxX + MAX_ENTITY_RADIUS) / 64.0D);
-        int maxCy = MathHelper.floor_double((aabb.maxY + MAX_ENTITY_RADIUS) / 64.0D);
-        int maxCz = MathHelper.floor_double((aabb.maxZ + MAX_ENTITY_RADIUS) / 64.0D);
+        int maxCx = MathHelper.floor_double((aabb.maxX + MAX_ENTITY_RADIUS) / 32.0D);
+        int maxCy = MathHelper.floor_double((aabb.maxY + MAX_ENTITY_RADIUS) / 32.0D);
+        int maxCz = MathHelper.floor_double((aabb.maxZ + MAX_ENTITY_RADIUS) / 32.0D);
 
         for(int ix = minCx; ix <= maxCx; ++ix){
         	for(int iy = minCy; iy <= maxCy; ++iy){
@@ -3893,15 +3639,16 @@ public abstract class World implements IBlockAccess
     @SideOnly(Side.CLIENT)
     public void joinEntityInSurroundings(Entity par1Entity)
     {
-        int cx = MathHelper.floor_double(par1Entity.posX / 16.0D);
-        int cy = MathHelper.floor_double(par1Entity.posY / 16.0D);
-        byte b0 = 2; //TODO: check this
+        int cx = MathHelper.floor_double(par1Entity.posX / 32.0D);
+        int cy = MathHelper.floor_double(par1Entity.posY / 32.0D);
+        int cz = MathHelper.floor_double(par1Entity.posZ / 32.0D);
+        byte b0 = 1; // was 2
 
         for (int k = cx - b0; k <= cx + b0; ++k)
         {
             for (int l = cy - b0; l <= cy + b0; ++l)
             {
-            	for(int i = cy - b0; i <= cy + b0; ++i)
+            	for(int i = cz - b0; i <= cz + b0; ++i)
             	{
                 	this.getChunkFromChunkCoords(k, l, i);
             	}
@@ -4366,7 +4113,7 @@ public abstract class World implements IBlockAccess
             return _default;
         }
 
-        UChunk64 chunk = this.chunkProvider.provideChunk(x >> 6, y >> 6, z >> 6);
+        UChunk32 chunk = this.chunkProvider.provideChunk(x >> 5, y >> 5, z >> 5);
         if (chunk == null || chunk.isEmpty())
         {
             return _default;
@@ -4399,7 +4146,7 @@ public abstract class World implements IBlockAccess
             return 0;
         }
 
-        return getChunkFromChunkCoords(x >> 6, z >> 6, z >> 6).func_150808_b(x & 63, y & 63, z & 63);
+        return getChunkFromChunkCoords(x >> 5, z >> 5, z >> 5).func_150808_b(x & 31, y & 31, z & 31);
     }
 
     /**

@@ -1,26 +1,26 @@
 package io.github.trianglecube36.unlimited.event;
 
-import io.github.trianglecube36.unlimited.chunk.UChunk64;
+import io.github.trianglecube36.unlimited.chunk.UChunk32;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class UChunkEvent extends WorldEvent
 {
-    private final UChunk64 chunk;
+    private final UChunk32 chunk;
 
-	public UChunkEvent(UChunk64 chunk)
+	public UChunkEvent(UChunk32 chunk)
     {
         super(chunk.worldObj);
         this.chunk = chunk;
     }
     
-    public UChunk64 getChunk()
+    public UChunk32 getChunk()
     {
         return chunk;
     }
     
     public static class Load extends UChunkEvent
     {
-        public Load(UChunk64 chunk)
+        public Load(UChunk32 chunk)
         {
             super(chunk);
         }
@@ -28,7 +28,7 @@ public class UChunkEvent extends WorldEvent
 
     public static class Unload extends UChunkEvent
     {
-        public Unload(UChunk64 chunk)
+        public Unload(UChunk32 chunk)
         {
             super(chunk);
         }

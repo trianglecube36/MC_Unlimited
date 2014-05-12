@@ -1,7 +1,7 @@
 package io.github.trianglecube36.unlimited.light;
 
 import io.github.trianglecube36.unlimited.chunk.UChunk2D;
-import io.github.trianglecube36.unlimited.chunk.UChunk64;
+import io.github.trianglecube36.unlimited.chunk.UChunk32;
 
 import java.util.LinkedList;
 
@@ -60,41 +60,43 @@ public class LightingEngine {
 		
 	}
 	
-	public void rePopulateLight(UChunk23 chunk, UChunk2D c2D){
-		int topblock = (chunk.yPosition << 6) + 63;
-		int skyvalue;
-		int hieght;
-		int skyDefault = EnumSkyBlock.Sky.defaultLightValue;
-		for(int x = 0;x < 64;x++){
-			for(int z = 0;z < 64;z++){
-				skyvalue = chunk.getSavedLightValue(EnumSkyBlock.Sky, x, 63, z);
-				hieght = c2D.heightMap.get(x, z);
-				if(hieght < topblock && skyvalue < skyDefault){
-					skyColomnGained(chunk, x, z, hieght);
-				}else if(hieght > topblock && skyvalue == skyDefault){ //note: not hieght >= topblock
-					skyColomnLost(chunk, x, z, hieght);
+	public void rePopulateLight(UChunk32 chunk, UChunk2D c2D){
+		if(!world.provider.hasNoSky){
+			int topblock = (chunk.yPosition << 5) + 31;
+			int skyvalue;
+			int hieght;
+			int skyDefault = EnumSkyBlock.Sky.defaultLightValue;
+			for(int x = 0;x < 32;x++){
+				for(int z = 0;z < 32;z++){
+					skyvalue = chunk.getSavedLightValue(EnumSkyBlock.Sky, x, 31, z);
+					hieght = c2D.heightMap.get(x, z);
+					if(hieght < topblock && skyvalue < skyDefault){
+						skyColomnGained(chunk, x, z, hieght);
+					}else if(hieght > topblock && skyvalue == skyDefault){ //note: not hieght >= topblock
+						skyColomnLost(chunk, x, z, hieght);
+					}
 				}
 			}
 		}
 	}
 	
-	public void skyColomnLost(UChunk64 chunk, int x, int z, int newh){
-		int offy = (chunk.yPosition << 6);
+	public void skyColomnLost(UChunk32 chunk, int x, int z, int newh){
+		int offy = (chunk.yPosition << 5);
 		int base = offy + 62;
-		while(chunk.getSavedLightValue(EnumSkyBlock.Sky, x, base & 6, z) == 15 && base != offy){
+		while(chunk.getSavedLightValue(EnumSkyBlock.Sky, x, base & 5, z) == 15 && base != offy){
 			base--;
 		}
-		int offx = (chunk.xPosition << 6) + x;
-		int offz = (chunk.zPosition << 6) + z;
-		for(int i = 63 + (chunk.yPosition << 6);i >= base;i--){
+		int offx = (chunk.xPosition << 5) + x;
+		int offz = (chunk.zPosition << 5) + z;
+		for(int i = 31 + (chunk.yPosition << 5);i >= base;i--){
 			updateLightByType(EnumSkyBlock.Sky, offx, i, offz);
 		}
 	}
 	
-	public void skyColomnGained(UChunk64 chunk, int x, int z, int newh){
-		int offx = (chunk.xPosition << 6) + x;
-		int offz = (chunk.zPosition << 6) + z;
-		for(int i = (chunk.yPosition << 6) + 63;i > newh;i--){
+	public void skyColomnGained(UChunk32 chunk, int x, int z, int newh){
+		int offx = (chunk.xPosition << 5) + x;
+		int offz = (chunk.zPosition << 5) + z;
+		for(int i = (chunk.yPosition << 5) + 31;i > newh;i--){
 			lightWave(offx, i, offz, 15, EnumSkyBlock.Sky);
 		}
 	}

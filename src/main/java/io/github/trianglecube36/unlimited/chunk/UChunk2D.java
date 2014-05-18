@@ -21,6 +21,8 @@ public class UChunk2D {
     public final int zPosition;
     
     public List columnChunks;
+
+	public boolean isModified;
     
     public UChunk2D(int x, int z){
     	xPosition = x;
@@ -95,5 +97,9 @@ public class UChunk2D {
 
 	public int getPrecipitationHeight(int x, int z) {
 		return this.pHeightMap.get(x, z);
+	}
+	
+	public boolean needsSaving(boolean force){
+		return true;
 	}
 }

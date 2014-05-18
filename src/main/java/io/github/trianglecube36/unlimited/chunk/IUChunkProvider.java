@@ -8,22 +8,15 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 
 public interface IUChunkProvider {
-    /**
-     * Checks to see if a chunk exists at x, y
-     */
     boolean chunkExists(int x, int y, int z);
+    boolean chunk2DExists(int x, int z);
 
-    /**
-     * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
-     * specified chunk from the map seed and chunk seed
-     */
     UChunk32 provideChunk(int x, int y, int z);
+    UChunk2D provideChunk2D(int x, int z);
 
-    /**
-     * loads or generates the chunk at the chunk location specified
-     */
     UChunk32 loadChunk(int x, int y, int z);
-
+    UChunk2D loadChunk2D(int x, int z);
+    
     /**
      * Populates chunk with ores etc etc
      */
@@ -55,9 +48,11 @@ public interface IUChunkProvider {
      */
     List getPossibleCreatures(EnumCreatureType var1, int x, int y, int z);
 
+    // fined structure?... used for eye of ender
     ChunkPosition func_147416_a(World world, String str, int x, int y, int z);
 
     int getLoadedChunkCount();
+    int getLoadedChunk2DCount();
 
     void recreateStructures(int x, int y, int z);
 

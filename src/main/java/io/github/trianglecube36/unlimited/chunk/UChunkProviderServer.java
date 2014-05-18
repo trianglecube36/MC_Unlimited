@@ -1,5 +1,6 @@
 package io.github.trianglecube36.unlimited.chunk;
 
+import io.github.trianglecube36.unlimited.util.HashMap2D;
 import io.github.trianglecube36.unlimited.util.HashMap3D;
 
 import java.io.IOException;
@@ -40,7 +41,9 @@ public class UChunkProviderServer implements IUChunkProvider
      * first out)
      */
     private Set chunksToUnload = new HashSet();
+    private Set chunk2DsToUnload = new HashSet();
     private UChunk32 defaultEmptyChunk;
+    private UChunk2D defaultEmptyChunk2D;
     private IUChunkProvider currentChunkProvider;
     public IUChunkLoader currentChunkLoader;
     /**
@@ -48,7 +51,9 @@ public class UChunkProviderServer implements IUChunkProvider
      */
     public boolean loadChunkOnProvideRequest = true;
     private HashMap3D loadedChunkHashMap = new HashMap3D();
+    private HashMap2D loadedChunk2DHashMap = new HashMap2D();
     private List loadedChunks = new ArrayList();
+    private List loadedChunk2Ds = new ArrayList();
     private WorldServer worldObj;
 
     public UChunkProviderServer(WorldServer par1WorldServer, IUChunkLoader par2IChunkLoader, IUChunkProvider par3IChunkProvider)
@@ -67,6 +72,11 @@ public class UChunkProviderServer implements IUChunkProvider
         return this.loadedChunkHashMap.containsItem(x, y, z);
     }
 
+    public boolean chunk2DExists(int x, int z)
+    {
+        return this.loadedChunk2DHashMap.containsItem(x, z);
+    }
+    
     /**
      * marks chunk for unload by "unload100OldestChunks"  if there is no spawn point, or if the center of the chunk is
      * outside 200 blocks (x or z) of the spawn
@@ -117,7 +127,7 @@ public class UChunkProviderServer implements IUChunkProvider
 
         if (chunk == null)
         {
-        	//TODO: add emulation for old type chunk
+        	//TODO: add compatibility for old type chunk
         	/*
             chunk = ForgeChunkManager.fetchDormantChunk(k, this.worldObj);
             if (chunk == null)
@@ -164,6 +174,47 @@ public class UChunkProviderServer implements IUChunkProvider
         return chunk;
     }
 
+    public UChunk2D loadChunk2D(int x, int z)
+    {
+    	ChunkCoordinates k = new ChunkCoordinates(x, 0, z);
+        this.chunk2DsToUnload.remove(k);
+        UChunk2D chunk = (UChunk2D)this.loadedChunk2DHashMap.getValueByKey(x, z);
+
+        if (chunk == null)
+        {
+            chunk = this.safeLoadChunk2D(x, z);
+
+            if (chunk == null)
+            {
+                if (this.currentChunkProvider == null)
+                {
+                    chunk = this.defaultEmptyChunk2D;
+                }
+                else
+                {
+                    try
+                    {
+                        chunk = this.currentChunkProvider.provideChunk2D(x, z);
+                    }
+                    catch (Throwable throwable)
+                    {
+                        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception generating new chunk");
+                        CrashReportCategory crashreportcategory = crashreport.makeCategory("Chunk to be generated");
+                        crashreportcategory.addCrashSection("Location", String.format("%d,%d", new Object[] {Integer.valueOf(x), Integer.valueOf(z)}));
+                        crashreportcategory.addCrashSection("Position hash", k);
+                        crashreportcategory.addCrashSection("Generator", this.currentChunkProvider.makeString());
+                        throw new ReportedException(crashreport);
+                    }
+                }
+            }
+
+            this.loadedChunk2DHashMap.add(x, z, chunk);
+            this.loadedChunk2Ds.add(chunk);
+        }
+
+        return chunk;
+    }
+    
     /**
      * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
      * specified chunk from the map seed and chunk seed
@@ -174,6 +225,12 @@ public class UChunkProviderServer implements IUChunkProvider
         return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(x, y, z)) : chunk;
     }
 
+    public UChunk2D provideChunk2D(int x, int z)
+    {
+        UChunk2D chunk = (UChunk2D)this.loadedChunk2DHashMap.getValueByKey(x, z);
+        return chunk == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk2D : this.loadChunk2D(x, z)) : chunk;
+    }
+    
     /**
      * used by loadChunk, but catches any exceptions if the load fails.
      */
@@ -209,6 +266,33 @@ public class UChunkProviderServer implements IUChunkProvider
         }
     }
 
+    private UChunk2D safeLoadChunk2D(int x, int z)
+    {
+        if (this.currentChunkLoader == null)
+        {
+            return null;
+        }
+        else
+        {
+            try
+            {
+                UChunk2D chunk = this.currentChunkLoader.loadChunk2D(this.worldObj, x, z);
+
+                if (chunk != null)
+                {
+                    //chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
+                }
+
+                return chunk;
+            }
+            catch (Exception exception)
+            {
+                field_147417_b.error("Couldn\'t load chunk", exception);
+                return null;
+            }
+        }
+    }
+    
     /**
      * used by saveChunks, but catches any exceptions if the save fails.
      */
@@ -249,6 +333,26 @@ public class UChunkProviderServer implements IUChunkProvider
             }
         }
     }
+    
+    private void safeSaveChunk2D(UChunk2D par1Chunk)
+    {
+        if (this.currentChunkLoader != null)
+        {
+            try
+            {
+                //par1Chunk.lastSaveTime = this.worldObj.getTotalWorldTime();
+                this.currentChunkLoader.saveChunk2D(this.worldObj, par1Chunk);
+            }
+            catch (IOException ioexception)
+            {
+                field_147417_b.error("Couldn\'t save chunk", ioexception);
+            }
+            catch (MinecraftException minecraftexception)
+            {
+                field_147417_b.error("Couldn\'t save chunk; already in use by another instance of Minecraft?", minecraftexception);
+            }
+        }
+    }
 
     /**
      * Populates chunk with ores etc etc
@@ -256,13 +360,11 @@ public class UChunkProviderServer implements IUChunkProvider
     public void populate(IUChunkProvider par1IChunkProvider, int x, int y, int z)
     {
         UChunk32 chunk = this.provideChunk(x, y, z);
-
+        
         if (!chunk.isTerrainPopulated)
         {
-        	//TODO: new lighting system... some lighting thing
-        	/*
-            chunk.func_150809_p();
-            */
+        	UChunk2D c2D = this.provideChunk2D(x, z);
+        	worldObj.le.populateLight(chunk, c2D);
 
             if (this.currentChunkProvider != null)
             {
@@ -296,6 +398,24 @@ public class UChunkProviderServer implements IUChunkProvider
             if (chunk.needsSaving(par1))
             {
                 this.safeSaveChunk(chunk);
+                chunk.isModified = false;
+                ++i;
+
+                if (i == 24 && !par1)
+                {
+                    return false;
+                }
+            }
+        }
+        
+        i = 0;
+        for (int j = 0; j < this.loadedChunk2Ds.size(); ++j)
+        {
+            UChunk2D chunk = (UChunk2D)this.loadedChunk2Ds.get(j);
+
+            if (chunk.needsSaving(par1))
+            {
+                this.safeSaveChunk2D(chunk);
                 chunk.isModified = false;
                 ++i;
 
@@ -354,6 +474,28 @@ public class UChunkProviderServer implements IUChunkProvider
                         DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
                         return currentChunkProvider.unloadQueuedChunks();
                     }
+                }else{
+                	continue;
+                }
+            }
+            
+            for (int i = 0; i < 25; ++i)
+            {
+                if (!this.chunk2DsToUnload.isEmpty())
+                {
+                	ChunkCoordinates loc = (ChunkCoordinates)this.chunk2DsToUnload.iterator().next();
+                    UChunk2D chunk = (UChunk2D)this.loadedChunk2DHashMap.getValueByKey(loc.posX, loc.posZ);
+                    this.safeSaveChunk2D(chunk);
+                    this.chunk2DsToUnload.remove(loc);
+                    this.loadedChunk2DHashMap.remove(loc.posX, loc.posZ);
+                    this.loadedChunk2Ds.remove(chunk);
+
+                    if(loadedChunk2Ds.size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)){
+                        DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
+                        return currentChunkProvider.unloadQueuedChunks();
+                    }
+                }else{
+                	continue;
                 }
             }
 
@@ -371,7 +513,7 @@ public class UChunkProviderServer implements IUChunkProvider
      */
     public boolean canSave()
     {
-        return !this.worldObj.levelSaving;//was canNotSave... there is some noob messing up MCP >:(
+        return !this.worldObj.levelSaving;
     }
 
     /**
@@ -398,6 +540,11 @@ public class UChunkProviderServer implements IUChunkProvider
     public int getLoadedChunkCount()
     {
         return this.loadedChunkHashMap.getNumHashElements();
+    }
+    
+    public int getLoadedChunk2DCount()
+    {
+        return this.loadedChunk2DHashMap.getNumHashElements();
     }
 
     public void recreateStructures(int x, int y, int z) {}

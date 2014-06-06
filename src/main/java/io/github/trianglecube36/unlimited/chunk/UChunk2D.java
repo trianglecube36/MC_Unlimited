@@ -102,4 +102,8 @@ public class UChunk2D {
 	public boolean needsSaving(boolean force){
 		return true;
 	}
+
+	public boolean isAtLocation(int x, int z) {
+		return x == this.xPosition && z == this.zPosition;
+	}
 }

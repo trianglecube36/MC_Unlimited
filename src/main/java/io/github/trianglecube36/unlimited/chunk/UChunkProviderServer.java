@@ -101,6 +101,26 @@ public class UChunkProviderServer implements IUChunkProvider
             this.chunksToUnload.add(new ChunkCoordinates(x, y, z));
         }
     }
+    
+    public void unloadChunk2DsIfNotNearSpawn(int x, int z)
+    {
+        if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
+        {
+            ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
+            int bx = x * 32 + 16 - chunkcoordinates.posX;
+            int by = z * 32 + 16 - chunkcoordinates.posZ;
+            short short1 = 128;
+
+            if (bx < -short1 || bx > short1 || by < -short1 || by > short1)
+            {
+                this.chunk2DsToUnload.add(new ChunkCoordinates(x, 0, z));
+            }
+        }
+        else
+        {
+            this.chunk2DsToUnload.add(new ChunkCoordinates(x, 0, z));
+        }
+    }
 
     /**
      * marks all chunks for unload, ignoring those near the spawn
@@ -113,6 +133,14 @@ public class UChunkProviderServer implements IUChunkProvider
         {
             UChunk32 chunk = (UChunk32)iterator.next();
             this.unloadChunksIfNotNearSpawn(chunk.xPosition, chunk.yPosition, chunk.zPosition);
+        }
+        
+        iterator = this.loadedChunk2Ds.iterator();
+
+        while (iterator.hasNext())
+        {
+            UChunk2D chunk = (UChunk2D)iterator.next();
+            this.unloadChunk2DsIfNotNearSpawn(chunk.xPosition, chunk.zPosition);
         }
     }
 
@@ -164,10 +192,10 @@ public class UChunkProviderServer implements IUChunkProvider
 
             this.loadedChunkHashMap.add(x, y, z, chunk);
             this.loadedChunks.add(chunk);
-            UChunk2D chunk2d = this.provideChunk2D(x, z);
-            chunk2d.chunkLoad(chunk);
             chunk.onChunkLoad();
             chunk.populateChunk(this, this, x, y, z);
+            UChunk2D chunk2d = this.provideChunk2D(x, z);
+            chunk2d.chunkLoad(chunk);
             worldObj.le.populateLight(chunk, chunk2d);
         }
 
@@ -345,11 +373,11 @@ public class UChunkProviderServer implements IUChunkProvider
             }
             catch (IOException ioexception)
             {
-                field_147417_b.error("Couldn\'t save chunk", ioexception);
+                field_147417_b.error("Couldn\'t save chunk2d", ioexception);
             }
             catch (MinecraftException minecraftexception)
             {
-                field_147417_b.error("Couldn\'t save chunk; already in use by another instance of Minecraft?", minecraftexception);
+                field_147417_b.error("Couldn\'t save chunk2d; already in use by another instance of Minecraft?", minecraftexception);
             }
         }
     }
@@ -371,7 +399,7 @@ public class UChunkProviderServer implements IUChunkProvider
                 this.currentChunkProvider.populate(par1IChunkProvider, x, y, z);
                 /*
                 GameRegistry.generateWorld(x, y, worldObj, currentChunkProvider, par1IChunkProvider);
-                TODO: fix for emulation
+                TODO: fix for compatibility
                 */
                 chunk.setChunkModified();
             }

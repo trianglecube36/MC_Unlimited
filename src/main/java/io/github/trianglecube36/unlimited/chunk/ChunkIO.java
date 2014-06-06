@@ -41,7 +41,9 @@ import cpw.mods.fml.common.FMLLog;
 public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     private static final Logger logger = LogManager.getLogger();
     private List chunksToRemove = new ArrayList();
-    private Set pendingU32ChunksCoordinates = new HashSet();
+    private List chunk2DsToRemove = new ArrayList();
+    private Set pendingUChunk32sCoordinates = new HashSet();
+    private Set pendingUChunk2DsCoordinates = new HashSet();
     private Object syncLockObject = new Object();
     /**
      * Save directory for chunks using the cool new epic save format
@@ -63,7 +65,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
         
         synchronized (this.syncLockObject)
         {
-            if (this.pendingU32ChunksCoordinates.contains(location))
+            if (this.pendingUChunk32sCoordinates.contains(location))
             {
                 for (int k = 0; k < this.chunksToRemove.size(); ++k)
                 {
@@ -89,6 +91,41 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
         }
 
         return this.checkedReadChunkFromNBT(world, x, y, z, nbttagcompound);
+    }
+    
+    public UChunk2D loadChunk2D(World world, int x, int z) throws IOException
+    {
+        NBTTagCompound nbttagcompound = null;
+        UChunkCoordIntPair location = new UChunkCoordIntPair(x, 0 ,z);
+        
+        synchronized (this.syncLockObject)
+        {
+            if (this.pendingUChunk2DsCoordinates.contains(location))
+            {
+                for (int k = 0; k < this.chunk2DsToRemove.size(); ++k)
+                {
+                    if (((ChunkIO.PendingChunk)this.chunk2DsToRemove.get(k)).chunkCoordinate.equals(location))
+                    {
+                        nbttagcompound = ((ChunkIO.PendingChunk)this.chunk2DsToRemove.get(k)).nbtTags;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (nbttagcompound == null)
+        {
+            DataInputStream datainputstream = URegionFileCache.getChunk2DInputStream(this.chunkSaveLocation, x, z);
+
+            if (datainputstream == null)
+            {
+                return null;
+            }
+
+            nbttagcompound = CompressedStreamTools.read(datainputstream);
+        }
+
+        return this.checkedReadChunk2DFromNBT(world, x, z, nbttagcompound);
     }
 
     /**
@@ -123,6 +160,35 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
             return chunk;
         }
     }
+    
+    protected UChunk2D checkedReadChunk2DFromNBT(World world, int x, int z, NBTTagCompound tag)
+    {
+        if (!tag.hasKey("Level", 10))
+        {
+            logger.error("Chunk2D file at " + x + "," + z + " is missing level data, skipping");
+            return null;
+        }
+        else if (!tag.getCompoundTag("Level").hasKey("Sections", 9))
+        {
+            logger.error("Chunk2D file at " + x + "," + z + " is missing block data, skipping");
+            return null;
+        }
+        else
+        {
+            UChunk2D chunk = this.readChunk2DFromNBT(world, tag.getCompoundTag("Level"));
+
+            if (!chunk.isAtLocation(x, z))
+            {
+                logger.error("Chunk2D file at " + x + "," + z + " is in the wrong location; relocating. (Expected " + x + "," + z + ", got " + chunk.xPosition +  ", " + chunk.zPosition + ")");
+                tag.setInteger("xPos", x);
+                tag.setInteger("zPos", z);
+                chunk = this.readChunk2DFromNBT(world, tag.getCompoundTag("Level"));
+            }
+
+            MinecraftForge.EVENT_BUS.post(new UChunk2DDataEvent.Load(chunk, tag));
+            return chunk;
+        }
+    }
 
     public void saveChunk(World world, UChunk32 chunk) throws MinecraftException, IOException
     {
@@ -142,12 +208,31 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
             exception.printStackTrace();
         }
     }
+    
+    public void saveChunk2D(World world, UChunk2D chunk) throws MinecraftException, IOException
+    {
+        world.checkSessionLock();
+
+        try
+        {
+            NBTTagCompound nbttagcompound = new NBTTagCompound();
+            NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+            nbttagcompound.setTag("Level", nbttagcompound1);
+            this.writeChunk2DToNBT(chunk, world, nbttagcompound1);
+            MinecraftForge.EVENT_BUS.post(new UChunk2DDataEvent.Save(chunk, nbttagcompound));
+            this.addChunkToPending(new UChunkCoordIntPair(chunk.xPosition, 0, chunk.zPosition), nbttagcompound);
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
 
     protected void addChunkToPending(UChunkCoordIntPair location, NBTTagCompound tag)
     {
         synchronized (this.syncLockObject)
         {
-            if (this.pendingU32ChunksCoordinates.contains(location))
+            if (this.pendingUChunk32sCoordinates.contains(location))
             {
                 for (int i = 0; i < this.chunksToRemove.size(); ++i)
                 {
@@ -160,7 +245,29 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
             }
 
             this.chunksToRemove.add(new ChunkIO.PendingChunk(location, tag));
-            this.pendingU32ChunksCoordinates.add(location);
+            this.pendingUChunk32sCoordinates.add(location);
+            ThreadedFileIOBase.threadedIOInstance.queueIO(this);
+        }
+    }
+    
+    protected void addChunk2DToPending(UChunkCoordIntPair location, NBTTagCompound tag)
+    {
+        synchronized (this.syncLockObject)
+        {
+            if (this.pendingUChunk2DsCoordinates.contains(location))
+            {
+                for (int i = 0; i < this.chunk2DsToRemove.size(); ++i)
+                {
+                    if (((ChunkIO.PendingChunk)this.chunk2DsToRemove.get(i)).chunkCoordinate.equals(location))
+                    {
+                        this.chunk2DsToRemove.set(i, new ChunkIO.PendingChunk(location, tag));
+                        return;
+                    }
+                }
+            }
+
+            this.chunk2DsToRemove.add(new ChunkIO.PendingChunk(location, tag));
+            this.pendingUChunk2DsCoordinates.add(location);
             ThreadedFileIOBase.threadedIOInstance.queueIO(this);
         }
     }
@@ -171,24 +278,35 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     public boolean writeNextIO()
     {
         ChunkIO.PendingChunk pendingchunk = null;
-        Object object = this.syncLockObject;
+        boolean is2d = false;
+        Object object = this.syncLockObject; // looks like this does nothing
 
         synchronized (this.syncLockObject)
         {
             if (this.chunksToRemove.isEmpty())
             {
-                return false;
+            	is2d = true;
+            	if(this.chunk2DsToRemove.isEmpty()){
+            		return false;
+            	}else{
+            		pendingchunk = (ChunkIO.PendingChunk)this.chunk2DsToRemove.remove(0);
+            		this.pendingUChunk2DsCoordinates.remove(pendingchunk.chunkCoordinate);
+            	}
+            }else{
+            	pendingchunk = (ChunkIO.PendingChunk)this.chunksToRemove.remove(0);
+            	this.pendingUChunk32sCoordinates.remove(pendingchunk.chunkCoordinate);
             }
-
-            pendingchunk = (ChunkIO.PendingChunk)this.chunksToRemove.remove(0);
-            this.pendingU32ChunksCoordinates.remove(pendingchunk.chunkCoordinate);
         }
 
         if (pendingchunk != null)
         {
             try
             {
-                this.writeChunkNBTTags(pendingchunk);
+            	if(is2d){
+            		this.writeChunk2DNBTTags(pendingchunk);
+            	}else{
+            		this.writeChunkNBTTags(pendingchunk);
+            	}
             }
             catch (Exception exception)
             {
@@ -202,6 +320,13 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     private void writeChunkNBTTags(ChunkIO.PendingChunk pending) throws IOException
     {
         DataOutputStream dataoutputstream = URegionFileCache.getChunkOutputStream(this.chunkSaveLocation, pending.chunkCoordinate.chunkXPos, pending.chunkCoordinate.chunkYPos, pending.chunkCoordinate.chunkZPos);
+        CompressedStreamTools.write(pending.nbtTags, dataoutputstream);
+        dataoutputstream.close();
+    }
+    
+    private void writeChunk2DNBTTags(ChunkIO.PendingChunk pending) throws IOException
+    {
+        DataOutputStream dataoutputstream = URegionFileCache.getChunk2DOutputStream(this.chunkSaveLocation, pending.chunkCoordinate.chunkXPos, pending.chunkCoordinate.chunkZPos);
         CompressedStreamTools.write(pending.nbtTags, dataoutputstream);
         dataoutputstream.close();
     }
@@ -458,14 +583,14 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     }
 
     static class PendingChunk
-        {
-            public final UChunkCoordIntPair chunkCoordinate;
-            public final NBTTagCompound nbtTags;
+    {
+        public final UChunkCoordIntPair chunkCoordinate;
+        public final NBTTagCompound nbtTags;
 
-            public PendingChunk(UChunkCoordIntPair location, NBTTagCompound par2NBTTagCompound)
-            {
-                this.chunkCoordinate = location;
-                this.nbtTags = par2NBTTagCompound;
-            }
+        public PendingChunk(UChunkCoordIntPair location, NBTTagCompound par2NBTTagCompound)
+        {
+            this.chunkCoordinate = location;
+            this.nbtTags = par2NBTTagCompound;
         }
+    }
 }

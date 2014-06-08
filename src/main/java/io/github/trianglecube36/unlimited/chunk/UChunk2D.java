@@ -10,12 +10,11 @@ import net.minecraft.world.biome.WorldChunkManager;
 public class UChunk2D {
 	public World worldObj;
 	
-	private byte[] blockBiomeArray;
+	public byte[] blockBiomeArray;
 	
 	public StackArray pHeightMap;
     public StackArray heightMap;
     public StackArray solidMap;
-    public int heightMapMin;
     
     public final int xPosition;
     public final int zPosition;
@@ -24,7 +23,8 @@ public class UChunk2D {
 
 	public boolean isModified;
     
-    public UChunk2D(int x, int z){
+    public UChunk2D(World w, int x, int z){
+    	worldObj = w;
     	xPosition = x;
     	zPosition = z;
     	heightMap = new StackArray();

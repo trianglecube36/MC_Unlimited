@@ -1,5 +1,6 @@
 package io.github.trianglecube36.unlimited.chunk;
 
+import io.github.trianglecube36.unlimited.event.UChunk2DDataEvent;
 import io.github.trianglecube36.unlimited.event.UChunkDataEvent;
 
 import java.io.DataInputStream;
@@ -362,14 +363,14 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     {
         tag.setByte("V", (byte)1); //TODO: what is this used for?
         tag.setInteger("xPos", chunk.xPosition);
-        tag.setInteger("yPos", chunk.zPosition);
+        tag.setInteger("yPos", chunk.yPosition);
         tag.setInteger("zPos", chunk.zPosition);
         tag.setLong("LastUpdate", world.getTotalWorldTime());
         tag.setBoolean("TerrainPopulated", chunk.isTerrainPopulated);
         tag.setBoolean("LightPopulated", chunk.isLightPopulated);
         tag.setLong("InhabitedTime", chunk.inhabitedTime);
         ExtendedBlockStorage[] blockarrays = chunk.getBlockStorageArray();
-        NBTTagList nbttaglist = new NBTTagList();
+        NBTTagList sectionsListNBT = new NBTTagList();
         boolean flag = !world.provider.hasNoSky;
         int i = blockarrays.length;
         NBTTagCompound nbttagcompound1;
@@ -401,11 +402,11 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
                     nbttagcompound1.setByteArray("SkyLight", new byte[extendedblockstorage.getBlocklightArray().data.length]);
                 }
 
-                nbttaglist.appendTag(nbttagcompound1);
+                sectionsListNBT.appendTag(nbttagcompound1);
             }
         }
 
-        tag.setTag("Sections", nbttaglist);
+        tag.setTag("Sections", sectionsListNBT);
         chunk.hasEntities = false;
         NBTTagList nbttaglist2 = new NBTTagList();
         Iterator iterator1 = chunk.entityLists.iterator();
@@ -475,11 +476,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
             tag.setTag("TileTicks", nbttaglist1);
         }
     }
-
-    /**
-     * Reads the data stored in the passed NBTTagCompound and creates a Chunk with that data in the passed World.
-     * Returns the created Chunk.
-     */
+    
     private UChunk32 readChunkFromNBT(World par1World, NBTTagCompound tag)
     {
         int x = tag.getInteger("xPos");
@@ -581,7 +578,34 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
 
         return chunk;
     }
+    
+    private void writeChunk2DToNBT(UChunk2D chunk, World world, NBTTagCompound tag)
+    {
+        tag.setByte("V", (byte)1); //TODO: what is this used for?
+        tag.setInteger("xPos", chunk.xPosition);
+        tag.setInteger("yPos", chunk.zPosition);
+        tag.setInteger("zPos", chunk.zPosition);
+        tag.setLong("LastUpdate", world.getTotalWorldTime());
+        tag.setByteArray("PrecipitationMap", chunk.pHeightMap.save());
+        tag.setByteArray("HeightMap", chunk.heightMap.save());
+        tag.setByteArray("SolidMap", chunk.solidMap.save());
+        tag.setByteArray("Biomes", chunk.blockBiomeArray);
+    }
 
+    private UChunk2D readChunk2DFromNBT(World world, NBTTagCompound tag)
+    {
+        int x = tag.getInteger("xPos");
+        int z = tag.getInteger("zPos");
+        UChunk2D chunk = new UChunk2D(world, x, z);
+
+        chunk.pHeightMap.loadData(tag.getByteArray("PrecipitationMap"));
+        chunk.heightMap.loadData(tag.getByteArray("HeightMap"));
+        chunk.solidMap.loadData(tag.getByteArray("SolidMap"));
+        chunk.blockBiomeArray = tag.getByteArray("Biomes");
+        tag.setByteArray("Biomes", chunk.blockBiomeArray);
+        return chunk;
+    }
+    
     static class PendingChunk
     {
         public final UChunkCoordIntPair chunkCoordinate;

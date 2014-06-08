@@ -82,7 +82,7 @@ public class LightingEngine {
 	
 	public void skyColomnLost(UChunk32 chunk, int x, int z, int newh){
 		int offy = (chunk.yPosition << 5);
-		int base = offy + 62;
+		int base = offy + 30; // note: one less as 31 is checked true
 		while(chunk.getSavedLightValue(EnumSkyBlock.Sky, x, base & 5, z) == 15 && base != offy){
 			base--;
 		}

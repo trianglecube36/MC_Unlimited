@@ -14,18 +14,18 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
-public class URegionFile
+public class URegion2DFile
 {
-    private static final byte[] emptySector = new byte[4096];
+    private static final byte[] emptySector = new byte[256];
     private final File fileName;
     private RandomAccessFile dataFile;
-    private final int[] offsets = new int[4096]; //note: pigs can't fly... o and, the last 12 bits are the sector count
-    private final int[] chunkTimestamps = new int[4096];
+    private final int[] offsets = new int[256]; //note: pigs can't fly... o and, the last 12 bits are the sector count
+    private final int[] chunkTimestamps = new int[256];
     private BitSet sectorFree;
     private int sizeDelta;
     private long lastModified;
 
-    public URegionFile(File par1File)
+    public URegion2DFile(File par1File)
     {
         this.fileName = par1File;
         this.sizeDelta = 0;
@@ -40,19 +40,24 @@ public class URegionFile
             this.dataFile = new RandomAccessFile(par1File, "rw");
             int i;
 
-            if (this.dataFile.length() < 32768L)
+            if (this.dataFile.length() < 4096L)
             {
-                for (i = 0; i < 4096; ++i)
+                for (i = 0; i < 256; ++i)
                 {
                     this.dataFile.writeInt(0);
                 }
 
-                for (i = 0; i < 4096; ++i)
+                for (i = 0; i < 256; ++i)
                 {
                     this.dataFile.writeInt(0);
                 }
+                
+                for (i = 0; i < 2048; ++i)
+                {
+                    this.dataFile.write(0); //this space does not do much
+                }
 
-                this.sizeDelta += 32768;
+                this.sizeDelta += 4096;
             }
 
             if ((this.dataFile.length() & 4095L) != 0L)
@@ -65,12 +70,12 @@ public class URegionFile
 
             i = (int)this.dataFile.length() / 4096;
             this.sectorFree = new BitSet(i);
-            this.sectorFree.set(8, i); // 8 false's , true's ...
+            this.sectorFree.set(1, i); // 1 false's , true's ...
 
             this.dataFile.seek(0L);
             int k;
             int j;
-            for (j = 0; j < 4096; ++j)
+            for (j = 0; j < 256; ++j)
             {
                 k = this.dataFile.readInt();
                 this.offsets[j] = k;
@@ -85,7 +90,7 @@ public class URegionFile
                 }
             }
 
-            for (j = 0; j < 4096; ++j)
+            for (j = 0; j < 256; ++j)
             {
                 k = this.dataFile.readInt();
                 this.chunkTimestamps[j] = k;
@@ -97,80 +102,78 @@ public class URegionFile
         }
     }
 
-    public synchronized DataInputStream getChunkDataInputStream(int x, int y, int z)
+    public synchronized DataInputStream getChunk2DDataInputStream(int x, int z)
     {
-        if (this.outOfBounds(x, y, z))
+        if (this.outOfBounds(x, z))
         {
             return null;
         }
-        else
+        
+        try
         {
-            try
-            {
-                int k = this.getOffset(x, y, z);
+            int k = this.getOffset(x, z);
 
-                if (k == 0)
+            if (k == 0)
+            {
+                return null;
+            }
+            else
+            {
+                int off = k >> 12;
+                int count = k & 4095;
+
+                if (off + count > this.sectorFree.size())
                 {
                     return null;
                 }
                 else
                 {
-                    int off = k >> 12;
-                    int count = k & 4095;
+                    this.dataFile.seek((long)(off * 4096));
+                    int dataLength = this.dataFile.readInt();
 
-                    if (off + count > this.sectorFree.size())
+                    if (dataLength > 4096 * count)
+                    {
+                        return null;
+                    }
+                    else if (dataLength <= 0)
                     {
                         return null;
                     }
                     else
                     {
-                        this.dataFile.seek((long)(off * 4096));
-                        int dataLength = this.dataFile.readInt();
+                        byte type = this.dataFile.readByte();
+                        byte[] abyte;
 
-                        if (dataLength > 4096 * count)
+                        if (type == 1)
                         {
-                            return null;
+                            abyte = new byte[dataLength - 1];
+                            this.dataFile.read(abyte);
+                            return new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(abyte))));
                         }
-                        else if (dataLength <= 0)
+                        else if (type == 2)
                         {
-                            return null;
+                            abyte = new byte[dataLength - 1];
+                            this.dataFile.read(abyte);
+                            return new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(abyte))));
                         }
                         else
                         {
-                            byte type = this.dataFile.readByte();
-                            byte[] abyte;
-
-                            if (type == 1)
-                            {
-                                abyte = new byte[dataLength - 1];
-                                this.dataFile.read(abyte);
-                                return new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(abyte))));
-                            }
-                            else if (type == 2)
-                            {
-                                abyte = new byte[dataLength - 1];
-                                this.dataFile.read(abyte);
-                                return new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(abyte))));
-                            }
-                            else
-                            {
-                                return null;
-                            }
+                            return null;
                         }
                     }
                 }
             }
-            catch (IOException ioexception)
-            {
-                return null;
-            }
+        }
+        catch (IOException ioexception)
+        {
+            return null;
         }
     }
 
     @SuppressWarnings("resource")
-	public DataOutputStream getChunkDataOutputStream(int x, int y, int z)
+	public DataOutputStream getChunk2DDataOutputStream(int x, int z)
     {
-        return this.outOfBounds(x, y, z) ? null : new DataOutputStream(new DeflaterOutputStream(new URegionFile.ChunkBuffer(x, y, z)));
+        return this.outOfBounds(x, z) ? null : new DataOutputStream(new DeflaterOutputStream(new URegion2DFile.Chunk2DBuffer(x, z)));
     }
     
     private int freeIndex(){
@@ -181,12 +184,12 @@ public class URegionFile
     	}
     	return -1;
     }
-
-    protected synchronized void write(int x, int y, int z, byte[] dataArray, int numbites)
+    
+    protected synchronized void write(int x, int z, byte[] dataArray, int numbites)
     {
         try
         {
-            int l = this.getOffset(x, y, z);
+            int l = this.getOffset(x, z);
             int off = l >> 12;
             int count = l & 4095;
             int newcount = (numbites + 5) / 4096 + 1;
@@ -244,7 +247,7 @@ public class URegionFile
                 if (sNewCount >= newcount)
                 {
                     off = firstTrue;
-                    this.setOffset(x, y, z, firstTrue << 12 | newcount);
+                    this.setOffset(x, z, firstTrue << 12 | newcount);
 
                     for (iteration = 0; iteration < newcount; ++iteration)
                     {
@@ -266,11 +269,11 @@ public class URegionFile
 
                     this.sizeDelta += 4096 * newcount;
                     this.write(off, dataArray, numbites);
-                    this.setOffset(x, y, z, off << 12 | newcount);
+                    this.setOffset(x, z, off << 12 | newcount);
                 }
             }
 
-            this.setChunkTimestamp(x, y, z, (int)(System.currentTimeMillis() / 1000L));
+            this.setChunkTimestamp(x, z, (int)(System.currentTimeMillis() / 1000L));
         }
         catch (IOException ioexception)
         {
@@ -286,32 +289,32 @@ public class URegionFile
         this.dataFile.write(dataArray, 0, numbites);
     }
 
-    private boolean outOfBounds(int x, int y, int z)
+    private boolean outOfBounds(int x, int z)
     {
-        return x < 0 || x >= 16 || y < 0 || y >= 16 || z < 0 || z >= 16;
+        return x < 0 || x >= 16 || z < 0 || z >= 16;
     }
 
-    private int getOffset(int x, int y, int z)
+    private int getOffset(int x, int z)
     {
-        return this.offsets[x + y * 16 + z * 256];
+        return this.offsets[x + z * 16];
     }
 
-    public boolean isChunkSaved(int x, int y, int z)
+    public boolean isChunk2DSaved(int x, int z)
     {
-        return this.getOffset(x, y, z) != 0;
+        return this.getOffset(x, z) != 0;
     }
 
-    private void setOffset(int x, int y, int z, int offset) throws IOException
+    private void setOffset(int x, int z, int offset) throws IOException
     {
-        this.offsets[x + y * 16 + z * 256] = offset;
-        this.dataFile.seek((long)((x + y * 16 + z * 256) * 4));
+        this.offsets[x + z * 16] = offset;
+        this.dataFile.seek((long)((x + z * 16) * 4));
         this.dataFile.writeInt(offset);
     }
 
-    private void setChunkTimestamp(int x, int y, int z, int timeStamp) throws IOException
+    private void setChunkTimestamp(int x, int z, int timeStamp) throws IOException
     {
-        this.chunkTimestamps[x + y * 16 + z * 256] = timeStamp;
-        this.dataFile.seek((long)(16384 + (x + y * 16 + z * 256) * 4));
+        this.chunkTimestamps[x + z * 16] = timeStamp;
+        this.dataFile.seek((long)(1024 + (x + z * 16) * 4));
         this.dataFile.writeInt(timeStamp);
     }
 
@@ -323,23 +326,21 @@ public class URegionFile
         }
     }
 
-    class ChunkBuffer extends ByteArrayOutputStream
+    class Chunk2DBuffer extends ByteArrayOutputStream
     {
         private int chunkX;
-        private int chunkY;
         private int chunkZ;
 
-        public ChunkBuffer(int x, int y, int z)
+        public Chunk2DBuffer(int x, int z)
         {
             super(4096);
             this.chunkX = x;
-            this.chunkY = y;
             this.chunkZ = z;
         }
 
         public void close() throws IOException
         {
-            URegionFile.this.write(this.chunkX, this.chunkY, this.chunkZ, this.buf, this.count);
+            URegion2DFile.this.write(this.chunkX, this.chunkZ, this.buf, this.count);
         }
     }
 }

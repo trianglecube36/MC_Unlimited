@@ -1,5 +1,10 @@
 package io.github.trianglecube36.unlimited.chunk;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -72,31 +77,52 @@ public class StackArray {
 	}
 	
 	public void loadData(byte[] ba){
-		int x;
-		int y;
-		int i = 512;
-		
-		for(x = 0;x < stacks.length;x++){
-			i += stacks[x].length;
-		}
-		
-		byte[] savea = new byte[i];
-		
-		for(x = 0;x < 512;x++){
-			savea[x] = (byte) ((stacks[(x << 1)].length << 4) | (stacks[(x << 1) + 1].length));
-		}
-		
-		i = 512;
-		int[] s;
-		for(x = 0;x < 32;x++){
-			s = stacks[x];
-			for(y = 0;y < s.length){
-				
+		try {
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(ba));
+			int i;
+			int y;
+			byte l;
+			for(i = 0;i < 512;i++){
+				l = in.readByte();
+				stacks[i << 1] = new int[l >>> 4];
+				stacks[(i << 1) + 1] = new int[l & 0x0F];
 			}
+			
+			int[] s;
+			for(i = 0;i < 1024;i++){
+				s = stacks[i];
+				for(y = 0;y < s.length;y++){
+					s[y] = in.readInt();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	public byte[] save(){
-		return null;
+		int i;
+		int y;
+		
+		try {
+			ByteArrayOutputStream bo = new ByteArrayOutputStream(512);
+			DataOutputStream o = new DataOutputStream(bo);
+
+			for(i = 0;i < 512;i++){
+				o.writeByte((byte) ((stacks[(i << 1)].length << 4) | (stacks[(i << 1) + 1].length)));
+			}
+			
+			int[] s;
+			for(i = 0;i < 1024;i++){
+				s = stacks[i];
+				for(y = 0;y < s.length;y++){
+					o.writeInt(s[y]);
+				}
+			}
+			return bo.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null; // should never get here...
 	}
 }

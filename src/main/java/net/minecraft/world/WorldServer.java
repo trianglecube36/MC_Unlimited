@@ -2,6 +2,7 @@ package net.minecraft.world;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.github.trianglecube36.unlimited.IUSaveHandler;
 import io.github.trianglecube36.unlimited.chunk.IUChunkLoader;
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
 import io.github.trianglecube36.unlimited.chunk.UChunk2D;
@@ -113,7 +114,7 @@ public class WorldServer extends World
     protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
     public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
 
-    public WorldServer(MinecraftServer p_i45284_1_, ISaveHandler p_i45284_2_, String p_i45284_3_, int p_i45284_4_, WorldSettings p_i45284_5_, Profiler p_i45284_6_)
+    public WorldServer(MinecraftServer p_i45284_1_, IUSaveHandler p_i45284_2_, String p_i45284_3_, int p_i45284_4_, WorldSettings p_i45284_5_, Profiler p_i45284_6_)
     {
         super(p_i45284_2_, p_i45284_3_, p_i45284_5_, WorldProvider.getProviderForDimension(p_i45284_4_), p_i45284_6_);
         this.mcServer = p_i45284_1_;
@@ -395,7 +396,7 @@ public class WorldServer extends World
         	ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
             int x = chunkcoordintpair.chunkXPos * 32;
             int z = chunkcoordintpair.chunkZPos * 32;
-            this.theProfiler.startSection("getChunk");
+            this.theProfiler.startSection("getChunk2D");
             UChunk2D chunk = this.get2DChunk(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
         	
             this.theProfiler.startSection("thunder");
@@ -728,7 +729,7 @@ public class WorldServer extends World
      */
     protected IUChunkProvider createChunkProvider()
     {
-        IUChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
+        IUChunkLoader ichunkloader = this.saveHandler.getUChunkLoader(this.provider);
         this.theChunkProviderServer = new UChunkProviderServer(this, ichunkloader, this.provider.createChunkGenerator());
         return this.theChunkProviderServer;
     }

@@ -2,6 +2,7 @@ package net.minecraft.world;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.github.trianglecube36.unlimited.IUSaveHandler;
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
 import io.github.trianglecube36.unlimited.chunk.UChunk2D;
 import io.github.trianglecube36.unlimited.chunk.UChunk32;
@@ -150,7 +151,7 @@ public abstract class World implements IBlockAccess
      * Handles chunk operations and caching
      */
     protected IUChunkProvider chunkProvider;
-    protected final ISaveHandler saveHandler;
+    protected final IUSaveHandler saveHandler;
     /**
      * holds information about a world (size on disk, time, spawn point, seed, ...)
      */
@@ -177,6 +178,8 @@ public abstract class World implements IBlockAccess
      * Positions to update
      */
     protected Set activeChunkSet = new HashSet();
+    protected Set activeChunk2DSet = new HashSet();
+    
     /**
      * number of ticks until the next random ambients play
      */
@@ -244,7 +247,7 @@ public abstract class World implements IBlockAccess
     }
 
     @SideOnly(Side.CLIENT)
-    public World(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_)
+    public World(IUSaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_)
     {
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.spawnHostileMobs = true;
@@ -283,7 +286,7 @@ public abstract class World implements IBlockAccess
         this.calculateInitialWeather();
     }
 
-    public World(ISaveHandler p_i45369_1_, String p_i45369_2_, WorldSettings p_i45369_3_, WorldProvider p_i45369_4_, Profiler p_i45369_5_)
+    public World(IUSaveHandler p_i45369_1_, String p_i45369_2_, WorldSettings p_i45369_3_, WorldProvider p_i45369_4_, Profiler p_i45369_5_)
     {
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.spawnHostileMobs = true;
@@ -371,10 +374,10 @@ public abstract class World implements IBlockAccess
     }
 
     private static MapStorage s_mapStorage;
-    private static ISaveHandler s_savehandler;
+    private static IUSaveHandler s_savehandler;
     //Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
     //Buildcraft has suffered from the issue this fixes.  If you load the same data from two different worlds they can get two different copies of the same object, thus the last saved gets final say.
-    private MapStorage getMapStorage(ISaveHandler savehandler)
+    private MapStorage getMapStorage(IUSaveHandler savehandler)
     {
         if (s_savehandler != savehandler || s_mapStorage == null)
         {
@@ -525,7 +528,7 @@ public abstract class World implements IBlockAccess
     }
     
     public UChunk2D get2DChunk(int x, int z){
-    	this.chunkProvider.provide2DChunk(x, z);
+    	return this.chunkProvider.provideChunk2D(x, z);
     }
 
     /**
@@ -2928,6 +2931,7 @@ public abstract class World implements IBlockAccess
     protected void setActivePlayerChunksAndCheckLight()
     {
         this.activeChunkSet.clear();
+        this.activeChunk2DSet.clear();
         this.theProfiler.startSection("buildList");
         this.activeChunkSet.addAll(getPersistentChunks().keySet());
         int i;
@@ -2944,14 +2948,15 @@ public abstract class World implements IBlockAccess
             cz = MathHelper.floor_double(entityplayer.posZ / 32.0D);
             byte b0 = 4; // was 7
 
-            for (int j = -b0; j <= b0; ++j)
+            for (int x = -b0; x <= b0; ++x)
             {
-                for (int k = -b0; k <= b0; ++k)
+                for (int z = -b0; z <= b0; ++z)
                 {
-                	for (int l = -b0; l <= b0; ++l)
+                	for (int y = -b0; y <= b0; ++y)
                 	{
-                		this.activeChunkSet.add(new UChunkCoordIntPair(j + cx, k + cy, l + cz));
+                		this.activeChunkSet.add(new UChunkCoordIntPair(x + cx, y + cy, z + cz));
                 	}
+                	this.activeChunk2DSet.add(new UChunkCoordIntPair(x + cx, 0, z + cz));
                 }
             }
         }

@@ -74,16 +74,28 @@ public class UChunk2D {
 
     public BiomeGenBase getBiomeGenForWorldCoords(int x, int z, WorldChunkManager cm)
     {
-        int k = this.blockBiomeArray[z << 4 | x] & 255;
+        int k = this.blockBiomeArray[z << 5 | x] & 255;
 
         if (k == 255)
         {
             BiomeGenBase biomegenbase = cm.getBiomeGenAt((this.xPosition << 5) + x, (this.zPosition << 5) + z);
             k = biomegenbase.biomeID;
-            this.blockBiomeArray[z << 4 | x] = (byte)(k & 255);
+            this.blockBiomeArray[z << 5 | x] = (byte)(k & 255);
         }
-
-        return BiomeGenBase.getBiome(k) == null ? BiomeGenBase.plains : BiomeGenBase.getBiome(k);
+        BiomeGenBase bio = BiomeGenBase.getBiome(k);
+        return bio == null ? BiomeGenBase.plains : bio;
+    }
+    
+    public BiomeGenBase[] getBiomeGenArray(BiomeGenBase[] array){
+    	int k;
+    	BiomeGenBase bio;
+    	for(int i = 0; i < 1024;i++){
+    		k = this.blockBiomeArray[i] & 255;
+    		bio = BiomeGenBase.getBiome(k);
+    		array[i] = bio == null ? BiomeGenBase.plains : bio;
+    	}
+    	
+    	return array;
     }
 
 	public boolean canBlockSeeTheSky(int x, int y, int z)

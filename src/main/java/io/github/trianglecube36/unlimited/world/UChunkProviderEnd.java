@@ -1,8 +1,11 @@
 package io.github.trianglecube36.unlimited.world;
 
+import io.github.trianglecube36.unlimited.UTempGenerator;
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
+import io.github.trianglecube36.unlimited.chunk.UChunk2D;
 import io.github.trianglecube36.unlimited.chunk.UChunk32;
 import io.github.trianglecube36.unlimited.event.UChunkProviderEvent;
+import io.github.trianglecube36.unlimited.event.UPopulateChunkEvent;
 
 import java.util.List;
 import java.util.Random;
@@ -17,7 +20,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
@@ -137,19 +139,19 @@ public class UChunkProviderEnd implements IUChunkProvider
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() == Result.DENY) return;
 
-        for (int k = 0; k < 16; ++k)
+        for (int x = 0; x < 32; ++x)
         {
-            for (int l = 0; l < 16; ++l)
+            for (int z = 0; z < 32; ++z)
             {
                 byte b0 = 1;
                 int i1 = -1;
                 Block block = Blocks.end_stone;
                 Block block1 = Blocks.end_stone;
 
-                for (int j1 = 127; j1 >= 0; --j1)
+                for (int y = 31; y >= 0; --y)
                 {
-                    int k1 = (l * 16 + k) * 128 + j1;
-                    Block block2 = blockArray[k1];
+                    int index = (z << 10) | (x << 5) | y;
+                    Block block2 = blockArray[index];
 
                     if (block2 != null && block2.getMaterial() != Material.air)
                     {
@@ -165,19 +167,19 @@ public class UChunkProviderEnd implements IUChunkProvider
 
                                 i1 = b0;
 
-                                if (j1 >= 0)
+                                if (y >= 0)
                                 {
-                                    blockArray[k1] = block;
+                                    blockArray[index] = block;
                                 }
                                 else
                                 {
-                                    blockArray[k1] = block1;
+                                    blockArray[index] = block1;
                                 }
                             }
                             else if (i1 > 0)
                             {
                                 --i1;
-                                blockArray[k1] = block1;
+                                blockArray[index] = block1;
                             }
                         }
                     }
@@ -207,19 +209,37 @@ public class UChunkProviderEnd implements IUChunkProvider
         this.endRNG.setSeed((long)cx * 341873128712L + (long)cy * 740231021391L + (long)cz * 132897987541L);
         Block[] ablock = new Block[32768];
         //this.biomesForGeneration = this.endWorld.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, cx * 16, cz * 16, 16, 16);
-        this.endWorld.get2DChunk(cx, cz).getBiomeGenArray(this.biomesForGeneration);
-        this.func_147420_a(cx, cy, cz, ablock, this.biomesForGeneration);
+        UChunk2D c2D = this.endWorld.get2DChunk(cx, cz);
+        c2D.getBiomeGenArray(this.biomesForGeneration);
+        //this.generateTarrain(cx, cy, cz, ablock, this.biomesForGeneration); //TODO: re-add
+        UTempGenerator.generateTarrain(cx, cy, cz, ablock, this.biomesForGeneration);
         this.replaceBlocksForBiome(cx, cy, cz, ablock, this.biomesForGeneration);
         UChunk32 chunk = new UChunk32(this.endWorld, ablock, cx, cy, cz);
-        byte[] abyte = chunk.getBiomeArray();
+        /*byte[] abyte = chunk.getBiomeArray();
 
         for (int k = 0; k < abyte.length; ++k)
         {
             abyte[k] = (byte)this.biomesForGeneration[k].biomeID;
-        }
+        }*/
 
-        chunk.generateSkylightMap();
+        endWorld.le.populateLight(chunk, c2D);
         return chunk;
+    }
+    
+    public UChunk2D loadChunk2D(int cx, int cz){
+    	return provideChunk2D(cx, cz);
+    }
+    
+    public UChunk2D provideChunk2D(int cx, int cz){
+    	UChunk2D c2D = new UChunk2D(endWorld, cx, cz);
+    	byte[] abyte = c2D.blockBiomeArray;
+    	this.biomesForGeneration = this.endWorld.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, cx << 5, cz << 5, 32, 32);
+    	
+    	for (int i = 0; i < abyte.length; ++i)
+        {
+            abyte[i] = (byte)this.biomesForGeneration[i].biomeID;
+        }
+    	return c2D;
     }
 
     /**
@@ -365,10 +385,7 @@ public class UChunkProviderEnd implements IUChunkProvider
         return par1ArrayOfDouble;
     }
 
-    /**
-     * Checks to see if a chunk exists at x, y
-     */
-    public boolean chunkExists(int par1, int par2)
+    public boolean chunkExists(int x, int y, int z)
     {
         return true;
     }
@@ -376,18 +393,19 @@ public class UChunkProviderEnd implements IUChunkProvider
     /**
      * Populates chunk with ores etc etc
      */
-    public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
+    public void populate(IUChunkProvider par1IChunkProvider, int x, int y, int z)
     {
         BlockFalling.fallInstantly = true;
 
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
+        MinecraftForge.EVENT_BUS.post(new UPopulateChunkEvent.Pre(par1IChunkProvider, endWorld, endWorld.rand, x, y, z, false));
 
-        int k = par2 * 16;
-        int l = par3 * 16;
-        BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(k + 16, l + 16);
-        biomegenbase.decorate(this.endWorld, this.endWorld.rand, k, l);
+        int bx = x * 32;
+        int by = y * 32;
+        int bz = z * 32;
+        BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(bx + 32, bz + 32);
+        biomegenbase.decorate(this.endWorld, this.endWorld.rand, bx, bz);
 
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, par2, par3, false));
+        MinecraftForge.EVENT_BUS.post(new UPopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, x, y, z, false));
 
         BlockFalling.fallInstantly = false;
     }
@@ -450,5 +468,15 @@ public class UChunkProviderEnd implements IUChunkProvider
         return 0;
     }
 
-    public void recreateStructures(int par1, int par2) {}
+    public void recreateStructures(int x, int y, int z) {}
+
+	@Override
+	public boolean chunk2DExists(int x, int z) {
+		return true;
+	}
+
+	@Override
+	public int getLoadedChunk2DCount() {
+		return 0;
+	}
 }

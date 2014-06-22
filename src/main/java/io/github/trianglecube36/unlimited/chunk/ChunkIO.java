@@ -20,18 +20,14 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.NibbleArray;
-import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraft.world.chunk.storage.RegionFileCache;
 import net.minecraft.world.storage.IThreadedFileIO;
 import net.minecraft.world.storage.ThreadedFileIOBase;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ChunkDataEvent;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -41,10 +37,10 @@ import cpw.mods.fml.common.FMLLog;
 
 public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     private static final Logger logger = LogManager.getLogger();
-    private List chunksToRemove = new ArrayList();
-    private List chunk2DsToRemove = new ArrayList();
-    private Set pendingUChunk32sCoordinates = new HashSet();
-    private Set pendingUChunk2DsCoordinates = new HashSet();
+    private List<PendingChunk> chunksToRemove = new ArrayList<PendingChunk>();
+    private List<PendingChunk> chunk2DsToRemove = new ArrayList<PendingChunk>();
+    private Set<UChunkCoordIntPair> pendingUChunk32sCoordinates = new HashSet<UChunkCoordIntPair>();
+    private Set<UChunkCoordIntPair> pendingUChunk2DsCoordinates = new HashSet<UChunkCoordIntPair>();
     private Object syncLockObject = new Object();
     /**
      * Save directory for chunks using the cool new epic save format
@@ -280,7 +276,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
     {
         ChunkIO.PendingChunk pendingchunk = null;
         boolean is2d = false;
-        Object object = this.syncLockObject; // looks like this does nothing
+        //Object object = this.syncLockObject; // looks like this does nothing
 
         synchronized (this.syncLockObject)
         {
@@ -409,7 +405,7 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
         tag.setTag("Sections", sectionsListNBT);
         chunk.hasEntities = false;
         NBTTagList nbttaglist2 = new NBTTagList();
-        Iterator iterator1 = chunk.entityLists.iterator();
+        Iterator<?> iterator1 = chunk.entityLists.iterator();
 
         while (iterator1.hasNext())
         {
@@ -452,13 +448,13 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
         }
 
         tag.setTag("TileEntities", nbttaglist3);
-        List list = world.getPendingBlockUpdates(chunk, false);
+        List<?> list = world.getPendingBlockUpdates(chunk, false);
 
         if (list != null)
         {
             long k = world.getTotalWorldTime();
             NBTTagList nbttaglist1 = new NBTTagList();
-            Iterator iterator = list.iterator();
+            Iterator<?> iterator = list.iterator();
 
             while (iterator.hasNext())
             {
@@ -499,18 +495,18 @@ public class ChunkIO implements IThreadedFileIO, IUChunkLoader {
             byte[] blocks = nbttagcompound1.getByteArray("Blocks");
             NibbleArray data = new NibbleArray(nbttagcompound1.getByteArray("Data"), 4);
             NibbleArray blockLight = new NibbleArray(nbttagcompound1.getByteArray("BlockLight"), 4);
-            NibbleArray skyLight;
+            NibbleArray skyLight = null;
             if (flag)
             {
                 skyLight = new NibbleArray(nbttagcompound1.getByteArray("SkyLight"), 4);
             }
-            ExtendedBlockStorage extendedblockstorage = new ExtendedBlockStorage(0, flag);
+            ExtendedBlockStorage blockstorage = new ExtendedBlockStorage(0, flag, blocks, data, blockLight, skyLight);
             if (nbttagcompound1.hasKey("Add", 7))
             {
-                extendedblockstorage.setBlockMSBArray(new NibbleArray(nbttagcompound1.getByteArray("Add"), 4));
+                blockstorage.setBlockMSBArray(new NibbleArray(nbttagcompound1.getByteArray("Add"), 4));
             }
-            extendedblockstorage.removeInvalidBlocks();
-            aextendedblockstorage[index] = extendedblockstorage;
+            blockstorage.removeInvalidBlocks();
+            aextendedblockstorage[index] = blockstorage;
         }
 
         chunk.setStorageArrays(aextendedblockstorage);

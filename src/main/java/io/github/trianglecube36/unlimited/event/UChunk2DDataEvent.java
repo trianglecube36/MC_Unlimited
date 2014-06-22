@@ -1,7 +1,6 @@
 package io.github.trianglecube36.unlimited.event;
 
 import io.github.trianglecube36.unlimited.chunk.UChunk2D;
-import io.github.trianglecube36.unlimited.chunk.UChunk32;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class UChunk2DDataEvent extends UChunk2DEvent

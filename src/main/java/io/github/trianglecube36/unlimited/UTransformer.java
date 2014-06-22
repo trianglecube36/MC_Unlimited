@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -14,14 +12,14 @@ import net.minecraft.launchwrapper.IClassTransformer;
 public class UTransformer implements IClassTransformer{
 
 	public static HashMap<String, ZipEntry> mapToReplace = null;
-	public static ZipFile jarFileZip;
+	public static ZipFile jarFileZip = null;
 	
 	public static void setUp(){
 		try {
 			jarFileZip = new ZipFile(ULoadingPlugin.jarfile);
 			mapToReplace = new HashMap<String, ZipEntry>();
-			ZipEntry over = jarFileZip.getEntry("overrideBin");
-			Enumeration entrys = jarFileZip.entries();
+			//ZipEntry over = jarFileZip.getEntry("overrideBin");
+			Enumeration<? extends ZipEntry> entrys = jarFileZip.entries();
 			while(entrys.hasMoreElements()){
 				ZipEntry en = (ZipEntry) entrys.nextElement();
 				String name = en.getName();

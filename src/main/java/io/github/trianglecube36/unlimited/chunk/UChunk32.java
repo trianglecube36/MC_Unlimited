@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.github.trianglecube36.unlimited.event.UChunkEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +13,6 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -25,19 +22,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.world.ChunkEvent;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +47,7 @@ public class UChunk32
     public final int yPosition;
     public final int zPosition;
 
-    private boolean isGapLightingUpdated;
+    //private boolean isGapLightingUpdated;
     public Map chunkTileEntityMap;
 
     public List entityLists;
@@ -214,18 +204,11 @@ public class UChunk32
     public boolean setBlockAndMetadata(int x, int y, int z, Block block, int data)
     {//TODO: fix stuff
      //TODO: link to new lighting system
-        int i1 = z << 4 | x;
 
-        /*if (y >= this.precipitationHeightMap[i1] - 1)
-        {
-            this.precipitationHeightMap[i1] = -999;
-        }
+        Block oldblock = this.getBlock(x, y, z);
+        int olddata = this.getBlockMetadata(x, y, z);
 
-        int j1 = this.heightMap[i1];*/
-        Block block1 = this.getBlock(x, y, z);
-        int data1 = this.getBlockMetadata(x, y, z);
-
-        if (block1 == block && data1 == data)
+        if (oldblock == block && olddata == data)
         {
             return false;
         }
@@ -233,8 +216,6 @@ public class UChunk32
         {
         	int index = (z >> 4) << 2 | (y >> 4) << 1 | x >> 4;
             ExtendedBlockStorage extendedblockstorage = this.storageArrays[index];
-            //boolean flag = false;
-
             if (extendedblockstorage == null)
             {
                 if (block == Blocks.air)
@@ -243,29 +224,32 @@ public class UChunk32
                 }
 
                 extendedblockstorage = this.storageArrays[index] = new ExtendedBlockStorage(0, !this.worldObj.provider.hasNoSky);
-                //flag = y >= j1;
             }
 
             int wx = (this.xPosition << 5) + x;
-            int wy = (this.yPosition << 5) + x;
+            int wy = (this.yPosition << 5) + y;
             int wz = (this.zPosition << 5) + z;
-
+            int oldOpacity = 0;
+            int oldLight = 0;
+            
             if (!this.worldObj.isRemote)
             {
-                block1.onBlockPreDestroy(this.worldObj, wx, wy, wz, data1);
+            	oldOpacity = block.getLightOpacity(this.worldObj, wx, wy, wz);
+            	oldLight = block.getLightValue(this.worldObj, wx, wy, wz);
+                oldblock.onBlockPreDestroy(this.worldObj, wx, wy, wz, olddata);
             }
 
             extendedblockstorage.func_150818_a(x & 15, y & 15, z & 15, block);
-            extendedblockstorage.setExtBlockMetadata(x & 15, y & 15, z & 15, data); // Move this above to prevent other mods/tile entites from creating invalid ones for the wrong metadata
+            extendedblockstorage.setExtBlockMetadata(x & 15, y & 15, z & 15, data);
 
             if (!this.worldObj.isRemote)
             {
-                block1.breakBlock(this.worldObj, wx, wy, wz, block1, data1);
+                oldblock.breakBlock(this.worldObj, wx, wy, wz, oldblock, olddata);
             }
-            else if (block1.hasTileEntity(data1))
+            else if (oldblock.hasTileEntity(olddata))
             {
-                TileEntity te = this.getTileEntityUnsafe(x & 31, y & 31, z & 31); //note: dont know why check > 64
-                if (te != null && te.shouldRefresh(block1, block, data1, data, worldObj, wx, wy, wz))
+                TileEntity te = this.getTileEntityUnsafe(x & 31, y & 31, z & 31);
+                if (te != null && te.shouldRefresh(oldblock, block, olddata, data, worldObj, wx, wy, wz))
                 {
                     this.worldObj.removeTileEntity(wx, wy, wz);
                 }
@@ -277,37 +261,12 @@ public class UChunk32
             }
             else
             {
-                /*if (flag)
-                {
-                    this.generateSkylightMap();
-                }
-                else
-                {
-                    int j2 = block.func_149717_k();
-                    int k2 = block1.func_149717_k();
-
-                    if (j2 > 0)
-                    {
-                        if (y >= j1)
-                        {
-                            this.relightBlock(x, y + 1, z);
-                        }
-                    }
-                    else if (y == j1 - 1)
-                    {
-                        this.relightBlock(x, y, z);
-                    }
-
-                    if (j2 != k2 && (j2 < k2 || this.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) > 0 || this.getSavedLightValue(EnumSkyBlock.Block, x, y, z) > 0))
-                    {
-                        this.propagateSkylightOcclusion(x, z);
-                    }
-                }*/
-
                 TileEntity tileentity;
 
                 if (!this.worldObj.isRemote)
                 {
+                	UChunk2D c2d = this.worldObj.get2DChunk(this.xPosition, this.zPosition);
+                	c2d.blockUpdated(this, wx, wy, wz, oldOpacity, oldLight, block);
                     block.onBlockAdded(this.worldObj, wx, wy, wz);
                 }
 
@@ -700,7 +659,7 @@ public class UChunk32
         return false;
     }
 
-    public void populateChunk(IUChunkProvider cp1, IUChunkProvider cp2, int par3, int par4, int par5)
+    /*public void populateChunk(IUChunkProvider cp1, IUChunkProvider cp2, int par3, int par4, int par5)
     {//TODO: fined a better way!
         if (!this.isTerrainPopulated && cp1.chunkExists(par3 + 1, par4 + 1) && cp1.chunkExists(par3, par4 + 1) && cp1.chunkExists(par3 + 1, par4))
         {
@@ -721,7 +680,7 @@ public class UChunk32
         {
             cp1.populate(cp2, par3 - 1, par4 - 1);
         }
-    }
+    }*/
 
     public boolean func_150802_k()
     {

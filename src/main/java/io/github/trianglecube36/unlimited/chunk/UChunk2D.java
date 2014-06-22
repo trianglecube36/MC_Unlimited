@@ -3,6 +3,7 @@ package io.github.trianglecube36.unlimited.chunk;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
@@ -117,5 +118,11 @@ public class UChunk2D {
 
 	public boolean isAtLocation(int x, int z) {
 		return x == this.xPosition && z == this.zPosition;
+	}
+
+	public void blockUpdated(UChunk32 uChunk32, int wx, int wy, int wz, int oldOpacity, int oldLight, Block newblock) {
+		if(true){
+			
+		}
 	}
 }

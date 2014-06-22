@@ -3,8 +3,6 @@ package io.github.trianglecube36.unlimited.light;
 import io.github.trianglecube36.unlimited.chunk.UChunk2D;
 import io.github.trianglecube36.unlimited.chunk.UChunk32;
 
-import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;

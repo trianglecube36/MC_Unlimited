@@ -1,7 +1,6 @@
 package net.minecraft.world;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 import io.github.trianglecube36.unlimited.IUSaveHandler;
 import io.github.trianglecube36.unlimited.chunk.IUChunkLoader;
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
@@ -57,15 +56,10 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraft.world.chunk.storage.IChunkLoader;
-import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
-import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.ChestGenHooks;
-import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -73,6 +67,9 @@ import net.minecraftforge.event.world.WorldEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class WorldServer extends World
 {
@@ -334,8 +331,8 @@ public class WorldServer extends World
     protected void func_147456_g()
     {
         super.func_147456_g();
-        int i = 0;
-        int j = 0;
+        //int i = 0;
+        //int j = 0;
         Iterator iterator = this.activeChunkSet.iterator();
 
         doneChunks.retainAll(activeChunkSet);
@@ -344,7 +341,7 @@ public class WorldServer extends World
             doneChunks.clear();
         }
 
-        final long startTime = System.nanoTime();
+        //final long startTime = System.nanoTime();
 
         while (iterator.hasNext())
         {
@@ -375,12 +372,12 @@ public class WorldServer extends World
                         int j2 = i2 & 15;
                         int k2 = i2 >> 8 & 15;
                         int l2 = i2 >> 16 & 15;
-                        ++j;
+                        //++j;
                         Block block = extendedblockstorage.getBlockByExtId(j2, l2, k2);
 
                         if (block.getTickRandomly())
                         {
-                            ++i;
+                            //++i;
                             block.updateTick(this, j2 + x, l2 + extendedblockstorage.getYLocation(), k2 + z, this.rand);
                         }
                     }

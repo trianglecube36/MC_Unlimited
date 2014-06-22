@@ -7,8 +7,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 public class StackArray {
 	public int[][] stacks; // [x << 6 | z][depth]
 	

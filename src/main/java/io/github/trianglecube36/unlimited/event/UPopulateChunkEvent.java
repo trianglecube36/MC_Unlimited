@@ -5,7 +5,6 @@ import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
 import java.util.Random;
 
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
 
 public class UPopulateChunkEvent extends UChunkProviderEvent
 {

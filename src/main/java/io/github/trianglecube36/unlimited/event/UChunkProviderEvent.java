@@ -1,10 +1,9 @@
 package io.github.trianglecube36.unlimited.event;
 
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.IChunkProvider;
+import cpw.mods.fml.common.eventhandler.Event;
 
 public class UChunkProviderEvent extends Event
 {

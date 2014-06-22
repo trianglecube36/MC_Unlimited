@@ -1,9 +1,15 @@
 package io.github.trianglecube36.unlimited.world;
 
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
+import io.github.trianglecube36.unlimited.chunk.UChunk2D;
 import io.github.trianglecube36.unlimited.chunk.UChunk32;
 import io.github.trianglecube36.unlimited.event.UChunkProviderEvent;
+import io.github.trianglecube36.unlimited.event.UDecorateBiomeEvent;
 import io.github.trianglecube36.unlimited.event.UPopulateChunkEvent;
+import io.github.trianglecube36.unlimited.event.UTerrainGen;
+import static io.github.trianglecube36.unlimited.event.UOreGenEvent.GenerateMinable.EventType.*;
+import static io.github.trianglecube36.unlimited.event.UPopulateChunkEvent.Populate.EventType.*;
+import static io.github.trianglecube36.unlimited.event.UDecorateBiomeEvent.Decorate.EventType.*;
 
 import java.util.List;
 import java.util.Random;
@@ -29,15 +35,12 @@ import net.minecraft.world.gen.feature.WorldGenGlowStone2;
 import net.minecraft.world.gen.feature.WorldGenHellLava;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.structure.MapGenNetherBridge;
-import static net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.*;
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
-import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
-import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.*;
 import net.minecraftforge.common.*;
 import cpw.mods.fml.common.eventhandler.Event.*;
 import net.minecraftforge.event.terraingen.*;
 
-public class ChunkProviderHell implements IUChunkProvider
+public class UChunkProviderHell implements IUChunkProvider
 {
     private Random hellRNG;
     /** A NoiseGeneratorOctaves used in generating nether terrain */
@@ -77,7 +80,7 @@ public class ChunkProviderHell implements IUChunkProvider
         netherCaveGenerator = TerrainGen.getModdedMapGen(netherCaveGenerator, NETHER_CAVE);
     }
 
-    public ChunkProviderHell(World par1World, long par2)
+    public UChunkProviderHell(World par1World, long par2)
     {
         this.worldObj = par1World;
         this.hellRNG = new Random(par2);
@@ -278,6 +281,25 @@ public class ChunkProviderHell implements IUChunkProvider
     {
         return this.provideChunk(x, y, z);
     }
+    
+    public UChunk2D loadChunk2D(int x, int z)
+    {
+        return this.provideChunk2D(x, z);
+    }
+    
+    private BiomeGenBase[] biomesForGeneration;
+    
+    public UChunk2D provideChunk2D(int cx, int cz){
+    	UChunk2D c2D = new UChunk2D(worldObj, cx, cz);
+    	byte[] abyte = c2D.blockBiomeArray;
+    	this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, cx << 5, cz << 5, 32, 32);
+    	
+    	for (int i = 0; i < abyte.length; ++i)
+        {
+            abyte[i] = (byte)this.biomesForGeneration[i].biomeID;
+        }
+    	return c2D;
+    }
 
     /**
      * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
@@ -476,7 +498,7 @@ public class ChunkProviderHell implements IUChunkProvider
         int k1;
         int l1;
 
-        boolean doGen = TerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, cx, cy, cz, false, NETHER_LAVA);
+        boolean doGen = UTerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, cx, cy, cz, false, NETHER_LAVA);
         for (i1 = 0; doGen && i1 < 8; ++i1)
         {
             j1 = bx + this.hellRNG.nextInt(32) + 16;
@@ -488,75 +510,75 @@ public class ChunkProviderHell implements IUChunkProvider
         i1 = this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1) + 1; //was i1 = this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1) + 1;
         int i2;
 
-        doGen = TerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, cx, cy, cz, false, FIRE);
+        doGen = UTerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, cx, cy, cz, false, FIRE);
         for (j1 = 0; doGen && j1 < i1; ++j1)
         {
-            k1 = bx + this.hellRNG.nextInt(16) + 8;
-            l1 = this.hellRNG.nextInt(120) + 4;
-            i2 = bz + this.hellRNG.nextInt(16) + 8;
+            k1 = bx + this.hellRNG.nextInt(32) + 16;
+            l1 = by + this.hellRNG.nextInt(32) + 16;
+            i2 = bz + this.hellRNG.nextInt(32) + 16;
             (new WorldGenFire()).generate(this.worldObj, this.hellRNG, k1, l1, i2);
         }
 
         i1 = this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1);
         
-        doGen = TerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, cx, cz, false, GLOWSTONE);
+        doGen = UTerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, cx, cy, cz, false, GLOWSTONE);
         for (j1 = 0; doGen && j1 < i1; ++j1)
         {
-            k1 = bx + this.hellRNG.nextInt(16) + 8;
-            l1 = this.hellRNG.nextInt(120) + 4;
-            i2 = bz + this.hellRNG.nextInt(16) + 8;
+            k1 = bx + this.hellRNG.nextInt(32) + 16;
+            l1 = by + this.hellRNG.nextInt(32) + 16;
+            i2 = bz + this.hellRNG.nextInt(32) + 16;
             (new WorldGenGlowStone1()).generate(this.worldObj, this.hellRNG, k1, l1, i2);
         }
 
         for (j1 = 0; doGen && j1 < 10; ++j1)
         {
-            k1 = bx + this.hellRNG.nextInt(16) + 8;
-            l1 = this.hellRNG.nextInt(128);
-            i2 = bz + this.hellRNG.nextInt(16) + 8;
+            k1 = bx + this.hellRNG.nextInt(32) + 16;
+            l1 = by + this.hellRNG.nextInt(32) + 16;
+            i2 = bz + this.hellRNG.nextInt(32) + 16;
             (new WorldGenGlowStone2()).generate(this.worldObj, this.hellRNG, k1, l1, i2);
         }
 
-        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, hellRNG, bx, bz));
+        MinecraftForge.EVENT_BUS.post(new UDecorateBiomeEvent.Pre(worldObj, hellRNG, bx, by, bz));
 
-        doGen = TerrainGen.decorate(worldObj, hellRNG, bx, bz, SHROOM);
-        if (doGen && this.hellRNG.nextInt(1) == 0)
+        doGen = UTerrainGen.decorate(worldObj, hellRNG, bx, by, bz, SHROOM);
+        if (doGen && this.hellRNG.nextBoolean()) //was doGen && this.hellRNG.nextInt(1) == 0
         {
-            j1 = bx + this.hellRNG.nextInt(16) + 8;
-            k1 = this.hellRNG.nextInt(128);
-            l1 = bz + this.hellRNG.nextInt(16) + 8;
+            j1 = bx + this.hellRNG.nextInt(32) + 16;
+            k1 = by + this.hellRNG.nextInt(32) + 16;
+            l1 = bz + this.hellRNG.nextInt(32) + 16;
             (new WorldGenFlowers(Blocks.brown_mushroom)).generate(this.worldObj, this.hellRNG, j1, k1, l1);
         }
 
-        if (doGen && this.hellRNG.nextInt(1) == 0)
+        if (doGen && this.hellRNG.nextBoolean()) //was doGen && this.hellRNG.nextInt(1) == 0
         {
-            j1 = bx + this.hellRNG.nextInt(16) + 8;
-            k1 = this.hellRNG.nextInt(128);
-            l1 = bz + this.hellRNG.nextInt(16) + 8;
+            j1 = bx + this.hellRNG.nextInt(32) + 16;
+            k1 = by + this.hellRNG.nextInt(32) + 16;
+            l1 = bz + this.hellRNG.nextInt(32) + 16;
             (new WorldGenFlowers(Blocks.red_mushroom)).generate(this.worldObj, this.hellRNG, j1, k1, l1);
         }
 
         WorldGenMinable worldgenminable = new WorldGenMinable(Blocks.quartz_ore, 13, Blocks.netherrack);
         int j2;
 
-        doGen = TerrainGen.generateOre(worldObj, hellRNG, worldgenminable, bx, bz, QUARTZ);
+        doGen = UTerrainGen.generateOre(worldObj, hellRNG, worldgenminable, bx, by, bz, QUARTZ);
         for (k1 = 0; doGen && k1 < 16; ++k1)
         {
-            l1 = bx + this.hellRNG.nextInt(16);
-            i2 = this.hellRNG.nextInt(108) + 10;
-            j2 = bz + this.hellRNG.nextInt(16);
-            worldgenminable.generate(this.worldObj, this.hellRNG, l1, i2, j2);
+            l1 = bx + this.hellRNG.nextInt(32) + 8;
+            i2 = by + this.hellRNG.nextInt(32) + 16;
+            j2 = bz + this.hellRNG.nextInt(32) + 8;
+            worldgenminable.generate(this.worldObj, this.hellRNG, l1, i2, j2); //mojang? y you do dis? NOTE: +8 OFFSET ON X AND Z IS APPLYED AT WorldGenMinable
         }
 
-        for (k1 = 0; k1 < 16; ++k1)
+        /*for (k1 = 0; k1 < 16; ++k1)
         {
             l1 = bx + this.hellRNG.nextInt(16);
             i2 = this.hellRNG.nextInt(108) + 10;
             j2 = bz + this.hellRNG.nextInt(16);
             (new WorldGenHellLava(Blocks.flowing_lava, true)).generate(this.worldObj, this.hellRNG, l1, i2, j2);
-        }
+        }*/ //TODO: check this!
 
-        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, hellRNG, bx, bz));
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, hellRNG, cx, cz, false));
+        MinecraftForge.EVENT_BUS.post(new UDecorateBiomeEvent.Post(worldObj, hellRNG, bx, by, bz));
+        MinecraftForge.EVENT_BUS.post(new UPopulateChunkEvent.Post(par1IChunkProvider, worldObj, hellRNG, cx, cy, cz, false));
 
         BlockFalling.fallInstantly = false;
     }
@@ -603,9 +625,9 @@ public class ChunkProviderHell implements IUChunkProvider
     /**
      * Returns a list of creatures of the specified type that can spawn at the given location.
      */
-    public List getPossibleCreatures(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
+    public List getPossibleCreatures(EnumCreatureType mobtype, int par2, int par3, int par4)
     {
-        if (par1EnumCreatureType == EnumCreatureType.monster)
+        if (mobtype == EnumCreatureType.monster)
         {
             if (this.genNetherBridge.hasStructureAt(par2, par3, par4))
             {
@@ -619,7 +641,7 @@ public class ChunkProviderHell implements IUChunkProvider
         }
 
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(par2, par4);
-        return biomegenbase.getSpawnableList(par1EnumCreatureType);
+        return biomegenbase.getSpawnableList(mobtype);
     }
 
     public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_)
@@ -631,9 +653,14 @@ public class ChunkProviderHell implements IUChunkProvider
     {
         return 0;
     }
-
-    public void recreateStructures(int par1, int par2)
+    
+    public int getLoadedChunk2DCount()
     {
-        this.genNetherBridge.func_151539_a(this, this.worldObj, par1, par2, (Block[])null);
+        return 0;
+    }
+
+    public void recreateStructures(int x, int y, int z)
+    {
+        this.genNetherBridge.func_151539_a(this, this.worldObj, x, y, z, (Block[])null);
     }
 }

@@ -1,16 +1,13 @@
 package net.minecraft.entity;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -49,6 +46,9 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fluids.IFluidBlock;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class Entity
 {
@@ -2246,7 +2246,7 @@ public abstract class Entity
         {
             boolean flag = !this.worldObj.func_147469_q(i - 1, j, k);
             boolean flag1 = !this.worldObj.func_147469_q(i + 1, j, k);
-            boolean flag2 = !this.worldObj.func_147469_q(i, j - 1, k);
+            //boolean flag2 = !this.worldObj.func_147469_q(i, j - 1, k);
             boolean flag3 = !this.worldObj.func_147469_q(i, j + 1, k);
             boolean flag4 = !this.worldObj.func_147469_q(i, j, k - 1);
             boolean flag5 = !this.worldObj.func_147469_q(i, j, k + 1);

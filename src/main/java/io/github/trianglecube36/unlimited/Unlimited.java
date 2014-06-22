@@ -1,13 +1,8 @@
 package io.github.trianglecube36.unlimited;
 
-import java.util.Map;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
 @Mod(modid = Unlimited.MODID, version = Unlimited.VERSION)
 public class Unlimited

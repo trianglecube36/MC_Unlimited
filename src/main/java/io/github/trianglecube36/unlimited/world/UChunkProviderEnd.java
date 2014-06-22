@@ -20,7 +20,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraftforge.common.*;
@@ -403,7 +402,7 @@ public class UChunkProviderEnd implements IUChunkProvider
         int by = y * 32;
         int bz = z * 32;
         BiomeGenBase biomegenbase = this.endWorld.getBiomeGenForCoords(bx + 32, bz + 32);
-        biomegenbase.decorate(this.endWorld, this.endWorld.rand, bx, bz);
+        biomegenbase.decorate(this.endWorld, this.endWorld.rand, bx, by, bz);
 
         MinecraftForge.EVENT_BUS.post(new UPopulateChunkEvent.Post(par1IChunkProvider, endWorld, endWorld.rand, x, y, z, false));
 

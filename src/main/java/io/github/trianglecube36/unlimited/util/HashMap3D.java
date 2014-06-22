@@ -16,7 +16,8 @@ public class HashMap3D
     private final float percentUseable = 0.75F;
 
     /** count of times elements have been added/removed */
-    private transient volatile int modCount;
+    @SuppressWarnings("unused")
+	private transient volatile int modCount;
 
     /**
      * returns the hashed key given the original key

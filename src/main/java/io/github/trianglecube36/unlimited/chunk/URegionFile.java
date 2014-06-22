@@ -8,7 +8,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
@@ -17,25 +16,25 @@ import java.util.zip.InflaterInputStream;
 public class URegionFile
 {
     private static final byte[] emptySector = new byte[4096];
-    private final File fileName;
+    //private final File fileName;
     private RandomAccessFile dataFile;
     private final int[] offsets = new int[4096]; //note: pigs can't fly... o and, the last 12 bits are the sector count
     private final int[] chunkTimestamps = new int[4096];
     private BitSet sectorFree;
-    private int sizeDelta;
-    private long lastModified;
+    //private int sizeDelta;
+    //private long lastModified;
 
     public URegionFile(File par1File)
     {
-        this.fileName = par1File;
-        this.sizeDelta = 0;
+        //this.fileName = par1File;
+        //this.sizeDelta = 0;
 
         try
         {
-            if (par1File.exists())
-            {
-                this.lastModified = par1File.lastModified();
-            }
+            //if (par1File.exists())
+            //{
+            //    this.lastModified = par1File.lastModified();
+            //}
 
             this.dataFile = new RandomAccessFile(par1File, "rw");
             int i;
@@ -52,7 +51,7 @@ public class URegionFile
                     this.dataFile.writeInt(0);
                 }
 
-                this.sizeDelta += 32768;
+                //this.sizeDelta += 32768;
             }
 
             if ((this.dataFile.length() & 4095L) != 0L)
@@ -264,7 +263,7 @@ public class URegionFile
                         this.sectorFree.clear(this.sectorFree.size());
                     }
 
-                    this.sizeDelta += 4096 * newcount;
+                    //this.sizeDelta += 4096 * newcount;
                     this.write(off, dataArray, numbites);
                     this.setOffset(x, y, z, off << 12 | newcount);
                 }

@@ -341,9 +341,9 @@ public class UChunk32
         	}
         }else{
         	if(type == EnumSkyBlock.Block){
-        		return this.worldObj.provider.hasNoSky ? 0 : storage.getExtSkylightValue(x & 15, y & 15, z & 15);
+        		return storage.getExtBlocklightValue(x & 15, y & 15, z & 15);
         	}else{
-        		return type == EnumSkyBlock.Block ? storage.getExtBlocklightValue(x & 15, y & 15, z & 15) : type.defaultLightValue;
+        		return this.worldObj.provider.hasNoSky ? 0 : storage.getExtSkylightValue(x & 15, y & 15, z & 15);
         	}
         }
         //was

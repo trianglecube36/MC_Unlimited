@@ -5,6 +5,7 @@ import java.util.Map;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
+@IFMLLoadingPlugin.MCVersion("1.7.10")
 public class ULoadingPlugin  implements IFMLLoadingPlugin{
 	
 	public static File jarfile;

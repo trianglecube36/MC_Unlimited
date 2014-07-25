@@ -23,8 +23,8 @@ public class UTransformer implements IClassTransformer{
 			while(entrys.hasMoreElements()){
 				ZipEntry en = (ZipEntry) entrys.nextElement();
 				String name = en.getName();
-				if(!en.isDirectory() && name.startsWith("overrideBin")){
-					String s = name.substring(12, name.length() - 6).replace('/', '.');
+				if(!en.isDirectory() && name.endsWith(".class")){
+					String s = name.substring(0, name.length() - 6).replace('/', '.'); // strip .class
 					mapToReplace.put(s, en);
 				}
 			}
@@ -36,10 +36,13 @@ public class UTransformer implements IClassTransformer{
 	
 	@Override
 	public byte[] transform(String Name, String deobfClazzName, byte[] oldData) {
+		if(!deobfClazzName.startsWith("net.minecraft")){ // note: this includes net.minecraftforge - mite need to smash up some stuff in there
+			return oldData;
+		}
 		if(mapToReplace == null){
 			setUp();
 		}
-		ZipEntry en = mapToReplace.get(deobfClazzName.subSequence(deobfClazzName.lastIndexOf('.', deobfClazzName.length()) + 1, deobfClazzName.length()));
+		ZipEntry en = mapToReplace.get(deobfClazzName);
 		if(en != null){
 			byte[] data = null;
 			try {

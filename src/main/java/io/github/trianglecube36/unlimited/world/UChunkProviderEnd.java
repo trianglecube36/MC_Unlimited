@@ -205,7 +205,7 @@ public class UChunkProviderEnd implements IUChunkProvider
      */
     public UChunk32 provideChunk(int cx, int cy, int cz)
     {
-        this.endRNG.setSeed((long)cx * 341873128712L + (long)cy * 740231021391L + (long)cz * 132897987541L);
+        this.endRNG.setSeed((long)cx * 341873128712L + (long)cy * 740231021407L + (long)cz * 132897987541L);
         Block[] ablock = new Block[32768];
         //this.biomesForGeneration = this.endWorld.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, cx * 16, cz * 16, 16, 16);
         UChunk2D c2D = this.endWorld.get2DChunk(cx, cz);

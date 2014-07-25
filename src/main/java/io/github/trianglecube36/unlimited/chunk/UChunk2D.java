@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
@@ -61,7 +62,7 @@ public class UChunk2D {
     }
     
     /**
-     * x, y, z are relative to the UChunk64
+     * x, y, z are relative to the UChunk32
      */
     public boolean canBeTop(UChunk32 chunk, int x, int y, int z){
     	return chunk.getBlock(x, y, z).getLightOpacity(worldObj, x + (chunk.xPosition << 5), y + (chunk.yPosition << 5), z + (chunk.zPosition << 5)) != 0;
@@ -121,8 +122,40 @@ public class UChunk2D {
 	}
 
 	public void blockUpdated(UChunk32 uChunk32, int wx, int wy, int wz, int oldOpacity, int oldLight, Block newblock) {
-		if(true){
+		int newOpacity = newblock.getLightOpacity(worldObj, wx, wy, wz);
+		int newLight = newblock.getLightValue(worldObj, wx, wy, wz);
+		if(oldOpacity != newOpacity || oldLight != newLight){
+			int oldh = heightMap.get(wx & 31, wz & 31);
+			if(newOpacity != 0){
+				if(wy > oldh){
+					if(oldh >> 5 == uChunk32.yPosition || oldh == wy - 1){
+						heightMap.set(wx & 31, wz & 31, wy);
+					}else{
+						heightMap.push(wx & 31, wz & 31, wy);
+					}
+				}else if(wy < oldh && oldOpacity == 0){
+					heightMap.sar(wx & 31, wz & 31, wy - 1);
+				}
+			}else if(oldh == wy){
+				heightMap.pop(wx & 31, wz & 31);
+				checkHieght(wx & 31, wz & 31);
+			}else if(oldh > wy){
+				heightMap.sar(wx & 31, wz & 31, wy);
+			}
 			
+			if(newOpacity != oldOpacity){
+				if(newLight > oldLight){
+					worldObj.le.lightWave(wx, wy, wz, newLight, EnumSkyBlock.Block);
+				}else if(newLight < oldLight){
+					worldObj.le.updateLightByType(EnumSkyBlock.Block, wx, wy, wz);
+				}
+			}else{
+				worldObj.le.updateLightByType(EnumSkyBlock.Block, wx, wy, wz);
+			}
 		}
+	}
+	
+	private void checkHieght(int x, int z){
+		//TODO: loopy throo all loded chunks to see if there is a hier block
 	}
 }

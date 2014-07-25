@@ -78,7 +78,7 @@ public class LightingEngine {
 		}
 	}
 	
-	public void skyColomnLost(UChunk32 chunk, int x, int z, int newh){
+	private void skyColomnLost(UChunk32 chunk, int x, int z, int newh){
 		int offy = (chunk.yPosition << 5);
 		int base = offy + 30; // note: one less as 31 is checked true
 		while(chunk.getSavedLightValue(EnumSkyBlock.Sky, x, base & 5, z) == 15 && base != offy){
@@ -91,12 +91,20 @@ public class LightingEngine {
 		}
 	}
 	
-	public void skyColomnGained(UChunk32 chunk, int x, int z, int newh){
+	private void skyColomnGained(UChunk32 chunk, int x, int z, int newh){
 		int offx = (chunk.xPosition << 5) + x;
 		int offz = (chunk.zPosition << 5) + z;
 		for(int i = (chunk.yPosition << 5) + 31;i > newh;i--){
 			lightWave(offx, i, offz, 15, EnumSkyBlock.Sky);
 		}
+	}
+	
+	public void skyColomnLost(UChunk2D chunk2d, int wx, int wz, int low, int high){
+		
+	}
+	
+	public void skyColomnGained(UChunk2D chunk2d, int wx, int wz, int low, int high){
+		
 	}
 	
 	public void lightWave(int x, int y, int z, int compV, EnumSkyBlock type){

@@ -34,7 +34,7 @@ import net.minecraft.world.gen.structure.MapGenMineshaft;
 import net.minecraft.world.gen.structure.MapGenScatteredFeature;
 import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraft.world.gen.structure.MapGenVillage;
-//import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
+import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
 import static io.github.trianglecube36.unlimited.event.UPopulateChunkEvent.Populate.EventType.*;
 import net.minecraftforge.common.*;
 import cpw.mods.fml.common.eventhandler.Event.*;

@@ -22,8 +22,8 @@ group= "io.github.trianglecube36.unlimited" // http://maven.apache.org/guides/mi
 archivesBaseName = "unlimited"
 
 minecraft {
-    version = "1.7.2-10.12.1.1075"
-    assetDir = "eclipse/assets"
+    version = "1.7.10-10.13.0.1194"
+    runDir = "run_dir"
 }
 
 dependencies {

@@ -3,7 +3,7 @@
   "modid": "unlimited",
   "name": "Unlimited",
   "description": "Endless world height and depth!",
-  "version": "${version}",
+  "version": "1.0",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",

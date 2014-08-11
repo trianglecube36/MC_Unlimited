@@ -4,16 +4,26 @@ import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
 import io.github.trianglecube36.unlimited.event.UDecorateBiomeEvent.Decorate;
 import io.github.trianglecube36.unlimited.event.UOreGenEvent.GenerateMinable;
 import io.github.trianglecube36.unlimited.event.UPopulateChunkEvent.Populate;
+import io.github.trianglecube36.unlimited.gen.UMapGenBase;
 
 import java.util.Random;
 
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.terraingen.InitMapGenEvent;
 
 public abstract class UTerrainGen
 {
+	public static UMapGenBase getModdedMapGen(UMapGenBase original, UInitMapGenEvent.EventType type)
+    {
+        UInitMapGenEvent event = new UInitMapGenEvent(type, original);
+        MinecraftForge.TERRAIN_GEN_BUS.post(event);
+        return event.newGen;
+    }
+	
     public static boolean populate(IUChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkY, int chunkZ, boolean hasVillageGenerated, Populate.EventType type)
     {
         UPopulateChunkEvent.Populate event = new UPopulateChunkEvent.Populate(chunkProvider, world, rand, chunkX, chunkY, chunkZ, hasVillageGenerated, type);

@@ -1,5 +1,7 @@
 package io.github.trianglecube36.unlimited.util;
 
+import java.util.Iterator;
+
 public class HashMap3D
 {
     /** the array of all elements in the hash */
@@ -226,5 +228,50 @@ public class HashMap3D
     static int getHashCode(int i, int j, int k)
     {
         return getHashedKey(i, j, k);
+    }
+    
+    public Iterator iterator(){
+    	return new Map3DIterator();
+    }
+    
+    public class Map3DIterator implements Iterator{
+    	private int index;
+    	private HashUnit3D next;
+    	
+    	private Map3DIterator(){
+    		move();
+    	}
+    	
+    	private void move(){
+    		if(next != null && next.nextEntry != null){
+    			next = next.nextEntry;
+    			return;
+    		}
+    		index++;
+    		for(;index < HashMap3D.this.hashArray.length;index++){
+    			if(HashMap3D.this.hashArray[index] != null){
+    				next = HashMap3D.this.hashArray[index];
+    				return;
+    			}
+    		}
+    		next = null;
+    	}
+    	
+		@Override
+		public boolean hasNext() {
+			return next != null;
+		}
+
+		@Override
+		public Object next() {
+			HashUnit3D r = next;
+			move();
+			return r;
+		}
+
+		@Override
+		public void remove() {
+			
+		}
     }
 }

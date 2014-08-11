@@ -6,6 +6,9 @@ import io.github.trianglecube36.unlimited.chunk.UChunk32;
 import io.github.trianglecube36.unlimited.event.UChunkProviderEvent;
 import io.github.trianglecube36.unlimited.event.UPopulateChunkEvent;
 import io.github.trianglecube36.unlimited.event.UTerrainGen;
+import io.github.trianglecube36.unlimited.gen.UMapGenBase;
+import io.github.trianglecube36.unlimited.gen.UMapGenCaves;
+import io.github.trianglecube36.unlimited.gen.UMapGenRavine;
 
 import java.util.List;
 import java.util.Random;
@@ -34,7 +37,7 @@ import net.minecraft.world.gen.structure.MapGenMineshaft;
 import net.minecraft.world.gen.structure.MapGenScatteredFeature;
 import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraft.world.gen.structure.MapGenVillage;
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
+import static io.github.trianglecube36.unlimited.event.UInitMapGenEvent.EventType.*;
 import static io.github.trianglecube36.unlimited.event.UPopulateChunkEvent.Populate.EventType.*;
 import net.minecraftforge.common.*;
 import cpw.mods.fml.common.eventhandler.Event.*;
@@ -61,16 +64,16 @@ public class UChunkProviderGenerate implements IUChunkProvider
     private final double[] field_147434_q;
     private final float[] parabolicField;
     private double[] stoneNoise = new double[256];
-    private MapGenBase caveGenerator = new MapGenCaves();
+    private UMapGenBase caveGenerator = new UMapGenCaves();
     /** Holds Stronghold Generator */
-    private MapGenStronghold strongholdGenerator = new MapGenStronghold();
+    private UMapGenStronghold strongholdGenerator = new UMapGenStronghold();
     /** Holds Village Generator */
-    private MapGenVillage villageGenerator = new MapGenVillage();
+    private UMapGenVillage villageGenerator = new UMapGenVillage();
     /** Holds Mineshaft Generator */
-    private MapGenMineshaft mineshaftGenerator = new MapGenMineshaft();
-    private MapGenScatteredFeature scatteredFeatureGenerator = new MapGenScatteredFeature();
+    private UMapGenMineshaft mineshaftGenerator = new UMapGenMineshaft();
+    private UMapGenScatteredFeature scatteredFeatureGenerator = new UMapGenScatteredFeature();
     /** Holds ravine generator */
-    private MapGenBase ravineGenerator = new MapGenRavine();
+    private UMapGenBase ravineGenerator = new UMapGenRavine();
     /** The biomes that are used to generate the chunk */
     private BiomeGenBase[] biomesForGeneration;
     double[] field_147427_d;
@@ -80,13 +83,13 @@ public class UChunkProviderGenerate implements IUChunkProvider
     int[][] field_73219_j = new int[32][32];
 
     {
-        caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, CAVE);
-        strongholdGenerator = (MapGenStronghold) TerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
-        villageGenerator = (MapGenVillage) TerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
-        mineshaftGenerator = (MapGenMineshaft) TerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
-        scatteredFeatureGenerator = (MapGenScatteredFeature) TerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
-        ravineGenerator = TerrainGen.getModdedMapGen(ravineGenerator, RAVINE);
-    }    
+        caveGenerator = UTerrainGen.getModdedMapGen(caveGenerator, CAVE);
+        strongholdGenerator = (MapGenStronghold) UTerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
+        villageGenerator = (MapGenVillage) UTerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
+        mineshaftGenerator = (MapGenMineshaft) UTerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
+        scatteredFeatureGenerator = (MapGenScatteredFeature) UTerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
+        ravineGenerator = UTerrainGen.getModdedMapGen(ravineGenerator, RAVINE);
+    }
 
     public UChunkProviderGenerate(World par1World, long par2, boolean par4)
     {

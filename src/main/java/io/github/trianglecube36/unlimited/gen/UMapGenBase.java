@@ -1,4 +1,4 @@
-package net.minecraft.world.gen;
+package io.github.trianglecube36.unlimited.gen;
 
 import io.github.trianglecube36.unlimited.chunk.IUChunkProvider;
 
@@ -7,7 +7,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-public class MapGenBase
+public class UMapGenBase
 {
     /** The number of chunks to gen-check in any given direction. */
     protected int range = 6; //was 8 - now 6 for 1.5x bigger possible structures >:) 
@@ -15,7 +15,6 @@ public class MapGenBase
     protected Random rand = new Random();
     /** This world object. */
     protected World worldObj;
-    private static final String __OBFID = "CL_00000394";
 
     /** chunk generating */
     public void func_151539_a(IUChunkProvider chunkpro, World world, int x, int y, int z, Block[] blockArray)
@@ -43,5 +42,5 @@ public class MapGenBase
         }
     }
     /** chunk generating apply random ness crazy stuff idk */
-    protected void func_151538_a(World world, int checkX, int checkY, int checkZ, int locX, int locY, int locZ, Block[] blockArray) {}
+    protected void func_151538_a(World world, int checkX, int checkY, int checkZ, int cX, int cY, int cZ, Block[] blockArray) {}
 }

@@ -1,29 +1,26 @@
-package net.minecraft.world.gen;
+package io.github.trianglecube36.unlimited.gen;
 
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.MapGenBase;
 
-public class MapGenCaves extends MapGenBase
+public class UMapGenRavine extends UMapGenBase
 {
-    private static final String __OBFID = "CL_00000393";
+    private float[] field_75046_d = new float[1024];
 
-    protected void func_151542_a(long rlong, int cX, int cY, int cZ, Block[] blockArray, double checkX, double checkY, double checkZ)
+    protected void func_151540_a(long rlong, int cX, int cY, int cZ, Block[] blockArray, double checkX, double checkY, double checkZ, float upar1, float upar2, float upar3, int upar4, int upar5, double upar6)
     {
-        this.func_151541_a(rlong, cX, cY, cZ, blockArray, checkX, checkY, checkZ, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
-    }
-
-    protected void func_151541_a(long rlong, int cX, int cY, int cZ, Block[] blockArray, double checkX, double checkY, double checkZ, float upar1, float upar2, float upar3, int upar4, int upar5, double upar6)
-    {
+        Random random = new Random(rlong);
         double mX = (double)(cX * 32 + 16);
-        double mY = (double)(cY * 32 + 16);
+        double mY = (double)(cZ * 32 + 16);
         double mZ = (double)(cZ * 32 + 16);
         float f3 = 0.0F;
         float f4 = 0.0F;
-        Random random = new Random(rlong);
 
         if (upar5 <= 0)
         {
@@ -31,70 +28,65 @@ public class MapGenCaves extends MapGenBase
             upar5 = j1 - random.nextInt(j1 / 4);
         }
 
-        boolean flag2 = false;
+        boolean flag1 = false;
 
         if (upar4 == -1)
         {
             upar4 = upar5 / 2;
-            flag2 = true;
+            flag1 = true;
         }
 
-        int k1 = random.nextInt(upar5 / 2) + upar5 / 4;
+        float f5 = 1.0F;
 
-        for (boolean flag = random.nextInt(6) == 0; upar4 < upar5; ++upar4)
+        for (int k1 = 0; k1 < 256; ++k1)
         {
-            double d6 = 1.5D + (double)(MathHelper.sin((float)upar4 * (float)Math.PI / (float)upar5) * upar1 * 1.0F);
-            double d7 = d6 * upar6;
-            float f5 = MathHelper.cos(upar3);
-            float f6 = MathHelper.sin(upar3);
-            checkX += (double)(MathHelper.cos(upar2) * f5);
-            checkY += (double)f6;
-            checkZ += (double)(MathHelper.sin(upar2) * f5);
-
-            if (flag)
+            if (k1 == 0 || random.nextInt(3) == 0)
             {
-                upar3 *= 0.92F;
-            }
-            else
-            {
-                upar3 *= 0.7F;
+                f5 = 1.0F + random.nextFloat() * random.nextFloat() * 1.0F;
             }
 
-            upar3 += f4 * 0.1F;
-            upar2 += f3 * 0.1F;
-            f4 *= 0.9F;
-            f3 *= 0.75F;
+            this.field_75046_d[k1] = f5 * f5;
+        }
+
+        for (; upar4 < upar5; ++upar4)
+        {
+            double d12 = 1.5D + (double)(MathHelper.sin((float)upar4 * (float)Math.PI / (float)upar5) * upar1 * 1.0F);
+            double d6 = d12 * upar6;
+            d12 *= (double)random.nextFloat() * 0.25D + 0.75D;
+            d6 *= (double)random.nextFloat() * 0.25D + 0.75D;
+            float f6 = MathHelper.cos(upar3);
+            float f7 = MathHelper.sin(upar3);
+            checkX += (double)(MathHelper.cos(upar2) * f6);
+            checkY += (double)f7;
+            checkZ += (double)(MathHelper.sin(upar2) * f6);
+            upar3 *= 0.7F;
+            upar3 += f4 * 0.05F;
+            upar2 += f3 * 0.05F;
+            f4 *= 0.8F;
+            f3 *= 0.5F;
             f4 += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 2.0F;
             f3 += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 4.0F;
 
-            if (!flag2 && upar4 == k1 && upar1 > 1.0F && upar5 > 0)
+            if (flag1 || random.nextInt(4) != 0)
             {
-                this.func_151541_a(random.nextLong(), cX, cY, cZ, blockArray, checkX, checkY, checkZ, random.nextFloat() * 0.5F + 0.5F, upar2 - ((float)Math.PI / 2F), upar3 / 3.0F, upar4, upar5, 1.0D);
-                this.func_151541_a(random.nextLong(), cX, cY, cZ, blockArray, checkX, checkY, checkZ, random.nextFloat() * 0.5F + 0.5F, upar2 + ((float)Math.PI / 2F), upar3 / 3.0F, upar4, upar5, 1.0D);
-                return;
-            }
+                double d7 = checkX - mX;
+                double d8 = checkZ - mZ;
+                double d9 = (double)(upar5 - upar4);
+                double d10 = (double)(upar1 + 2.0F + 16.0F);
 
-            if (flag2 || random.nextInt(4) != 0)
-            {
-                double incX = checkX - mX;
-                double incY = checkY - mY;
-                double incZ = checkZ - mZ;
-                double d10 = (double)(upar5 - upar4);
-                double d11 = (double)(upar1 + 2.0F + 32.0F); // was (double)(upar1 + 2.0F + 16.0F)
-
-                if (incX * incX + incY * incY + incZ * incZ - d10 * d10 > d11 * d11)
+                if (d7 * d7 + d8 * d8 - d9 * d9 > d10 * d10)
                 {
                     return;
                 }
 
-                if (checkX >= mX - 32.0D - d6 * 2.0D && checkY >= mY - 32.0D - d6 * 2.0D && checkZ >= mZ - 32.0D - d6 * 2.0D && checkX <= mX + 32.0D + d6 * 2.0D && checkY <= mY + 32.0D + d6 * 2.0D && checkZ <= mZ + 32.0D + d6 * 2.0D) //was 16
+                if (checkX >= mX - 32.0D - d12 * 2.0D && checkY >= mY - 32.0D - d12 * 2.0D && checkZ >= mZ - 32.0D - d12 * 2.0D && checkX <= mX + 32.0D + d12 * 2.0D && checkY <= mY + 32.0D + d12 * 2.0D && checkZ <= mZ + 32.0D + d12 * 2.0D)
                 {
-                    int minx = MathHelper.floor_double(checkX - d6) - cX * 32 - 1; // was 16
-                    int maxx = MathHelper.floor_double(checkX + d6) - cX * 32 + 1; //
-                    int miny = MathHelper.floor_double(checkY - d7) - cY * 32 - 1; //
-                    int maxy = MathHelper.floor_double(checkY + d7) - cY * 32 + 1; //
-                    int minz = MathHelper.floor_double(checkZ - d6) - cZ * 32 - 1; //
-                    int maxz = MathHelper.floor_double(checkZ + d6) - cZ * 32 + 1; //
+                    int minx = MathHelper.floor_double(checkX - d12) - cX * 32 - 1;
+                    int maxx = MathHelper.floor_double(checkX + d12) - cX * 32 + 1;
+                    int miny = MathHelper.floor_double(checkY - d6 ) - cY * 32 - 1;
+                    int maxy = MathHelper.floor_double(checkY + d6 ) - cY * 32 + 1;
+                    int minz = MathHelper.floor_double(checkZ - d12) - cZ * 32 - 1;
+                    int maxz = MathHelper.floor_double(checkZ + d12) - cZ * 32 + 1;
 
                     if (minx < 0)
                     {
@@ -126,60 +118,61 @@ public class MapGenCaves extends MapGenBase
                         maxz = 32; // was 16
                     }
 
-                    boolean flag3 = false;
+                    boolean flag2 = false;
                     int ix;
                     int j3;
 
-                    for (ix = minx; !flag3 && ix < maxx; ++ix)
+                    for (ix = minx; !flag2 && ix < maxx; ++ix)
                     {
-                        for (int iz = minz; !flag3 && iz < maxz; ++iz)
+                        for (int iz = minz; !flag2 && iz < maxz; ++iz)
                         {
-                            for (int iy = maxy + 1; !flag3 && iy >= miny - 1; --iy)
+                            for (int iy = maxy + 1; !flag2 && iy >= miny - 1; --iy)
                             {
-                                j3 = (ix << 10) + (iz << 5) + iy;
+                            	j3 = (ix << 10) + (iz << 5) + iy;
 
                                 Block block = blockArray[j3];
 
                                 if (isOceanBlock(blockArray, j3, ix, iy, iz, cX, cY, cZ))
                                 {
-                                    flag3 = true;
+                                    flag2 = true;
                                 }
 
                                 if (iy != miny - 1 && ix != minx && ix != maxx - 1 && iz != minz && iz != maxz - 1)
                                 {
                                     iy = miny;
-                                }
+                                } 
                             }
                         }
                     }
 
-                    if (!flag3)
+                    if (!flag2)
                     {
                         for (ix = minx; ix < maxx; ++ix)
                         {
-                            double d13 = ((double)(ix + cX * 32) + 0.5D - checkX) / d6;
+                            double disX = ((double)(ix + cX * 32) + 0.5D - checkX) / d12;
 
                             for (j3 = minz; j3 < maxz; ++j3)
                             {
-                                double d14 = ((double)(j3 + cZ * 32) + 0.5D - checkZ) / d6;
+                                double disZ = ((double)(j3 + cZ * 32) + 0.5D - checkZ) / d12;
                                 int k3 = (ix << 10) + (j3 << 5) + maxy;
-                                boolean flag1 = false;
+                                boolean flag = false;
 
-                                if (d13 * d13 + d14 * d14 < 1.0D)
+                                if (disX * disX + disZ * disZ < 1.0D)
                                 {
                                     for (int l3 = maxy - 1; l3 >= miny; --l3)
                                     {
-                                        double d12 = ((double)l3 + 0.5D - checkY) / d7;
+                                        double disY = ((double)(l3 + cY * 32) + 0.5D - checkY) / d6;
 
-                                        if (d12 > -0.7D && d13 * d13 + d12 * d12 + d14 * d14 < 1.0D)
+                                        if ((disX * disX + disZ * disZ) * (double)this.field_75046_d[l3] + disY * disY / 6.0D < 1.0D)
                                         {
                                             Block block1 = blockArray[k3];
 
                                             if (isTopBlock(blockArray, k3, ix, l3, j3, cX, cY, cZ))
                                             {
-                                                flag1 = true;
+                                                flag = true;
                                             }
-                                            digBlock(blockArray, k3, ix, l3, j3, cX, cY, cZ, flag1);
+
+                                            digBlock(blockArray, k3, ix, l3, j3, cX, cY, cZ, flag);
                                         }
 
                                         --k3;
@@ -188,7 +181,7 @@ public class MapGenCaves extends MapGenBase
                             }
                         }
 
-                        if (flag2)
+                        if (flag1)
                         {
                             break;
                         }
@@ -200,45 +193,29 @@ public class MapGenCaves extends MapGenBase
 
     protected void func_151538_a(World world, int checkX, int checkY, int checkZ, int locX, int locY, int locZ, Block[] blockArray)
     {
-        int i1 = this.rand.nextInt(this.rand.nextInt(this.rand.nextInt(15) + 1) + 1);
-
-        if (this.rand.nextInt(7) != 0)
-        {
-            i1 = 0;
-        }
-
-        for (int j1 = 0; j1 < i1; ++j1)
+    	if(checkY < 0 || checkY >= 2){
+    		return;
+    	}
+        if (this.rand.nextInt(25) == 0) //was 50
         {
             double d0 = (double)(checkX * 32 + this.rand.nextInt(32));
-            double d1 = (double)(checkY * 32 + this.rand.nextInt(32));
+        	double d1 = (double)(this.rand.nextInt(this.rand.nextInt(40) + 8) + 20);
             double d2 = (double)(checkZ * 32 + this.rand.nextInt(32));
-            int k1 = 1;
+            byte b0 = 1;
 
-            if (this.rand.nextInt(4) == 0)
-            {
-                this.func_151542_a(this.rand.nextLong(), locX, locY, locZ, blockArray, d0, d1, d2);
-                k1 += this.rand.nextInt(4);
-            }
-
-            for (int l1 = 0; l1 < k1; ++l1)
+            for (int i1 = 0; i1 < b0; ++i1)
             {
                 float f = this.rand.nextFloat() * (float)Math.PI * 2.0F;
                 float f1 = (this.rand.nextFloat() - 0.5F) * 2.0F / 8.0F;
-                float f2 = this.rand.nextFloat() * 2.0F + this.rand.nextFloat();
-
-                if (this.rand.nextInt(10) == 0)
-                {
-                    f2 *= this.rand.nextFloat() * this.rand.nextFloat() * 3.0F + 1.0F;
-                }
-
-                this.func_151541_a(this.rand.nextLong(), locX, locY, locZ, blockArray, d0, d1, d2, f2, f, f1, 0, 0, 1.0D);
+                float f2 = (this.rand.nextFloat() * 2.0F + this.rand.nextFloat()) * 2.0F;
+                this.func_151540_a(this.rand.nextLong(), locX, locY, locZ, blockArray, d0, d1, d2, f2, f, f1, 0, 0, 3.0D);
             }
         }
     }
 
     protected boolean isOceanBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkY, int chunkZ)
     {
-        return data[index] == Blocks.flowing_water || data[index] == Blocks.water;
+        return data[index] == Blocks.water || data[index] == Blocks.flowing_water;
     }
 
     //Exception biomes to make sure we generate like vanilla
@@ -254,7 +231,7 @@ public class MapGenCaves extends MapGenBase
     //Vanilla bugs to make sure that we generate the map the same way vanilla does.
     private boolean isTopBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkY, int chunkZ)
     {
-        BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 32, z + chunkZ * 32);
+        BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
         return (isExceptionBiome(biome) ? data[index] == Blocks.grass : data[index] == biome.topBlock);
     }
 
@@ -282,9 +259,9 @@ public class MapGenCaves extends MapGenBase
 
         if (block == Blocks.stone || block == filler || block == top)
         {
-            if (((chunkY << 5) + y) < -500) //was 10
+            if (y < 10)
             {
-                data[index] = Blocks.lava;
+                data[index] = Blocks.flowing_lava;
             }
             else
             {

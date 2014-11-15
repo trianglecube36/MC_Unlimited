@@ -17,22 +17,18 @@ import net.minecraft.util.Facing;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureIO;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraft.world.gen.structure.StructureComponent;
 
-public abstract class StructureComponent
+public abstract class UStructureComponent
 {
-    protected StructureBoundingBox boundingBox;
+    protected UStructureBoundingBox boundingBox;
     /** switches the Coordinate System base off the Bounding Box */
     protected int coordBaseMode;
     /** The type ID of this component. */
     protected int componentType;
-    private static final String __OBFID = "CL_00000511";
 
-    public StructureComponent() {}
+    public UStructureComponent() {}
 
-    protected StructureComponent(int p_i2091_1_)
+    protected UStructureComponent(int p_i2091_1_)
     {
         this.componentType = p_i2091_1_;
         this.coordBaseMode = -1;
@@ -40,12 +36,12 @@ public abstract class StructureComponent
 
     public NBTTagCompound func_143010_b()
     {
-        if (MapGenStructureIO.func_143036_a(this) == null) // Friendlier error then the Null Stirng error below.
+        if (UMapGenStructureIO.func_143036_a(this) == null) // Friendlier error then the Null Stirng error below.
         {
             throw new RuntimeException("StructureComponent \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
         }
         NBTTagCompound nbttagcompound = new NBTTagCompound();
-        nbttagcompound.setString("id", MapGenStructureIO.func_143036_a(this));
+        nbttagcompound.setString("id", UMapGenStructureIO.func_143036_a(this));
         nbttagcompound.setTag("BB", this.boundingBox.func_151535_h());
         nbttagcompound.setInteger("O", this.coordBaseMode);
         nbttagcompound.setInteger("GD", this.componentType);
@@ -59,7 +55,7 @@ public abstract class StructureComponent
     {
         if (p_143009_2_.hasKey("BB"))
         {
-            this.boundingBox = new StructureBoundingBox(p_143009_2_.getIntArray("BB"));
+            this.boundingBox = new UStructureBoundingBox(p_143009_2_.getIntArray("BB"));
         }
 
         this.coordBaseMode = p_143009_2_.getInteger("O");
@@ -72,15 +68,15 @@ public abstract class StructureComponent
     /**
      * Initiates construction of the Structure Component picked, at the current Location of StructGen
      */
-    public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_) {}
+    public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_) {}
 
     /**
      * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes Mineshafts at
      * the end, it adds Fences...
      */
-    public abstract boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_);
+    public abstract boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_);
 
-    public StructureBoundingBox getBoundingBox()
+    public UStructureBoundingBox getBoundingBox()
     {
         return this.boundingBox;
     }
@@ -96,10 +92,10 @@ public abstract class StructureComponent
     /**
      * Discover if bounding box can fit within the current bounding box object.
      */
-    public static StructureComponent findIntersecting(List p_74883_0_, StructureBoundingBox p_74883_1_)
+    public static UStructureComponent findIntersecting(List p_74883_0_, UStructureBoundingBox p_74883_1_)
     {
         Iterator iterator = p_74883_0_.iterator();
-        StructureComponent structurecomponent;
+        UStructureComponent structurecomponent;
 
         do
         {
@@ -108,7 +104,7 @@ public abstract class StructureComponent
                 return null;
             }
 
-            structurecomponent = (StructureComponent)iterator.next();
+            structurecomponent = (UStructureComponent)iterator.next();
         }
         while (structurecomponent.getBoundingBox() == null || !structurecomponent.getBoundingBox().intersectsWith(p_74883_1_));
 
@@ -123,7 +119,7 @@ public abstract class StructureComponent
     /**
      * checks the entire StructureBoundingBox for Liquids
      */
-    protected boolean isLiquidInStructureBoundingBox(World p_74860_1_, StructureBoundingBox p_74860_2_)
+    protected boolean isLiquidInStructureBoundingBox(World p_74860_1_, UStructureBoundingBox p_74860_2_)
     {
         int i = Math.max(this.boundingBox.minX - 1, p_74860_2_.minX);
         int j = Math.max(this.boundingBox.minY - 1, p_74860_2_.minY);
@@ -558,7 +554,7 @@ public abstract class StructureComponent
     /**
      * current Position depends on currently set Coordinates mode, is computed here
      */
-    protected void placeBlockAtCurrentPosition(World p_151550_1_, Block p_151550_2_, int p_151550_3_, int p_151550_4_, int p_151550_5_, int p_151550_6_, StructureBoundingBox p_151550_7_)
+    protected void placeBlockAtCurrentPosition(World p_151550_1_, Block p_151550_2_, int p_151550_3_, int p_151550_4_, int p_151550_5_, int p_151550_6_, UStructureBoundingBox p_151550_7_)
     {
         int i1 = this.getXWithOffset(p_151550_4_, p_151550_6_);
         int j1 = this.getYWithOffset(p_151550_5_);
@@ -570,7 +566,7 @@ public abstract class StructureComponent
         }
     }
 
-    protected Block getBlockAtCurrentPosition(World p_151548_1_, int p_151548_2_, int p_151548_3_, int p_151548_4_, StructureBoundingBox p_151548_5_)
+    protected Block getBlockAtCurrentPosition(World p_151548_1_, int p_151548_2_, int p_151548_3_, int p_151548_4_, UStructureBoundingBox p_151548_5_)
     {
         int l = this.getXWithOffset(p_151548_2_, p_151548_4_);
         int i1 = this.getYWithOffset(p_151548_3_);
@@ -582,7 +578,7 @@ public abstract class StructureComponent
      * arguments: (World worldObj, StructureBoundingBox structBB, int minX, int minY, int minZ, int maxX, int maxY, int
      * maxZ)
      */
-    protected void fillWithAir(World p_74878_1_, StructureBoundingBox p_74878_2_, int p_74878_3_, int p_74878_4_, int p_74878_5_, int p_74878_6_, int p_74878_7_, int p_74878_8_)
+    protected void fillWithAir(World p_74878_1_, UStructureBoundingBox p_74878_2_, int p_74878_3_, int p_74878_4_, int p_74878_5_, int p_74878_6_, int p_74878_7_, int p_74878_8_)
     {
         for (int k1 = p_74878_4_; k1 <= p_74878_7_; ++k1)
         {
@@ -600,7 +596,7 @@ public abstract class StructureComponent
      * arguments: (World worldObj, StructureBoundingBox structBB, int minX, int minY, int minZ, int maxX, int maxY, int
      * maxZ, int placeBlock, int replaceBlock, boolean alwaysreplace)
      */
-    protected void fillWithBlocks(World p_151549_1_, StructureBoundingBox p_151549_2_, int p_151549_3_, int p_151549_4_, int p_151549_5_, int p_151549_6_, int p_151549_7_, int p_151549_8_, Block p_151549_9_, Block p_151549_10_, boolean p_151549_11_)
+    protected void fillWithBlocks(World p_151549_1_, UStructureBoundingBox p_151549_2_, int p_151549_3_, int p_151549_4_, int p_151549_5_, int p_151549_6_, int p_151549_7_, int p_151549_8_, Block p_151549_9_, Block p_151549_10_, boolean p_151549_11_)
     {
         for (int k1 = p_151549_4_; k1 <= p_151549_7_; ++k1)
         {
@@ -629,7 +625,7 @@ public abstract class StructureComponent
      * maxZ, Block placeBlock, int placeBlockMetadata, Block replaceBlock, int replaceBlockMetadata, boolean
      * alwaysreplace)
      */
-    protected void fillWithMetadataBlocks(World p_151556_1_, StructureBoundingBox p_151556_2_, int p_151556_3_, int p_151556_4_, int p_151556_5_, int p_151556_6_, int p_151556_7_, int p_151556_8_, Block p_151556_9_, int p_151556_10_, Block p_151556_11_, int p_151556_12_, boolean p_151556_13_)
+    protected void fillWithMetadataBlocks(World p_151556_1_, UStructureBoundingBox p_151556_2_, int p_151556_3_, int p_151556_4_, int p_151556_5_, int p_151556_6_, int p_151556_7_, int p_151556_8_, Block p_151556_9_, int p_151556_10_, Block p_151556_11_, int p_151556_12_, boolean p_151556_13_)
     {
         for (int i2 = p_151556_4_; i2 <= p_151556_7_; ++i2)
         {
@@ -657,7 +653,7 @@ public abstract class StructureComponent
      * arguments: World worldObj, StructureBoundingBox structBB, int minX, int minY, int minZ, int maxX, int maxY, int
      * maxZ, boolean alwaysreplace, Random rand, StructurePieceBlockSelector blockselector
      */
-    protected void fillWithRandomizedBlocks(World p_74882_1_, StructureBoundingBox p_74882_2_, int p_74882_3_, int p_74882_4_, int p_74882_5_, int p_74882_6_, int p_74882_7_, int p_74882_8_, boolean p_74882_9_, Random p_74882_10_, StructureComponent.BlockSelector p_74882_11_)
+    protected void fillWithRandomizedBlocks(World p_74882_1_, UStructureBoundingBox p_74882_2_, int p_74882_3_, int p_74882_4_, int p_74882_5_, int p_74882_6_, int p_74882_7_, int p_74882_8_, boolean p_74882_9_, Random p_74882_10_, UStructureComponent.BlockSelector p_74882_11_)
     {
         for (int k1 = p_74882_4_; k1 <= p_74882_7_; ++k1)
         {
@@ -679,7 +675,7 @@ public abstract class StructureComponent
      * arguments: World worldObj, StructureBoundingBox structBB, Random rand, float randLimit, int minX, int minY, int
      * minZ, int maxX, int maxY, int maxZ, Block placeBlock, Block replaceBlock, boolean alwaysreplace
      */
-    protected void randomlyFillWithBlocks(World p_151551_1_, StructureBoundingBox p_151551_2_, Random p_151551_3_, float p_151551_4_, int p_151551_5_, int p_151551_6_, int p_151551_7_, int p_151551_8_, int p_151551_9_, int p_151551_10_, Block p_151551_11_, Block p_151551_12_, boolean p_151551_13_)
+    protected void randomlyFillWithBlocks(World p_151551_1_, UStructureBoundingBox p_151551_2_, Random p_151551_3_, float p_151551_4_, int p_151551_5_, int p_151551_6_, int p_151551_7_, int p_151551_8_, int p_151551_9_, int p_151551_10_, Block p_151551_11_, Block p_151551_12_, boolean p_151551_13_)
     {
         for (int k1 = p_151551_6_; k1 <= p_151551_9_; ++k1)
         {
@@ -703,7 +699,7 @@ public abstract class StructureComponent
         }
     }
 
-    protected void func_151552_a(World p_151552_1_, StructureBoundingBox p_151552_2_, Random p_151552_3_, float p_151552_4_, int p_151552_5_, int p_151552_6_, int p_151552_7_, Block p_151552_8_, int p_151552_9_)
+    protected void func_151552_a(World p_151552_1_, UStructureBoundingBox p_151552_2_, Random p_151552_3_, float p_151552_4_, int p_151552_5_, int p_151552_6_, int p_151552_7_, Block p_151552_8_, int p_151552_9_)
     {
         if (p_151552_3_.nextFloat() < p_151552_4_)
         {
@@ -711,7 +707,7 @@ public abstract class StructureComponent
         }
     }
 
-    protected void func_151547_a(World p_151547_1_, StructureBoundingBox p_151547_2_, int p_151547_3_, int p_151547_4_, int p_151547_5_, int p_151547_6_, int p_151547_7_, int p_151547_8_, Block p_151547_9_, boolean p_151547_10_)
+    protected void func_151547_a(World p_151547_1_, UStructureBoundingBox p_151547_2_, int p_151547_3_, int p_151547_4_, int p_151547_5_, int p_151547_6_, int p_151547_7_, int p_151547_8_, Block p_151547_9_, boolean p_151547_10_)
     {
         float f = (float)(p_151547_6_ - p_151547_3_ + 1);
         float f1 = (float)(p_151547_7_ - p_151547_4_ + 1);
@@ -748,7 +744,7 @@ public abstract class StructureComponent
     /**
      * Deletes all continuous blocks from selected position upwards. Stops at hitting air.
      */
-    protected void clearCurrentPositionBlocksUpwards(World p_74871_1_, int p_74871_2_, int p_74871_3_, int p_74871_4_, StructureBoundingBox p_74871_5_)
+    protected void clearCurrentPositionBlocksUpwards(World p_74871_1_, int p_74871_2_, int p_74871_3_, int p_74871_4_, UStructureBoundingBox p_74871_5_)
     {
         int l = this.getXWithOffset(p_74871_2_, p_74871_4_);
         int i1 = this.getYWithOffset(p_74871_3_);
@@ -764,7 +760,7 @@ public abstract class StructureComponent
         }
     }
 
-    protected void func_151554_b(World p_151554_1_, Block p_151554_2_, int p_151554_3_, int p_151554_4_, int p_151554_5_, int p_151554_6_, StructureBoundingBox p_151554_7_)
+    protected void func_151554_b(World p_151554_1_, Block p_151554_2_, int p_151554_3_, int p_151554_4_, int p_151554_5_, int p_151554_6_, UStructureBoundingBox p_151554_7_)
     {
         int i1 = this.getXWithOffset(p_151554_4_, p_151554_6_);
         int j1 = this.getYWithOffset(p_151554_5_);
@@ -783,7 +779,7 @@ public abstract class StructureComponent
     /**
      * Used to generate chests with items in it. ex: Temple Chests, Village Blacksmith Chests, Mineshaft Chests.
      */
-    protected boolean generateStructureChestContents(World p_74879_1_, StructureBoundingBox p_74879_2_, Random p_74879_3_, int p_74879_4_, int p_74879_5_, int p_74879_6_, WeightedRandomChestContent[] p_74879_7_, int p_74879_8_)
+    protected boolean generateStructureChestContents(World p_74879_1_, UStructureBoundingBox p_74879_2_, Random p_74879_3_, int p_74879_4_, int p_74879_5_, int p_74879_6_, WeightedRandomChestContent[] p_74879_7_, int p_74879_8_)
     {
         int i1 = this.getXWithOffset(p_74879_4_, p_74879_6_);
         int j1 = this.getYWithOffset(p_74879_5_);
@@ -810,7 +806,7 @@ public abstract class StructureComponent
     /**
      * Used to generate dispenser contents for structures. ex: Jungle Temples.
      */
-    protected boolean generateStructureDispenserContents(World p_74869_1_, StructureBoundingBox p_74869_2_, Random p_74869_3_, int p_74869_4_, int p_74869_5_, int p_74869_6_, int p_74869_7_, WeightedRandomChestContent[] p_74869_8_, int p_74869_9_)
+    protected boolean generateStructureDispenserContents(World p_74869_1_, UStructureBoundingBox p_74869_2_, Random p_74869_3_, int p_74869_4_, int p_74869_5_, int p_74869_6_, int p_74869_7_, WeightedRandomChestContent[] p_74869_8_, int p_74869_9_)
     {
         int j1 = this.getXWithOffset(p_74869_4_, p_74869_6_);
         int k1 = this.getYWithOffset(p_74869_5_);
@@ -834,7 +830,7 @@ public abstract class StructureComponent
         }
     }
 
-    protected void placeDoorAtCurrentPosition(World p_74881_1_, StructureBoundingBox p_74881_2_, Random p_74881_3_, int p_74881_4_, int p_74881_5_, int p_74881_6_, int p_74881_7_)
+    protected void placeDoorAtCurrentPosition(World p_74881_1_, UStructureBoundingBox p_74881_2_, Random p_74881_3_, int p_74881_4_, int p_74881_5_, int p_74881_6_, int p_74881_7_)
     {
         int i1 = this.getXWithOffset(p_74881_4_, p_74881_6_);
         int j1 = this.getYWithOffset(p_74881_5_);
@@ -850,7 +846,6 @@ public abstract class StructureComponent
         {
             protected Block field_151562_a;
             protected int selectedBlockMetaData;
-            private static final String __OBFID = "CL_00000512";
 
             protected BlockSelector()
             {

@@ -5,30 +5,17 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
-import net.minecraft.world.gen.structure.MapGenNetherBridge;
-import net.minecraft.world.gen.structure.MapGenScatteredFeature;
-import net.minecraft.world.gen.structure.MapGenStronghold;
-import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureMineshaftPieces;
-import net.minecraft.world.gen.structure.StructureMineshaftStart;
-import net.minecraft.world.gen.structure.StructureNetherBridgePieces;
-import net.minecraft.world.gen.structure.StructureStart;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces;
-import net.minecraft.world.gen.structure.StructureVillagePieces;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class MapGenStructureIO
+public class UMapGenStructureIO
 {
     private static final Logger logger = LogManager.getLogger();
     private static Map field_143040_a = new HashMap();
     private static Map field_143038_b = new HashMap();
     private static Map field_143039_c = new HashMap();
     private static Map field_143037_d = new HashMap();
-    private static final String __OBFID = "CL_00000509";
 
     public static void registerStructure(Class p_143034_0_, String p_143034_1_)
     {
@@ -42,19 +29,19 @@ public class MapGenStructureIO
         field_143037_d.put(p_143031_0_, p_143031_1_);
     }
 
-    public static String func_143033_a(StructureStart p_143033_0_)
+    public static String func_143033_a(UStructureStart p_143033_0_)
     {
         return (String)field_143038_b.get(p_143033_0_.getClass());
     }
 
-    public static String func_143036_a(StructureComponent p_143036_0_)
+    public static String func_143036_a(UStructureComponent p_143036_0_)
     {
         return (String)field_143037_d.get(p_143036_0_.getClass());
     }
 
-    public static StructureStart func_143035_a(NBTTagCompound p_143035_0_, World p_143035_1_)
+    public static UStructureStart func_143035_a(NBTTagCompound p_143035_0_, World p_143035_1_)
     {
-        StructureStart structurestart = null;
+        UStructureStart structurestart = null;
 
         try
         {
@@ -62,7 +49,7 @@ public class MapGenStructureIO
 
             if (oclass != null)
             {
-                structurestart = (StructureStart)oclass.newInstance();
+                structurestart = (UStructureStart)oclass.newInstance();
             }
         }
         catch (Exception exception)
@@ -83,9 +70,9 @@ public class MapGenStructureIO
         return structurestart;
     }
 
-    public static StructureComponent func_143032_b(NBTTagCompound p_143032_0_, World p_143032_1_)
+    public static UStructureComponent func_143032_b(NBTTagCompound p_143032_0_, World p_143032_1_)
     {
-        StructureComponent structurecomponent = null;
+        UStructureComponent structurecomponent = null;
 
         try
         {
@@ -93,7 +80,7 @@ public class MapGenStructureIO
 
             if (oclass != null)
             {
-                structurecomponent = (StructureComponent)oclass.newInstance();
+                structurecomponent = (UStructureComponent)oclass.newInstance();
             }
         }
         catch (Exception exception)
@@ -116,15 +103,15 @@ public class MapGenStructureIO
 
     static
     {
-        registerStructure(StructureMineshaftStart.class, "Mineshaft");
-        registerStructure(MapGenVillage.Start.class, "Village");
-        registerStructure(MapGenNetherBridge.Start.class, "Fortress");
-        registerStructure(MapGenStronghold.Start.class, "Stronghold");
-        registerStructure(MapGenScatteredFeature.Start.class, "Temple");
-        StructureMineshaftPieces.registerStructurePieces();
-        StructureVillagePieces.registerVillagePieces();
-        StructureNetherBridgePieces.registerNetherFortressPieces();
-        StructureStrongholdPieces.registerStrongholdPieces();
-        ComponentScatteredFeaturePieces.registerScatteredFeaturePieces();
+        registerStructure(UStructureMineshaftStart.class, "Mineshaft");
+        registerStructure(UMapGenVillage.Start.class, "Village");
+        registerStructure(UMapGenNetherBridge.Start.class, "Fortress");
+        registerStructure(UMapGenStronghold.Start.class, "Stronghold");
+        registerStructure(UMapGenScatteredFeature.Start.class, "Temple");
+        UStructureMineshaftPieces.registerStructurePieces();
+        UStructureVillagePieces.registerVillagePieces();
+        UStructureNetherBridgePieces.registerNetherFortressPieces();
+        UStructureStrongholdPieces.registerStrongholdPieces();
+        UComponentScatteredFeaturePieces.registerScatteredFeaturePieces();
     }
 }

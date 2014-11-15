@@ -10,18 +10,12 @@ import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.gen.structure.MapGenNetherBridge;
-import net.minecraft.world.gen.structure.MapGenStructure;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureNetherBridgePieces;
-import net.minecraft.world.gen.structure.StructureStart;
 
-public class MapGenNetherBridge extends MapGenStructure
+public class UMapGenNetherBridge extends UMapGenStructure
 {
     private List spawnList = new ArrayList();
-    private static final String __OBFID = "CL_00000451";
 
-    public MapGenNetherBridge()
+    public UMapGenNetherBridge()
     {
         this.spawnList.add(new BiomeGenBase.SpawnListEntry(EntityBlaze.class, 10, 2, 3));
         this.spawnList.add(new BiomeGenBase.SpawnListEntry(EntityPigZombie.class, 5, 4, 4));
@@ -39,43 +33,44 @@ public class MapGenNetherBridge extends MapGenStructure
         return this.spawnList;
     }
 
-    protected boolean canSpawnStructureAtCoords(int p_75047_1_, int p_75047_2_)
+    protected boolean canSpawnStructureAtCoords(int cX, int cY, int cZ)
     {
-        int k = p_75047_1_ >> 4;
-        int l = p_75047_2_ >> 4;
-        this.rand.setSeed((long)(k ^ l << 4) ^ this.worldObj.getSeed());
-        this.rand.nextInt();
-        return this.rand.nextInt(3) != 0 ? false : (p_75047_1_ != (k << 4) + 4 + this.rand.nextInt(8) ? false : p_75047_2_ == (l << 4) + 4 + this.rand.nextInt(8));
+    	if(cY == 2){ // sould make it at the level thay should gen at
+    		int k = cX >> 3; //was 4
+    		int l = cZ >> 3; //was 4
+        	this.rand.setSeed((long)(k ^ l << 4) ^ this.worldObj.getSeed());
+        	this.rand.nextInt();
+        	return this.rand.nextInt(3) != 0 ? false : (cX != (k << 3) + 2 + this.rand.nextInt(4) ? false : cZ == (l << 3) + 2 + this.rand.nextInt(4));
+    	}
+    	return false;
     }
 
-    protected StructureStart getStructureStart(int p_75049_1_, int p_75049_2_)
+    protected UStructureStart getStructureStart(int cX, int cY, int cZ)
     {
-        return new MapGenNetherBridge.Start(this.worldObj, this.rand, p_75049_1_, p_75049_2_);
+        return new UMapGenNetherBridge.Start(this.worldObj, this.rand, cX, cY, cZ);
     }
 
-    public static class Start extends StructureStart
+    public static class Start extends UStructureStart
         {
-            private static final String __OBFID = "CL_00000452";
-
             public Start() {}
 
-            public Start(World p_i2040_1_, Random p_i2040_2_, int p_i2040_3_, int p_i2040_4_)
+            public Start(World world, Random r, int cX, int cY, int cZ)
             {
-                super(p_i2040_3_, p_i2040_4_);
-                StructureNetherBridgePieces.Start start = new StructureNetherBridgePieces.Start(p_i2040_2_, (p_i2040_3_ << 4) + 2, (p_i2040_4_ << 4) + 2);
+                super(cX, cY, cZ);
+                UStructureNetherBridgePieces.Start start = new UStructureNetherBridgePieces.Start(r, (cX << 5) + 2, (cY << 5) + 2, (cZ << 5) + 2); //TODO: y the + 2?! //was Start(r, (cX << 4) + 2, (cZ << 4) + 2);
                 this.components.add(start);
-                start.buildComponent(start, this.components, p_i2040_2_);
+                start.buildComponent(start, this.components, r);
                 ArrayList arraylist = start.field_74967_d;
 
                 while (!arraylist.isEmpty())
                 {
-                    int k = p_i2040_2_.nextInt(arraylist.size());
-                    StructureComponent structurecomponent = (StructureComponent)arraylist.remove(k);
-                    structurecomponent.buildComponent(start, this.components, p_i2040_2_);
+                    int k = r.nextInt(arraylist.size());
+                    UStructureComponent structurecomponent = (UStructureComponent)arraylist.remove(k);
+                    structurecomponent.buildComponent(start, this.components, r);
                 }
 
                 this.updateBoundingBox();
-                this.setRandomHeight(p_i2040_1_, p_i2040_2_, 48, 70);
+                this.setRandomHeight(world, r, 48, 70);
             }
         }
 }

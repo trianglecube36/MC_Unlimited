@@ -658,29 +658,86 @@ public class UChunk32
     {
         return false;
     }
+    
+    private static boolean canPopulate(IUChunkProvider cp, int cX, int cY, int cZ){
+    	return  cp.chunkExists(cX + 1, cY    , cZ    ) &&
+    			cp.chunkExists(cX + 1, cY    , cZ + 1) &&
+    			cp.chunkExists(cX    , cY    , cZ + 1) &&
+    			
+    			cp.chunkExists(cX    , cY + 1, cZ    ) && 
+    			cp.chunkExists(cX + 1, cY + 1, cZ    ) &&
+    			cp.chunkExists(cX + 1, cY + 1, cZ + 1) &&
+    			cp.chunkExists(cX    , cY + 1, cZ + 1) &&
+    			
+    			cp.chunkExists(cX    , cY + 2, cZ    ) && 
+    			cp.chunkExists(cX + 1, cY + 2, cZ    ) &&
+    			cp.chunkExists(cX + 1, cY + 2, cZ + 1) &&
+    			cp.chunkExists(cX    , cY + 2, cZ + 1);
+    }
 
-    /*public void populateChunk(IUChunkProvider cp1, IUChunkProvider cp2, int par3, int par4, int par5)
+    /**
+     * the new populate system now supports 32 x 64 x 32 structures!
+     * 
+     * @param cp1
+     * @param cp2
+     * @param cX
+     * @param cY
+     * @param cZ
+     */
+    public void populateChunk(IUChunkProvider cp1, IUChunkProvider cp2, int cX, int cY, int cZ)
     {//TODO: fined a better way!
-        if (!this.isTerrainPopulated && cp1.chunkExists(par3 + 1, par4 + 1) && cp1.chunkExists(par3, par4 + 1) && cp1.chunkExists(par3 + 1, par4))
+        if (!this.isTerrainPopulated && this.canPopulate(cp1, cX, cY, cZ))
         {
-            cp1.populate(cp2, par3, par4);
+            cp1.populate(cp2, cX, cY, cZ);
         }
 
-        if (cp1.chunkExists(par3 - 1, par4) && !cp1.provideChunk(par3 - 1, par4).isTerrainPopulated && cp1.chunkExists(par3 - 1, par4 + 1) && cp1.chunkExists(par3, par4 + 1) && cp1.chunkExists(par3 - 1, par4 + 1))
-        {
-            cp1.populate(cp2, par3 - 1, par4);
+        //layer 3
+        if(cp1.chunkExists(cX - 1, cY    , cZ    ) && !cp1.provideChunk(cX - 1, cY    , cZ    ).isTerrainPopulated && this.canPopulate(cp1, cX - 1, cY    , cZ    )){
+         cp1.populate(cp2, cX - 1, cY    , cZ    );
+        }
+        
+        if(cp1.chunkExists(cX    , cY    , cZ - 1) && !cp1.provideChunk(cX    , cY    , cZ - 1).isTerrainPopulated && this.canPopulate(cp1, cX    , cY    , cZ - 1)){
+         cp1.populate(cp2, cX    , cY    , cZ - 1);
         }
 
-        if (cp1.chunkExists(par3, par4 - 1) && !cp1.provideChunk(par3, par4 - 1).isTerrainPopulated && cp1.chunkExists(par3 + 1, par4 - 1) && cp1.chunkExists(par3 + 1, par4 - 1) && cp1.chunkExists(par3 + 1, par4))
-        {
-            cp1.populate(cp2, par3, par4 - 1);
+        if(cp1.chunkExists(cX - 1, cY    , cZ - 1) && !cp1.provideChunk(cX - 1, cY    , cZ - 1).isTerrainPopulated && this.canPopulate(cp1, cX - 1, cY    , cZ - 1)){
+         cp1.populate(cp2, cX - 1, cY    , cZ - 1);
+        }
+        
+        //layer 2
+        if(cp1.chunkExists(cX    , cY - 1, cZ    ) && !cp1.provideChunk(cX    , cY - 1, cZ    ).isTerrainPopulated && this.canPopulate(cp1, cX    , cY - 1, cZ    )){
+         cp1.populate(cp2, cX    , cY - 1, cZ    );
+        }
+        
+        if(cp1.chunkExists(cX - 1, cY - 1, cZ    ) && !cp1.provideChunk(cX - 1, cY - 1, cZ    ).isTerrainPopulated && this.canPopulate(cp1, cX - 1, cY - 1, cZ    )){
+         cp1.populate(cp2, cX - 1, cY - 1, cZ    );
+        }
+        
+        if(cp1.chunkExists(cX    , cY - 1, cZ - 1) && !cp1.provideChunk(cX    , cY - 1, cZ - 1).isTerrainPopulated && this.canPopulate(cp1, cX    , cY - 1, cZ - 1)){
+         cp1.populate(cp2, cX    , cY - 1, cZ - 1);
         }
 
-        if (cp1.chunkExists(par3 - 1, par4 - 1) && !cp1.provideChunk(par3 - 1, par4 - 1).isTerrainPopulated && cp1.chunkExists(par3, par4 - 1) && cp1.chunkExists(par3 - 1, par4))
-        {
-            cp1.populate(cp2, par3 - 1, par4 - 1);
+        if(cp1.chunkExists(cX - 1, cY - 1, cZ - 1) && !cp1.provideChunk(cX - 1, cY - 1, cZ - 1).isTerrainPopulated && this.canPopulate(cp1, cX - 1, cY - 1, cZ - 1)){
+         cp1.populate(cp2, cX - 1, cY - 1, cZ - 1);
         }
-    }*/
+        
+        //layer 1
+        if(cp1.chunkExists(cX    , cY - 2, cZ    ) && !cp1.provideChunk(cX    , cY - 2, cZ    ).isTerrainPopulated && this.canPopulate(cp1, cX    , cY - 2, cZ    )){
+         cp1.populate(cp2, cX    , cY - 2, cZ    );
+        }
+        
+        if(cp1.chunkExists(cX - 1, cY - 2, cZ    ) && !cp1.provideChunk(cX - 1, cY - 2, cZ    ).isTerrainPopulated && this.canPopulate(cp1, cX - 1, cY - 2, cZ    )){
+         cp1.populate(cp2, cX - 1, cY - 2, cZ    );
+        }
+        
+        if(cp1.chunkExists(cX    , cY - 2, cZ - 1) && !cp1.provideChunk(cX    , cY - 2, cZ - 1).isTerrainPopulated && this.canPopulate(cp1, cX    , cY - 2, cZ - 1)){
+         cp1.populate(cp2, cX    , cY - 2, cZ - 1);
+        }
+
+        if(cp1.chunkExists(cX - 1, cY - 2, cZ - 1) && !cp1.provideChunk(cX - 1, cY - 2, cZ - 1).isTerrainPopulated && this.canPopulate(cp1, cX - 1, cY - 2, cZ - 1)){
+         cp1.populate(cp2, cX - 1, cY - 2, cZ - 1);
+        }
+    }
 
     public boolean func_150802_k()
     {

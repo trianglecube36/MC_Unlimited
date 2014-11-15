@@ -7,28 +7,26 @@ import java.util.Random;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureIO;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraft.world.gen.structure.StructureComponent;
 
-public abstract class StructureStart
+public abstract class UStructureStart
 {
     /** List of all StructureComponents that are part of this structure */
     protected LinkedList components = new LinkedList();
-    protected StructureBoundingBox boundingBox;
-    private int field_143024_c;
-    private int field_143023_d;
-    private static final String __OBFID = "CL_00000513";
+    protected UStructureBoundingBox boundingBox;
+    private int blockX;
+    private int blockY;
+    private int blockZ;
 
-    public StructureStart() {}
+    public UStructureStart() {}
 
-    public StructureStart(int p_i43002_1_, int p_i43002_2_)
+    public UStructureStart(int bX, int bY, int bZ)
     {
-        this.field_143024_c = p_i43002_1_;
-        this.field_143023_d = p_i43002_2_;
+        this.blockX = bX;
+        this.blockY = bY;
+        this.blockZ = bZ;
     }
 
-    public StructureBoundingBox getBoundingBox()
+    public UStructureBoundingBox getBoundingBox()
     {
         return this.boundingBox;
     }
@@ -41,15 +39,15 @@ public abstract class StructureStart
     /**
      * Keeps iterating Structure Pieces and spawning them until the checks tell it to stop
      */
-    public void generateStructure(World p_75068_1_, Random p_75068_2_, StructureBoundingBox p_75068_3_)
+    public void generateStructure(World world, Random rand, UStructureBoundingBox bbox)
     {
         Iterator iterator = this.components.iterator();
 
         while (iterator.hasNext())
         {
-            StructureComponent structurecomponent = (StructureComponent)iterator.next();
+            UStructureComponent structurecomponent = (UStructureComponent)iterator.next();
 
-            if (structurecomponent.getBoundingBox().intersectsWith(p_75068_3_) && !structurecomponent.addComponentParts(p_75068_1_, p_75068_2_, p_75068_3_))
+            if (structurecomponent.getBoundingBox().intersectsWith(bbox) && !structurecomponent.addComponentParts(world, rand, bbox))
             {
                 iterator.remove();
             }
@@ -61,33 +59,33 @@ public abstract class StructureStart
      */
     protected void updateBoundingBox()
     {
-        this.boundingBox = StructureBoundingBox.getNewBoundingBox();
+        this.boundingBox = UStructureBoundingBox.getNewBoundingBox();
         Iterator iterator = this.components.iterator();
 
         while (iterator.hasNext())
         {
-            StructureComponent structurecomponent = (StructureComponent)iterator.next();
+            UStructureComponent structurecomponent = (UStructureComponent)iterator.next();
             this.boundingBox.expandTo(structurecomponent.getBoundingBox());
         }
     }
 
-    public NBTTagCompound func_143021_a(int p_143021_1_, int p_143021_2_)
+    public NBTTagCompound func_143021_a(int cX, int cY, int cZ) //TODO: left off here
     {
-        if (MapGenStructureIO.func_143033_a(this) == null) // This is just a more friendly error instead of the 'Null String' below
+        if (UMapGenStructureIO.func_143033_a(this) == null) // This is just a more friendly error instead of the 'Null String' below
         {
             throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
         }
         NBTTagCompound nbttagcompound = new NBTTagCompound();
-        nbttagcompound.setString("id", MapGenStructureIO.func_143033_a(this));
-        nbttagcompound.setInteger("ChunkX", p_143021_1_);
-        nbttagcompound.setInteger("ChunkZ", p_143021_2_);
+        nbttagcompound.setString("id", UMapGenStructureIO.func_143033_a(this));
+        nbttagcompound.setInteger("ChunkX", cX);
+        nbttagcompound.setInteger("ChunkZ", cZ);
         nbttagcompound.setTag("BB", this.boundingBox.func_151535_h());
         NBTTagList nbttaglist = new NBTTagList();
         Iterator iterator = this.components.iterator();
 
         while (iterator.hasNext())
         {
-            StructureComponent structurecomponent = (StructureComponent)iterator.next();
+            UStructureComponent structurecomponent = (UStructureComponent)iterator.next();
             nbttaglist.appendTag(structurecomponent.func_143010_b());
         }
 
@@ -100,19 +98,19 @@ public abstract class StructureStart
 
     public void func_143020_a(World p_143020_1_, NBTTagCompound p_143020_2_)
     {
-        this.field_143024_c = p_143020_2_.getInteger("ChunkX");
-        this.field_143023_d = p_143020_2_.getInteger("ChunkZ");
+        this.blockX = p_143020_2_.getInteger("ChunkX");
+        this.blockZ = p_143020_2_.getInteger("ChunkZ");
 
         if (p_143020_2_.hasKey("BB"))
         {
-            this.boundingBox = new StructureBoundingBox(p_143020_2_.getIntArray("BB"));
+            this.boundingBox = new UStructureBoundingBox(p_143020_2_.getIntArray("BB"));
         }
 
         NBTTagList nbttaglist = p_143020_2_.getTagList("Children", 10);
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
-            this.components.add(MapGenStructureIO.func_143032_b(nbttaglist.getCompoundTagAt(i), p_143020_1_));
+            this.components.add(UMapGenStructureIO.func_143032_b(nbttaglist.getCompoundTagAt(i), p_143020_1_));
         }
 
         this.func_143017_b(p_143020_2_);
@@ -139,7 +137,7 @@ public abstract class StructureStart
 
         while (iterator.hasNext())
         {
-            StructureComponent structurecomponent = (StructureComponent)iterator.next();
+            UStructureComponent structurecomponent = (UStructureComponent)iterator.next();
             structurecomponent.getBoundingBox().offset(0, l, 0);
         }
     }
@@ -165,7 +163,7 @@ public abstract class StructureStart
 
         while (iterator.hasNext())
         {
-            StructureComponent structurecomponent = (StructureComponent)iterator.next();
+            UStructureComponent structurecomponent = (UStructureComponent)iterator.next();
             structurecomponent.getBoundingBox().offset(0, l, 0);
         }
     }
@@ -180,11 +178,11 @@ public abstract class StructureStart
 
     public int func_143019_e()
     {
-        return this.field_143024_c;
+        return this.blockX;
     }
 
     public int func_143018_f()
     {
-        return this.field_143023_d;
+        return this.blockZ;
     }
 }

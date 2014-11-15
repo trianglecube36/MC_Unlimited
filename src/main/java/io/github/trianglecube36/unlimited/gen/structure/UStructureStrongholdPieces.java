@@ -12,23 +12,19 @@ import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureIO;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces;
 import net.minecraftforge.common.ChestGenHooks;
 import static net.minecraftforge.common.ChestGenHooks.*;
 
-public class StructureStrongholdPieces
+public class UStructureStrongholdPieces
 {
-    private static final StructureStrongholdPieces.PieceWeight[] pieceWeightArray = new StructureStrongholdPieces.PieceWeight[] {new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Straight.class, 40, 0), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Prison.class, 5, 5), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.LeftTurn.class, 20, 0), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.RightTurn.class, 20, 0), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.RoomCrossing.class, 10, 6), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.StairsStraight.class, 5, 5), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Stairs.class, 5, 5), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Crossing.class, 5, 4), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.ChestCorridor.class, 5, 4), new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.Library.class, 10, 2)
+    private static final UStructureStrongholdPieces.PieceWeight[] pieceWeightArray = new UStructureStrongholdPieces.PieceWeight[] {new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.Straight.class, 40, 0), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.Prison.class, 5, 5), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.LeftTurn.class, 20, 0), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.RightTurn.class, 20, 0), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.RoomCrossing.class, 10, 6), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.StairsStraight.class, 5, 5), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.Stairs.class, 5, 5), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.Crossing.class, 5, 4), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.ChestCorridor.class, 5, 4), new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.Library.class, 10, 2)
     {
         private static final String __OBFID = "CL_00000484";
         public boolean canSpawnMoreStructuresOfType(int p_75189_1_)
         {
             return super.canSpawnMoreStructuresOfType(p_75189_1_) && p_75189_1_ > 4;
         }
-    }, new StructureStrongholdPieces.PieceWeight(StructureStrongholdPieces.PortalRoom.class, 20, 1)
+    }, new UStructureStrongholdPieces.PieceWeight(UStructureStrongholdPieces.PortalRoom.class, 20, 1)
     {
         private static final String __OBFID = "CL_00000485";
         public boolean canSpawnMoreStructuresOfType(int p_75189_1_)
@@ -40,24 +36,24 @@ public class StructureStrongholdPieces
     private static List structurePieceList;
     private static Class strongComponentType;
     static int totalWeight;
-    private static final StructureStrongholdPieces.Stones strongholdStones = new StructureStrongholdPieces.Stones(null);
+    private static final UStructureStrongholdPieces.Stones strongholdStones = new UStructureStrongholdPieces.Stones(null);
     private static final String __OBFID = "CL_00000483";
 
     public static void registerStrongholdPieces()
     {
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.ChestCorridor.class, "SHCC");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.Corridor.class, "SHFC");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.Crossing.class, "SH5C");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.LeftTurn.class, "SHLT");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.Library.class, "SHLi");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.PortalRoom.class, "SHPR");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.Prison.class, "SHPH");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.RightTurn.class, "SHRT");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.RoomCrossing.class, "SHRC");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.Stairs.class, "SHSD");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.Stairs2.class, "SHStart");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.Straight.class, "SHS");
-        MapGenStructureIO.func_143031_a(StructureStrongholdPieces.StairsStraight.class, "SHSSD");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.ChestCorridor.class, "SHCC");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.Corridor.class, "SHFC");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.Crossing.class, "SH5C");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.LeftTurn.class, "SHLT");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.Library.class, "SHLi");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.PortalRoom.class, "SHPR");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.Prison.class, "SHPH");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.RightTurn.class, "SHRT");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.RoomCrossing.class, "SHRC");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.Stairs.class, "SHSD");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.Stairs2.class, "SHStart");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.Straight.class, "SHS");
+        UMapGenStructureIO.func_143031_a(UStructureStrongholdPieces.StairsStraight.class, "SHSSD");
     }
 
     /**
@@ -66,12 +62,12 @@ public class StructureStrongholdPieces
     public static void prepareStructurePieces()
     {
         structurePieceList = new ArrayList();
-        StructureStrongholdPieces.PieceWeight[] apieceweight = pieceWeightArray;
+        UStructureStrongholdPieces.PieceWeight[] apieceweight = pieceWeightArray;
         int i = apieceweight.length;
 
         for (int j = 0; j < i; ++j)
         {
-            StructureStrongholdPieces.PieceWeight pieceweight = apieceweight[j];
+            UStructureStrongholdPieces.PieceWeight pieceweight = apieceweight[j];
             pieceweight.instancesSpawned = 0;
             structurePieceList.add(pieceweight);
         }
@@ -83,11 +79,11 @@ public class StructureStrongholdPieces
     {
         boolean flag = false;
         totalWeight = 0;
-        StructureStrongholdPieces.PieceWeight pieceweight;
+        UStructureStrongholdPieces.PieceWeight pieceweight;
 
         for (Iterator iterator = structurePieceList.iterator(); iterator.hasNext(); totalWeight += pieceweight.pieceWeight)
         {
-            pieceweight = (StructureStrongholdPieces.PieceWeight)iterator.next();
+            pieceweight = (UStructureStrongholdPieces.PieceWeight)iterator.next();
 
             if (pieceweight.instancesLimit > 0 && pieceweight.instancesSpawned < pieceweight.instancesLimit)
             {
@@ -101,59 +97,59 @@ public class StructureStrongholdPieces
     /**
      * translates the PieceWeight class to the Component class
      */
-    private static StructureStrongholdPieces.Stronghold getStrongholdComponentFromWeightedPiece(Class p_75200_0_, List p_75200_1_, Random p_75200_2_, int p_75200_3_, int p_75200_4_, int p_75200_5_, int p_75200_6_, int p_75200_7_)
+    private static UStructureStrongholdPieces.Stronghold getStrongholdComponentFromWeightedPiece(Class p_75200_0_, List p_75200_1_, Random p_75200_2_, int p_75200_3_, int p_75200_4_, int p_75200_5_, int p_75200_6_, int p_75200_7_)
     {
         Object object = null;
 
-        if (p_75200_0_ == StructureStrongholdPieces.Straight.class)
+        if (p_75200_0_ == UStructureStrongholdPieces.Straight.class)
         {
-            object = StructureStrongholdPieces.Straight.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.Straight.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.Prison.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.Prison.class)
         {
-            object = StructureStrongholdPieces.Prison.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.Prison.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.LeftTurn.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.LeftTurn.class)
         {
-            object = StructureStrongholdPieces.LeftTurn.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.LeftTurn.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.RightTurn.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.RightTurn.class)
         {
-            object = StructureStrongholdPieces.RightTurn.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.RightTurn.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.RoomCrossing.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.RoomCrossing.class)
         {
-            object = StructureStrongholdPieces.RoomCrossing.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.RoomCrossing.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.StairsStraight.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.StairsStraight.class)
         {
-            object = StructureStrongholdPieces.StairsStraight.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.StairsStraight.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.Stairs.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.Stairs.class)
         {
-            object = StructureStrongholdPieces.Stairs.getStrongholdStairsComponent(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.Stairs.getStrongholdStairsComponent(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.Crossing.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.Crossing.class)
         {
-            object = StructureStrongholdPieces.Crossing.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.Crossing.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.ChestCorridor.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.ChestCorridor.class)
         {
-            object = StructureStrongholdPieces.ChestCorridor.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.ChestCorridor.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.Library.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.Library.class)
         {
-            object = StructureStrongholdPieces.Library.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.Library.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
-        else if (p_75200_0_ == StructureStrongholdPieces.PortalRoom.class)
+        else if (p_75200_0_ == UStructureStrongholdPieces.PortalRoom.class)
         {
-            object = StructureStrongholdPieces.PortalRoom.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
+            object = UStructureStrongholdPieces.PortalRoom.findValidPlacement(p_75200_1_, p_75200_2_, p_75200_3_, p_75200_4_, p_75200_5_, p_75200_6_, p_75200_7_);
         }
 
-        return (StructureStrongholdPieces.Stronghold)object;
+        return (UStructureStrongholdPieces.Stronghold)object;
     }
 
-    private static StructureStrongholdPieces.Stronghold getNextComponent(StructureStrongholdPieces.Stairs2 p_75201_0_, List p_75201_1_, Random p_75201_2_, int p_75201_3_, int p_75201_4_, int p_75201_5_, int p_75201_6_, int p_75201_7_)
+    private static UStructureStrongholdPieces.Stronghold getNextComponent(UStructureStrongholdPieces.Stairs2 p_75201_0_, List p_75201_1_, Random p_75201_2_, int p_75201_3_, int p_75201_4_, int p_75201_5_, int p_75201_6_, int p_75201_7_)
     {
         if (!canAddStructurePieces())
         {
@@ -163,7 +159,7 @@ public class StructureStrongholdPieces
         {
             if (strongComponentType != null)
             {
-                StructureStrongholdPieces.Stronghold stronghold = getStrongholdComponentFromWeightedPiece(strongComponentType, p_75201_1_, p_75201_2_, p_75201_3_, p_75201_4_, p_75201_5_, p_75201_6_, p_75201_7_);
+                UStructureStrongholdPieces.Stronghold stronghold = getStrongholdComponentFromWeightedPiece(strongComponentType, p_75201_1_, p_75201_2_, p_75201_3_, p_75201_4_, p_75201_5_, p_75201_6_, p_75201_7_);
                 strongComponentType = null;
 
                 if (stronghold != null)
@@ -182,7 +178,7 @@ public class StructureStrongholdPieces
 
                 while (iterator.hasNext())
                 {
-                    StructureStrongholdPieces.PieceWeight pieceweight = (StructureStrongholdPieces.PieceWeight)iterator.next();
+                    UStructureStrongholdPieces.PieceWeight pieceweight = (UStructureStrongholdPieces.PieceWeight)iterator.next();
                     j1 -= pieceweight.pieceWeight;
 
                     if (j1 < 0)
@@ -192,7 +188,7 @@ public class StructureStrongholdPieces
                             break;
                         }
 
-                        StructureStrongholdPieces.Stronghold stronghold1 = getStrongholdComponentFromWeightedPiece(pieceweight.pieceClass, p_75201_1_, p_75201_2_, p_75201_3_, p_75201_4_, p_75201_5_, p_75201_6_, p_75201_7_);
+                        UStructureStrongholdPieces.Stronghold stronghold1 = getStrongholdComponentFromWeightedPiece(pieceweight.pieceClass, p_75201_1_, p_75201_2_, p_75201_3_, p_75201_4_, p_75201_5_, p_75201_6_, p_75201_7_);
 
                         if (stronghold1 != null)
                         {
@@ -210,11 +206,11 @@ public class StructureStrongholdPieces
                 }
             }
 
-            StructureBoundingBox structureboundingbox = StructureStrongholdPieces.Corridor.func_74992_a(p_75201_1_, p_75201_2_, p_75201_3_, p_75201_4_, p_75201_5_, p_75201_6_);
+            UStructureBoundingBox structureboundingbox = UStructureStrongholdPieces.Corridor.func_74992_a(p_75201_1_, p_75201_2_, p_75201_3_, p_75201_4_, p_75201_5_, p_75201_6_);
 
             if (structureboundingbox != null && structureboundingbox.minY > 1)
             {
-                return new StructureStrongholdPieces.Corridor(p_75201_7_, p_75201_2_, structureboundingbox, p_75201_6_);
+                return new UStructureStrongholdPieces.Corridor(p_75201_7_, p_75201_2_, structureboundingbox, p_75201_6_);
             }
             else
             {
@@ -223,7 +219,7 @@ public class StructureStrongholdPieces
         }
     }
 
-    private static StructureComponent getNextValidComponent(StructureStrongholdPieces.Stairs2 p_75196_0_, List p_75196_1_, Random p_75196_2_, int p_75196_3_, int p_75196_4_, int p_75196_5_, int p_75196_6_, int p_75196_7_)
+    private static UStructureComponent getNextValidComponent(UStructureStrongholdPieces.Stairs2 p_75196_0_, List p_75196_1_, Random p_75196_2_, int p_75196_3_, int p_75196_4_, int p_75196_5_, int p_75196_6_, int p_75196_7_)
     {
         if (p_75196_7_ > 50)
         {
@@ -231,7 +227,7 @@ public class StructureStrongholdPieces
         }
         else if (Math.abs(p_75196_3_ - p_75196_0_.getBoundingBox().minX) <= 112 && Math.abs(p_75196_5_ - p_75196_0_.getBoundingBox().minZ) <= 112)
         {
-            StructureStrongholdPieces.Stronghold stronghold = getNextComponent(p_75196_0_, p_75196_1_, p_75196_2_, p_75196_3_, p_75196_4_, p_75196_5_, p_75196_6_, p_75196_7_ + 1);
+            UStructureStrongholdPieces.Stronghold stronghold = getNextComponent(p_75196_0_, p_75196_1_, p_75196_2_, p_75196_3_, p_75196_4_, p_75196_5_, p_75196_6_, p_75196_7_ + 1);
 
             if (stronghold != null)
             {
@@ -247,7 +243,7 @@ public class StructureStrongholdPieces
         }
     }
 
-    public static class ChestCorridor extends StructureStrongholdPieces.Stronghold
+    public static class ChestCorridor extends UStructureStrongholdPieces.Stronghold
         {
             /** List of items that Stronghold chests can contain. */
             public static final WeightedRandomChestContent[] strongholdChestContents = new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.ender_pearl, 0, 1, 1, 10), new WeightedRandomChestContent(Items.diamond, 0, 1, 3, 3), new WeightedRandomChestContent(Items.iron_ingot, 0, 1, 5, 10), new WeightedRandomChestContent(Items.gold_ingot, 0, 1, 3, 5), new WeightedRandomChestContent(Items.redstone, 0, 4, 9, 5), new WeightedRandomChestContent(Items.bread, 0, 1, 3, 15), new WeightedRandomChestContent(Items.apple, 0, 1, 3, 15), new WeightedRandomChestContent(Items.iron_pickaxe, 0, 1, 1, 5), new WeightedRandomChestContent(Items.iron_sword, 0, 1, 1, 5), new WeightedRandomChestContent(Items.iron_chestplate, 0, 1, 1, 5), new WeightedRandomChestContent(Items.iron_helmet, 0, 1, 1, 5), new WeightedRandomChestContent(Items.iron_leggings, 0, 1, 1, 5), new WeightedRandomChestContent(Items.iron_boots, 0, 1, 1, 5), new WeightedRandomChestContent(Items.golden_apple, 0, 1, 1, 1), new WeightedRandomChestContent(Items.saddle, 0, 1, 1, 1), new WeightedRandomChestContent(Items.iron_horse_armor, 0, 1, 1, 1), new WeightedRandomChestContent(Items.golden_horse_armor, 0, 1, 1, 1), new WeightedRandomChestContent(Items.diamond_horse_armor, 0, 1, 1, 1)};
@@ -256,7 +252,7 @@ public class StructureStrongholdPieces
 
             public ChestCorridor() {}
 
-            public ChestCorridor(int p_i2071_1_, Random p_i2071_2_, StructureBoundingBox p_i2071_3_, int p_i2071_4_)
+            public ChestCorridor(int p_i2071_1_, Random p_i2071_2_, UStructureBoundingBox p_i2071_3_, int p_i2071_4_)
             {
                 super(p_i2071_1_);
                 this.coordBaseMode = p_i2071_4_;
@@ -279,25 +275,25 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                this.getNextComponentNormal((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
             }
 
-            public static StructureStrongholdPieces.ChestCorridor findValidPlacement(List p_75000_0_, Random p_75000_1_, int p_75000_2_, int p_75000_3_, int p_75000_4_, int p_75000_5_, int p_75000_6_)
+            public static UStructureStrongholdPieces.ChestCorridor findValidPlacement(List p_75000_0_, Random p_75000_1_, int p_75000_2_, int p_75000_3_, int p_75000_4_, int p_75000_5_, int p_75000_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75000_2_, p_75000_3_, p_75000_4_, -1, -1, 0, 5, 5, 7, p_75000_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75000_2_, p_75000_3_, p_75000_4_, -1, -1, 0, 5, 5, 7, p_75000_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75000_0_, structureboundingbox) == null ? new StructureStrongholdPieces.ChestCorridor(p_75000_6_, p_75000_1_, structureboundingbox, p_75000_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75000_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.ChestCorridor(p_75000_6_, p_75000_1_, structureboundingbox, p_75000_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -305,9 +301,9 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 6, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 6, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 1, 1, 0);
-                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, StructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 6);
+                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, UStructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 6);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 3, 1, 2, 3, 1, 4, Blocks.stonebrick, Blocks.stonebrick, false);
                     this.placeBlockAtCurrentPosition(p_74875_1_, Blocks.stone_slab, 5, 3, 1, 1, p_74875_3_);
                     this.placeBlockAtCurrentPosition(p_74875_1_, Blocks.stone_slab, 5, 3, 1, 5, p_74875_3_);
@@ -338,14 +334,14 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class Corridor extends StructureStrongholdPieces.Stronghold
+    public static class Corridor extends UStructureStrongholdPieces.Stronghold
         {
             private int field_74993_a;
             private static final String __OBFID = "CL_00000488";
 
             public Corridor() {}
 
-            public Corridor(int p_i2072_1_, Random p_i2072_2_, StructureBoundingBox p_i2072_3_, int p_i2072_4_)
+            public Corridor(int p_i2072_1_, Random p_i2072_2_, UStructureBoundingBox p_i2072_3_, int p_i2072_4_)
             {
                 super(p_i2072_1_);
                 this.coordBaseMode = p_i2072_4_;
@@ -365,11 +361,11 @@ public class StructureStrongholdPieces
                 this.field_74993_a = p_143011_1_.getInteger("Steps");
             }
 
-            public static StructureBoundingBox func_74992_a(List p_74992_0_, Random p_74992_1_, int p_74992_2_, int p_74992_3_, int p_74992_4_, int p_74992_5_)
+            public static UStructureBoundingBox func_74992_a(List p_74992_0_, Random p_74992_1_, int p_74992_2_, int p_74992_3_, int p_74992_4_, int p_74992_5_)
             {
                 boolean flag = true;
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74992_2_, p_74992_3_, p_74992_4_, -1, -1, 0, 5, 5, 4, p_74992_5_);
-                StructureComponent structurecomponent = StructureComponent.findIntersecting(p_74992_0_, structureboundingbox);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74992_2_, p_74992_3_, p_74992_4_, -1, -1, 0, 5, 5, 4, p_74992_5_);
+                UStructureComponent structurecomponent = UStructureComponent.findIntersecting(p_74992_0_, structureboundingbox);
 
                 if (structurecomponent == null)
                 {
@@ -381,11 +377,11 @@ public class StructureStrongholdPieces
                     {
                         for (int i1 = 3; i1 >= 1; --i1)
                         {
-                            structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74992_2_, p_74992_3_, p_74992_4_, -1, -1, 0, 5, 5, i1 - 1, p_74992_5_);
+                            structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74992_2_, p_74992_3_, p_74992_4_, -1, -1, 0, 5, 5, i1 - 1, p_74992_5_);
 
                             if (!structurecomponent.getBoundingBox().intersectsWith(structureboundingbox))
                             {
-                                return StructureBoundingBox.getComponentToAddBoundingBox(p_74992_2_, p_74992_3_, p_74992_4_, -1, -1, 0, 5, 5, i1, p_74992_5_);
+                                return UStructureBoundingBox.getComponentToAddBoundingBox(p_74992_2_, p_74992_3_, p_74992_4_, -1, -1, 0, 5, 5, i1, p_74992_5_);
                             }
                         }
                     }
@@ -398,7 +394,7 @@ public class StructureStrongholdPieces
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -435,7 +431,7 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class Crossing extends StructureStrongholdPieces.Stronghold
+    public static class Crossing extends UStructureStrongholdPieces.Stronghold
         {
             private boolean field_74996_b;
             private boolean field_74997_c;
@@ -445,7 +441,7 @@ public class StructureStrongholdPieces
 
             public Crossing() {}
 
-            public Crossing(int p_i2073_1_, Random p_i2073_2_, StructureBoundingBox p_i2073_3_, int p_i2073_4_)
+            public Crossing(int p_i2073_1_, Random p_i2073_2_, UStructureBoundingBox p_i2073_3_, int p_i2073_4_)
             {
                 super(p_i2073_1_);
                 this.coordBaseMode = p_i2073_4_;
@@ -478,7 +474,7 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
                 int i = 3;
                 int j = 5;
@@ -489,43 +485,43 @@ public class StructureStrongholdPieces
                     j = 8 - j;
                 }
 
-                this.getNextComponentNormal((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 5, 1);
+                this.getNextComponentNormal((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 5, 1);
 
                 if (this.field_74996_b)
                 {
-                    this.getNextComponentX((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, i, 1);
+                    this.getNextComponentX((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, i, 1);
                 }
 
                 if (this.field_74997_c)
                 {
-                    this.getNextComponentX((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, j, 7);
+                    this.getNextComponentX((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, j, 7);
                 }
 
                 if (this.field_74995_d)
                 {
-                    this.getNextComponentZ((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, i, 1);
+                    this.getNextComponentZ((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, i, 1);
                 }
 
                 if (this.field_74999_h)
                 {
-                    this.getNextComponentZ((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, j, 7);
+                    this.getNextComponentZ((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, j, 7);
                 }
             }
 
-            public static StructureStrongholdPieces.Crossing findValidPlacement(List p_74994_0_, Random p_74994_1_, int p_74994_2_, int p_74994_3_, int p_74994_4_, int p_74994_5_, int p_74994_6_)
+            public static UStructureStrongholdPieces.Crossing findValidPlacement(List p_74994_0_, Random p_74994_1_, int p_74994_2_, int p_74994_3_, int p_74994_4_, int p_74994_5_, int p_74994_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74994_2_, p_74994_3_, p_74994_4_, -4, -3, 0, 10, 9, 11, p_74994_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74994_2_, p_74994_3_, p_74994_4_, -4, -3, 0, 10, 9, 11, p_74994_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_74994_0_, structureboundingbox) == null ? new StructureStrongholdPieces.Crossing(p_74994_6_, p_74994_1_, structureboundingbox, p_74994_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_74994_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.Crossing(p_74994_6_, p_74994_1_, structureboundingbox, p_74994_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -533,7 +529,7 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 9, 8, 10, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 9, 8, 10, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 4, 3, 0);
 
                     if (this.field_74996_b)
@@ -557,14 +553,14 @@ public class StructureStrongholdPieces
                     }
 
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 5, 1, 10, 7, 3, 10, Blocks.air, Blocks.air, false);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 2, 1, 8, 2, 6, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 5, 4, 4, 9, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 8, 1, 5, 8, 4, 9, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 4, 7, 3, 4, 9, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 3, 5, 3, 3, 6, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 2, 1, 8, 2, 6, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 5, 4, 4, 9, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 8, 1, 5, 8, 4, 9, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 4, 7, 3, 4, 9, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 3, 5, 3, 3, 6, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 1, 3, 4, 3, 3, 4, Blocks.stone_slab, Blocks.stone_slab, false);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 1, 4, 6, 3, 4, 6, Blocks.stone_slab, Blocks.stone_slab, false);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 5, 1, 7, 7, 1, 8, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 5, 1, 7, 7, 1, 8, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 5, 1, 9, 7, 1, 9, Blocks.stone_slab, Blocks.stone_slab, false);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 5, 2, 7, 7, 2, 7, Blocks.stone_slab, Blocks.stone_slab, false);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 4, 5, 7, 4, 5, 9, Blocks.stone_slab, Blocks.stone_slab, false);
@@ -576,13 +572,13 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class LeftTurn extends StructureStrongholdPieces.Stronghold
+    public static class LeftTurn extends UStructureStrongholdPieces.Stronghold
         {
             private static final String __OBFID = "CL_00000490";
 
             public LeftTurn() {}
 
-            public LeftTurn(int p_i2074_1_, Random p_i2074_2_, StructureBoundingBox p_i2074_3_, int p_i2074_4_)
+            public LeftTurn(int p_i2074_1_, Random p_i2074_2_, UStructureBoundingBox p_i2074_3_, int p_i2074_4_)
             {
                 super(p_i2074_1_);
                 this.coordBaseMode = p_i2074_4_;
@@ -593,32 +589,32 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
                 if (this.coordBaseMode != 2 && this.coordBaseMode != 3)
                 {
-                    this.getNextComponentZ((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                    this.getNextComponentZ((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
                 }
                 else
                 {
-                    this.getNextComponentX((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                    this.getNextComponentX((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
                 }
             }
 
-            public static StructureStrongholdPieces.LeftTurn findValidPlacement(List p_75010_0_, Random p_75010_1_, int p_75010_2_, int p_75010_3_, int p_75010_4_, int p_75010_5_, int p_75010_6_)
+            public static UStructureStrongholdPieces.LeftTurn findValidPlacement(List p_75010_0_, Random p_75010_1_, int p_75010_2_, int p_75010_3_, int p_75010_4_, int p_75010_5_, int p_75010_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75010_2_, p_75010_3_, p_75010_4_, -1, -1, 0, 5, 5, 5, p_75010_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75010_2_, p_75010_3_, p_75010_4_, -1, -1, 0, 5, 5, 5, p_75010_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75010_0_, structureboundingbox) == null ? new StructureStrongholdPieces.LeftTurn(p_75010_6_, p_75010_1_, structureboundingbox, p_75010_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75010_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.LeftTurn(p_75010_6_, p_75010_1_, structureboundingbox, p_75010_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -626,7 +622,7 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 4, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 4, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 1, 1, 0);
 
                     if (this.coordBaseMode != 2 && this.coordBaseMode != 3)
@@ -643,7 +639,7 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class Library extends StructureStrongholdPieces.Stronghold
+    public static class Library extends UStructureStrongholdPieces.Stronghold
         {
             /** List of items that Stronghold Library chests can contain. */
             public static final WeightedRandomChestContent[] strongholdLibraryChestContents = new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.book, 0, 1, 3, 20), new WeightedRandomChestContent(Items.paper, 0, 2, 7, 20), new WeightedRandomChestContent(Items.map, 0, 1, 1, 1), new WeightedRandomChestContent(Items.compass, 0, 1, 1, 1)};
@@ -652,7 +648,7 @@ public class StructureStrongholdPieces
 
             public Library() {}
 
-            public Library(int p_i2075_1_, Random p_i2075_2_, StructureBoundingBox p_i2075_3_, int p_i2075_4_)
+            public Library(int p_i2075_1_, Random p_i2075_2_, UStructureBoundingBox p_i2075_3_, int p_i2075_4_)
             {
                 super(p_i2075_1_);
                 this.coordBaseMode = p_i2075_4_;
@@ -673,28 +669,28 @@ public class StructureStrongholdPieces
                 this.isLargeRoom = p_143011_1_.getBoolean("Tall");
             }
 
-            public static StructureStrongholdPieces.Library findValidPlacement(List p_75006_0_, Random p_75006_1_, int p_75006_2_, int p_75006_3_, int p_75006_4_, int p_75006_5_, int p_75006_6_)
+            public static UStructureStrongholdPieces.Library findValidPlacement(List p_75006_0_, Random p_75006_1_, int p_75006_2_, int p_75006_3_, int p_75006_4_, int p_75006_5_, int p_75006_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75006_2_, p_75006_3_, p_75006_4_, -4, -1, 0, 14, 11, 15, p_75006_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75006_2_, p_75006_3_, p_75006_4_, -4, -1, 0, 14, 11, 15, p_75006_5_);
 
-                if (!canStrongholdGoDeeper(structureboundingbox) || StructureComponent.findIntersecting(p_75006_0_, structureboundingbox) != null)
+                if (!canStrongholdGoDeeper(structureboundingbox) || UStructureComponent.findIntersecting(p_75006_0_, structureboundingbox) != null)
                 {
-                    structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75006_2_, p_75006_3_, p_75006_4_, -4, -1, 0, 14, 6, 15, p_75006_5_);
+                    structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75006_2_, p_75006_3_, p_75006_4_, -4, -1, 0, 14, 6, 15, p_75006_5_);
 
-                    if (!canStrongholdGoDeeper(structureboundingbox) || StructureComponent.findIntersecting(p_75006_0_, structureboundingbox) != null)
+                    if (!canStrongholdGoDeeper(structureboundingbox) || UStructureComponent.findIntersecting(p_75006_0_, structureboundingbox) != null)
                     {
                         return null;
                     }
                 }
 
-                return new StructureStrongholdPieces.Library(p_75006_6_, p_75006_1_, structureboundingbox, p_75006_5_);
+                return new UStructureStrongholdPieces.Library(p_75006_6_, p_75006_1_, structureboundingbox, p_75006_5_);
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -709,7 +705,7 @@ public class StructureStrongholdPieces
                         b0 = 6;
                     }
 
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 13, b0 - 1, 14, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 13, b0 - 1, 14, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 4, 1, 0);
                     this.randomlyFillWithBlocks(p_74875_1_, p_74875_3_, p_74875_2_, 0.07F, 2, 1, 1, 11, 4, 13, Blocks.web, Blocks.web, false);
                     boolean flag = true;
@@ -843,14 +839,14 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class PortalRoom extends StructureStrongholdPieces.Stronghold
+    public static class PortalRoom extends UStructureStrongholdPieces.Stronghold
         {
             private boolean hasSpawner;
             private static final String __OBFID = "CL_00000493";
 
             public PortalRoom() {}
 
-            public PortalRoom(int p_i2077_1_, Random p_i2077_2_, StructureBoundingBox p_i2077_3_, int p_i2077_4_)
+            public PortalRoom(int p_i2077_1_, Random p_i2077_2_, UStructureBoundingBox p_i2077_3_, int p_i2077_4_)
             {
                 super(p_i2077_1_);
                 this.coordBaseMode = p_i2077_4_;
@@ -872,41 +868,41 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
                 if (p_74861_1_ != null)
                 {
-                    ((StructureStrongholdPieces.Stairs2)p_74861_1_).strongholdPortalRoom = this;
+                    ((UStructureStrongholdPieces.Stairs2)p_74861_1_).strongholdPortalRoom = this;
                 }
             }
 
-            public static StructureStrongholdPieces.PortalRoom findValidPlacement(List p_75004_0_, Random p_75004_1_, int p_75004_2_, int p_75004_3_, int p_75004_4_, int p_75004_5_, int p_75004_6_)
+            public static UStructureStrongholdPieces.PortalRoom findValidPlacement(List p_75004_0_, Random p_75004_1_, int p_75004_2_, int p_75004_3_, int p_75004_4_, int p_75004_5_, int p_75004_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75004_2_, p_75004_3_, p_75004_4_, -4, -1, 0, 11, 8, 16, p_75004_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75004_2_, p_75004_3_, p_75004_4_, -4, -1, 0, 11, 8, 16, p_75004_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75004_0_, structureboundingbox) == null ? new StructureStrongholdPieces.PortalRoom(p_75004_6_, p_75004_1_, structureboundingbox, p_75004_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75004_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.PortalRoom(p_75004_6_, p_75004_1_, structureboundingbox, p_75004_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 10, 7, 15, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, StructureStrongholdPieces.Stronghold.Door.GRATES, 4, 1, 0);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 10, 7, 15, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, UStructureStrongholdPieces.Stronghold.Door.GRATES, 4, 1, 0);
                 byte b0 = 6;
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, b0, 1, 1, b0, 14, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 9, b0, 1, 9, b0, 14, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 2, b0, 1, 8, b0, 2, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 2, b0, 14, 8, b0, 14, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 1, 1, 2, 1, 4, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 8, 1, 1, 9, 1, 4, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, b0, 1, 1, b0, 14, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 9, b0, 1, 9, b0, 14, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 2, b0, 1, 8, b0, 2, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 2, b0, 14, 8, b0, 14, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 1, 1, 1, 2, 1, 4, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 8, 1, 1, 9, 1, 4, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 1, 1, 1, 1, 1, 3, Blocks.flowing_lava, Blocks.flowing_lava, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 9, 1, 1, 9, 1, 3, Blocks.flowing_lava, Blocks.flowing_lava, false);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 3, 1, 8, 7, 1, 12, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 3, 1, 8, 7, 1, 12, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 4, 1, 9, 6, 1, 11, Blocks.flowing_lava, Blocks.flowing_lava, false);
                 int i;
 
@@ -922,9 +918,9 @@ public class StructureStrongholdPieces
                 }
 
                 i = this.getMetadataWithOffset(Blocks.stone_brick_stairs, 3);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 5, 6, 1, 7, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 2, 6, 6, 2, 7, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 3, 7, 6, 3, 7, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 5, 6, 1, 7, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 2, 6, 6, 2, 7, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 3, 7, 6, 3, 7, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
 
                 for (int j = 4; j <= 6; ++j)
                 {
@@ -995,13 +991,13 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class Prison extends StructureStrongholdPieces.Stronghold
+    public static class Prison extends UStructureStrongholdPieces.Stronghold
         {
             private static final String __OBFID = "CL_00000494";
 
             public Prison() {}
 
-            public Prison(int p_i2078_1_, Random p_i2078_2_, StructureBoundingBox p_i2078_3_, int p_i2078_4_)
+            public Prison(int p_i2078_1_, Random p_i2078_2_, UStructureBoundingBox p_i2078_3_, int p_i2078_4_)
             {
                 super(p_i2078_1_);
                 this.coordBaseMode = p_i2078_4_;
@@ -1012,25 +1008,25 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                this.getNextComponentNormal((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
             }
 
-            public static StructureStrongholdPieces.Prison findValidPlacement(List p_75016_0_, Random p_75016_1_, int p_75016_2_, int p_75016_3_, int p_75016_4_, int p_75016_5_, int p_75016_6_)
+            public static UStructureStrongholdPieces.Prison findValidPlacement(List p_75016_0_, Random p_75016_1_, int p_75016_2_, int p_75016_3_, int p_75016_4_, int p_75016_5_, int p_75016_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75016_2_, p_75016_3_, p_75016_4_, -1, -1, 0, 9, 5, 11, p_75016_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75016_2_, p_75016_3_, p_75016_4_, -1, -1, 0, 9, 5, 11, p_75016_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75016_0_, structureboundingbox) == null ? new StructureStrongholdPieces.Prison(p_75016_6_, p_75016_1_, structureboundingbox, p_75016_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75016_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.Prison(p_75016_6_, p_75016_1_, structureboundingbox, p_75016_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -1038,13 +1034,13 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 8, 4, 10, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 8, 4, 10, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 1, 1, 0);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 1, 1, 10, 3, 3, 10, Blocks.air, Blocks.air, false);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 1, 4, 3, 1, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 3, 4, 3, 3, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 7, 4, 3, 7, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 9, 4, 3, 9, false, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 1, 4, 3, 1, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 3, 4, 3, 3, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 7, 4, 3, 7, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 4, 1, 9, 4, 3, 9, false, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 4, 1, 4, 4, 3, 6, Blocks.iron_bars, Blocks.iron_bars, false);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 5, 1, 5, 7, 3, 5, Blocks.iron_bars, Blocks.iron_bars, false);
                     this.placeBlockAtCurrentPosition(p_74875_1_, Blocks.iron_bars, 0, 4, 3, 2, p_74875_3_);
@@ -1058,22 +1054,22 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class RightTurn extends StructureStrongholdPieces.LeftTurn
+    public static class RightTurn extends UStructureStrongholdPieces.LeftTurn
         {
             private static final String __OBFID = "CL_00000495";
 
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
                 if (this.coordBaseMode != 2 && this.coordBaseMode != 3)
                 {
-                    this.getNextComponentX((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                    this.getNextComponentX((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
                 }
                 else
                 {
-                    this.getNextComponentZ((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                    this.getNextComponentZ((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
                 }
             }
 
@@ -1081,7 +1077,7 @@ public class StructureStrongholdPieces
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -1089,7 +1085,7 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 4, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 4, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 1, 1, 0);
 
                     if (this.coordBaseMode != 2 && this.coordBaseMode != 3)
@@ -1106,7 +1102,7 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class RoomCrossing extends StructureStrongholdPieces.Stronghold
+    public static class RoomCrossing extends UStructureStrongholdPieces.Stronghold
         {
             /**
              * Items that could generate in the chest that is located in Stronghold Room Crossing.
@@ -1117,7 +1113,7 @@ public class StructureStrongholdPieces
 
             public RoomCrossing() {}
 
-            public RoomCrossing(int p_i2079_1_, Random p_i2079_2_, StructureBoundingBox p_i2079_3_, int p_i2079_4_)
+            public RoomCrossing(int p_i2079_1_, Random p_i2079_2_, UStructureBoundingBox p_i2079_3_, int p_i2079_4_)
             {
                 super(p_i2079_1_);
                 this.coordBaseMode = p_i2079_4_;
@@ -1141,27 +1137,27 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 4, 1);
-                this.getNextComponentX((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 4);
-                this.getNextComponentZ((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 4);
+                this.getNextComponentNormal((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 4, 1);
+                this.getNextComponentX((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 4);
+                this.getNextComponentZ((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 4);
             }
 
-            public static StructureStrongholdPieces.RoomCrossing findValidPlacement(List p_75012_0_, Random p_75012_1_, int p_75012_2_, int p_75012_3_, int p_75012_4_, int p_75012_5_, int p_75012_6_)
+            public static UStructureStrongholdPieces.RoomCrossing findValidPlacement(List p_75012_0_, Random p_75012_1_, int p_75012_2_, int p_75012_3_, int p_75012_4_, int p_75012_5_, int p_75012_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75012_2_, p_75012_3_, p_75012_4_, -4, -1, 0, 11, 7, 11, p_75012_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75012_2_, p_75012_3_, p_75012_4_, -4, -1, 0, 11, 7, 11, p_75012_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75012_0_, structureboundingbox) == null ? new StructureStrongholdPieces.RoomCrossing(p_75012_6_, p_75012_1_, structureboundingbox, p_75012_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75012_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.RoomCrossing(p_75012_6_, p_75012_1_, structureboundingbox, p_75012_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -1169,7 +1165,7 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 10, 6, 10, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 10, 6, 10, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 4, 1, 0);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 4, 1, 10, 6, 3, 10, Blocks.air, Blocks.air, false);
                     this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 1, 4, 0, 3, 6, Blocks.air, Blocks.air, false);
@@ -1268,7 +1264,7 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class Stairs extends StructureStrongholdPieces.Stronghold
+    public static class Stairs extends UStructureStrongholdPieces.Stronghold
         {
             private boolean field_75024_a;
             private static final String __OBFID = "CL_00000498";
@@ -1280,20 +1276,20 @@ public class StructureStrongholdPieces
                 super(p_i2081_1_);
                 this.field_75024_a = true;
                 this.coordBaseMode = p_i2081_2_.nextInt(4);
-                this.field_143013_d = StructureStrongholdPieces.Stronghold.Door.OPENING;
+                this.field_143013_d = UStructureStrongholdPieces.Stronghold.Door.OPENING;
 
                 switch (this.coordBaseMode)
                 {
                     case 0:
                     case 2:
-                        this.boundingBox = new StructureBoundingBox(p_i2081_3_, 64, p_i2081_4_, p_i2081_3_ + 5 - 1, 74, p_i2081_4_ + 5 - 1);
+                        this.boundingBox = new UStructureBoundingBox(p_i2081_3_, 64, p_i2081_4_, p_i2081_3_ + 5 - 1, 74, p_i2081_4_ + 5 - 1);
                         break;
                     default:
-                        this.boundingBox = new StructureBoundingBox(p_i2081_3_, 64, p_i2081_4_, p_i2081_3_ + 5 - 1, 74, p_i2081_4_ + 5 - 1);
+                        this.boundingBox = new UStructureBoundingBox(p_i2081_3_, 64, p_i2081_4_, p_i2081_3_ + 5 - 1, 74, p_i2081_4_ + 5 - 1);
                 }
             }
 
-            public Stairs(int p_i2082_1_, Random p_i2082_2_, StructureBoundingBox p_i2082_3_, int p_i2082_4_)
+            public Stairs(int p_i2082_1_, Random p_i2082_2_, UStructureBoundingBox p_i2082_3_, int p_i2082_4_)
             {
                 super(p_i2082_1_);
                 this.field_75024_a = false;
@@ -1317,33 +1313,33 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
                 if (this.field_75024_a)
                 {
-                    StructureStrongholdPieces.strongComponentType = StructureStrongholdPieces.Crossing.class;
+                    UStructureStrongholdPieces.strongComponentType = UStructureStrongholdPieces.Crossing.class;
                 }
 
-                this.getNextComponentNormal((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                this.getNextComponentNormal((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
             }
 
             /**
              * performs some checks, then gives out a fresh Stairs component
              */
-            public static StructureStrongholdPieces.Stairs getStrongholdStairsComponent(List p_75022_0_, Random p_75022_1_, int p_75022_2_, int p_75022_3_, int p_75022_4_, int p_75022_5_, int p_75022_6_)
+            public static UStructureStrongholdPieces.Stairs getStrongholdStairsComponent(List p_75022_0_, Random p_75022_1_, int p_75022_2_, int p_75022_3_, int p_75022_4_, int p_75022_5_, int p_75022_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75022_2_, p_75022_3_, p_75022_4_, -1, -7, 0, 5, 11, 5, p_75022_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75022_2_, p_75022_3_, p_75022_4_, -1, -7, 0, 5, 11, 5, p_75022_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75022_0_, structureboundingbox) == null ? new StructureStrongholdPieces.Stairs(p_75022_6_, p_75022_1_, structureboundingbox, p_75022_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75022_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.Stairs(p_75022_6_, p_75022_1_, structureboundingbox, p_75022_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -1351,9 +1347,9 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 10, 4, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 10, 4, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 1, 7, 0);
-                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, StructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 4);
+                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, UStructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 4);
                     this.placeBlockAtCurrentPosition(p_74875_1_, Blocks.stonebrick, 0, 2, 6, 1, p_74875_3_);
                     this.placeBlockAtCurrentPosition(p_74875_1_, Blocks.stonebrick, 0, 1, 5, 1, p_74875_3_);
                     this.placeBlockAtCurrentPosition(p_74875_1_, Blocks.stone_slab, 0, 1, 6, 1, p_74875_3_);
@@ -1376,10 +1372,10 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class Stairs2 extends StructureStrongholdPieces.Stairs
+    public static class Stairs2 extends UStructureStrongholdPieces.Stairs
         {
-            public StructureStrongholdPieces.PieceWeight strongholdPieceWeight;
-            public StructureStrongholdPieces.PortalRoom strongholdPortalRoom;
+            public UStructureStrongholdPieces.PieceWeight strongholdPieceWeight;
+            public UStructureStrongholdPieces.PortalRoom strongholdPortalRoom;
             public List field_75026_c = new ArrayList();
             private static final String __OBFID = "CL_00000499";
 
@@ -1396,13 +1392,13 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class StairsStraight extends StructureStrongholdPieces.Stronghold
+    public static class StairsStraight extends UStructureStrongholdPieces.Stronghold
         {
             private static final String __OBFID = "CL_00000501";
 
             public StairsStraight() {}
 
-            public StairsStraight(int p_i2085_1_, Random p_i2085_2_, StructureBoundingBox p_i2085_3_, int p_i2085_4_)
+            public StairsStraight(int p_i2085_1_, Random p_i2085_2_, UStructureBoundingBox p_i2085_3_, int p_i2085_4_)
             {
                 super(p_i2085_1_);
                 this.coordBaseMode = p_i2085_4_;
@@ -1413,25 +1409,25 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                this.getNextComponentNormal((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
             }
 
-            public static StructureStrongholdPieces.StairsStraight findValidPlacement(List p_75028_0_, Random p_75028_1_, int p_75028_2_, int p_75028_3_, int p_75028_4_, int p_75028_5_, int p_75028_6_)
+            public static UStructureStrongholdPieces.StairsStraight findValidPlacement(List p_75028_0_, Random p_75028_1_, int p_75028_2_, int p_75028_3_, int p_75028_4_, int p_75028_5_, int p_75028_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75028_2_, p_75028_3_, p_75028_4_, -1, -7, 0, 5, 11, 8, p_75028_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75028_2_, p_75028_3_, p_75028_4_, -1, -7, 0, 5, 11, 8, p_75028_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75028_0_, structureboundingbox) == null ? new StructureStrongholdPieces.StairsStraight(p_75028_6_, p_75028_1_, structureboundingbox, p_75028_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75028_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.StairsStraight(p_75028_6_, p_75028_1_, structureboundingbox, p_75028_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -1439,9 +1435,9 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 10, 7, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 10, 7, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 1, 7, 0);
-                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, StructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 7);
+                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, UStructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 7);
                     int i = this.getMetadataWithOffset(Blocks.stone_stairs, 2);
 
                     for (int j = 0; j < 6; ++j)
@@ -1463,7 +1459,7 @@ public class StructureStrongholdPieces
             }
         }
 
-    static class Stones extends StructureComponent.BlockSelector
+    static class Stones extends UStructureComponent.BlockSelector
         {
             private static final String __OBFID = "CL_00000497";
 
@@ -1510,7 +1506,7 @@ public class StructureStrongholdPieces
             }
         }
 
-    public static class Straight extends StructureStrongholdPieces.Stronghold
+    public static class Straight extends UStructureStrongholdPieces.Stronghold
         {
             private boolean expandsX;
             private boolean expandsZ;
@@ -1518,7 +1514,7 @@ public class StructureStrongholdPieces
 
             public Straight() {}
 
-            public Straight(int p_i2084_1_, Random p_i2084_2_, StructureBoundingBox p_i2084_3_, int p_i2084_4_)
+            public Straight(int p_i2084_1_, Random p_i2084_2_, UStructureBoundingBox p_i2084_3_, int p_i2084_4_)
             {
                 super(p_i2084_1_);
                 this.coordBaseMode = p_i2084_4_;
@@ -1545,35 +1541,35 @@ public class StructureStrongholdPieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+                this.getNextComponentNormal((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
 
                 if (this.expandsX)
                 {
-                    this.getNextComponentX((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 2);
+                    this.getNextComponentX((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 2);
                 }
 
                 if (this.expandsZ)
                 {
-                    this.getNextComponentZ((StructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 2);
+                    this.getNextComponentZ((UStructureStrongholdPieces.Stairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 2);
                 }
             }
 
-            public static StructureStrongholdPieces.Straight findValidPlacement(List p_75018_0_, Random p_75018_1_, int p_75018_2_, int p_75018_3_, int p_75018_4_, int p_75018_5_, int p_75018_6_)
+            public static UStructureStrongholdPieces.Straight findValidPlacement(List p_75018_0_, Random p_75018_1_, int p_75018_2_, int p_75018_3_, int p_75018_4_, int p_75018_5_, int p_75018_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_75018_2_, p_75018_3_, p_75018_4_, -1, -1, 0, 5, 5, 7, p_75018_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_75018_2_, p_75018_3_, p_75018_4_, -1, -1, 0, 5, 5, 7, p_75018_5_);
                 /**
                  * returns false if the Structure Bounding Box goes below 10
                  */
-                return canStrongholdGoDeeper(structureboundingbox) && StructureComponent.findIntersecting(p_75018_0_, structureboundingbox) == null ? new StructureStrongholdPieces.Straight(p_75018_6_, p_75018_1_, structureboundingbox, p_75018_5_) : null;
+                return canStrongholdGoDeeper(structureboundingbox) && UStructureComponent.findIntersecting(p_75018_0_, structureboundingbox) == null ? new UStructureStrongholdPieces.Straight(p_75018_6_, p_75018_1_, structureboundingbox, p_75018_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 if (this.isLiquidInStructureBoundingBox(p_74875_1_, p_74875_3_))
                 {
@@ -1581,9 +1577,9 @@ public class StructureStrongholdPieces
                 }
                 else
                 {
-                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 6, true, p_74875_2_, StructureStrongholdPieces.strongholdStones);
+                    this.fillWithRandomizedBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 4, 6, true, p_74875_2_, UStructureStrongholdPieces.strongholdStones);
                     this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, this.field_143013_d, 1, 1, 0);
-                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, StructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 6);
+                    this.placeDoor(p_74875_1_, p_74875_2_, p_74875_3_, UStructureStrongholdPieces.Stronghold.Door.OPENING, 1, 1, 6);
                     this.func_151552_a(p_74875_1_, p_74875_3_, p_74875_2_, 0.1F, 1, 2, 1, Blocks.torch, 0);
                     this.func_151552_a(p_74875_1_, p_74875_3_, p_74875_2_, 0.1F, 3, 2, 1, Blocks.torch, 0);
                     this.func_151552_a(p_74875_1_, p_74875_3_, p_74875_2_, 0.1F, 1, 2, 5, Blocks.torch, 0);
@@ -1604,20 +1600,20 @@ public class StructureStrongholdPieces
             }
         }
 
-    public abstract static class Stronghold extends StructureComponent
+    public abstract static class Stronghold extends UStructureComponent
         {
-            protected StructureStrongholdPieces.Stronghold.Door field_143013_d;
+            protected UStructureStrongholdPieces.Stronghold.Door field_143013_d;
             private static final String __OBFID = "CL_00000503";
 
             public Stronghold()
             {
-                this.field_143013_d = StructureStrongholdPieces.Stronghold.Door.OPENING;
+                this.field_143013_d = UStructureStrongholdPieces.Stronghold.Door.OPENING;
             }
 
             protected Stronghold(int p_i2087_1_)
             {
                 super(p_i2087_1_);
-                this.field_143013_d = StructureStrongholdPieces.Stronghold.Door.OPENING;
+                this.field_143013_d = UStructureStrongholdPieces.Stronghold.Door.OPENING;
             }
 
             protected void func_143012_a(NBTTagCompound p_143012_1_)
@@ -1627,15 +1623,15 @@ public class StructureStrongholdPieces
 
             protected void func_143011_b(NBTTagCompound p_143011_1_)
             {
-                this.field_143013_d = StructureStrongholdPieces.Stronghold.Door.valueOf(p_143011_1_.getString("EntryDoor"));
+                this.field_143013_d = UStructureStrongholdPieces.Stronghold.Door.valueOf(p_143011_1_.getString("EntryDoor"));
             }
 
             /**
              * builds a door of the enumerated types (empty opening is a door)
              */
-            protected void placeDoor(World p_74990_1_, Random p_74990_2_, StructureBoundingBox p_74990_3_, StructureStrongholdPieces.Stronghold.Door p_74990_4_, int p_74990_5_, int p_74990_6_, int p_74990_7_)
+            protected void placeDoor(World p_74990_1_, Random p_74990_2_, UStructureBoundingBox p_74990_3_, UStructureStrongholdPieces.Stronghold.Door p_74990_4_, int p_74990_5_, int p_74990_6_, int p_74990_7_)
             {
-                switch (StructureStrongholdPieces.SwitchDoor.doorEnum[p_74990_4_.ordinal()])
+                switch (UStructureStrongholdPieces.SwitchDoor.doorEnum[p_74990_4_.ordinal()])
                 {
                     case 1:
                     default:
@@ -1678,7 +1674,7 @@ public class StructureStrongholdPieces
                 }
             }
 
-            protected StructureStrongholdPieces.Stronghold.Door getRandomDoor(Random p_74988_1_)
+            protected UStructureStrongholdPieces.Stronghold.Door getRandomDoor(Random p_74988_1_)
             {
                 int i = p_74988_1_.nextInt(5);
 
@@ -1687,31 +1683,31 @@ public class StructureStrongholdPieces
                     case 0:
                     case 1:
                     default:
-                        return StructureStrongholdPieces.Stronghold.Door.OPENING;
+                        return UStructureStrongholdPieces.Stronghold.Door.OPENING;
                     case 2:
-                        return StructureStrongholdPieces.Stronghold.Door.WOOD_DOOR;
+                        return UStructureStrongholdPieces.Stronghold.Door.WOOD_DOOR;
                     case 3:
-                        return StructureStrongholdPieces.Stronghold.Door.GRATES;
+                        return UStructureStrongholdPieces.Stronghold.Door.GRATES;
                     case 4:
-                        return StructureStrongholdPieces.Stronghold.Door.IRON_DOOR;
+                        return UStructureStrongholdPieces.Stronghold.Door.IRON_DOOR;
                 }
             }
 
             /**
              * Gets the next component in any cardinal direction
              */
-            protected StructureComponent getNextComponentNormal(StructureStrongholdPieces.Stairs2 p_74986_1_, List p_74986_2_, Random p_74986_3_, int p_74986_4_, int p_74986_5_)
+            protected UStructureComponent getNextComponentNormal(UStructureStrongholdPieces.Stairs2 p_74986_1_, List p_74986_2_, Random p_74986_3_, int p_74986_4_, int p_74986_5_)
             {
                 switch (this.coordBaseMode)
                 {
                     case 0:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.minX + p_74986_4_, this.boundingBox.minY + p_74986_5_, this.boundingBox.maxZ + 1, this.coordBaseMode, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.minX + p_74986_4_, this.boundingBox.minY + p_74986_5_, this.boundingBox.maxZ + 1, this.coordBaseMode, this.getComponentType());
                     case 1:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.minX - 1, this.boundingBox.minY + p_74986_5_, this.boundingBox.minZ + p_74986_4_, this.coordBaseMode, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.minX - 1, this.boundingBox.minY + p_74986_5_, this.boundingBox.minZ + p_74986_4_, this.coordBaseMode, this.getComponentType());
                     case 2:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.minX + p_74986_4_, this.boundingBox.minY + p_74986_5_, this.boundingBox.minZ - 1, this.coordBaseMode, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.minX + p_74986_4_, this.boundingBox.minY + p_74986_5_, this.boundingBox.minZ - 1, this.coordBaseMode, this.getComponentType());
                     case 3:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.maxX + 1, this.boundingBox.minY + p_74986_5_, this.boundingBox.minZ + p_74986_4_, this.coordBaseMode, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74986_1_, p_74986_2_, p_74986_3_, this.boundingBox.maxX + 1, this.boundingBox.minY + p_74986_5_, this.boundingBox.minZ + p_74986_4_, this.coordBaseMode, this.getComponentType());
                     default:
                         return null;
                 }
@@ -1720,18 +1716,18 @@ public class StructureStrongholdPieces
             /**
              * Gets the next component in the +/- X direction
              */
-            protected StructureComponent getNextComponentX(StructureStrongholdPieces.Stairs2 p_74989_1_, List p_74989_2_, Random p_74989_3_, int p_74989_4_, int p_74989_5_)
+            protected UStructureComponent getNextComponentX(UStructureStrongholdPieces.Stairs2 p_74989_1_, List p_74989_2_, Random p_74989_3_, int p_74989_4_, int p_74989_5_)
             {
                 switch (this.coordBaseMode)
                 {
                     case 0:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX - 1, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ + p_74989_5_, 1, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX - 1, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ + p_74989_5_, 1, this.getComponentType());
                     case 1:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX + p_74989_5_, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ - 1, 2, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX + p_74989_5_, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ - 1, 2, this.getComponentType());
                     case 2:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX - 1, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ + p_74989_5_, 1, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX - 1, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ + p_74989_5_, 1, this.getComponentType());
                     case 3:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX + p_74989_5_, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ - 1, 2, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74989_1_, p_74989_2_, p_74989_3_, this.boundingBox.minX + p_74989_5_, this.boundingBox.minY + p_74989_4_, this.boundingBox.minZ - 1, 2, this.getComponentType());
                     default:
                         return null;
                 }
@@ -1740,18 +1736,18 @@ public class StructureStrongholdPieces
             /**
              * Gets the next component in the +/- Z direction
              */
-            protected StructureComponent getNextComponentZ(StructureStrongholdPieces.Stairs2 p_74987_1_, List p_74987_2_, Random p_74987_3_, int p_74987_4_, int p_74987_5_)
+            protected UStructureComponent getNextComponentZ(UStructureStrongholdPieces.Stairs2 p_74987_1_, List p_74987_2_, Random p_74987_3_, int p_74987_4_, int p_74987_5_)
             {
                 switch (this.coordBaseMode)
                 {
                     case 0:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.maxX + 1, this.boundingBox.minY + p_74987_4_, this.boundingBox.minZ + p_74987_5_, 3, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.maxX + 1, this.boundingBox.minY + p_74987_4_, this.boundingBox.minZ + p_74987_5_, 3, this.getComponentType());
                     case 1:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.minX + p_74987_5_, this.boundingBox.minY + p_74987_4_, this.boundingBox.maxZ + 1, 0, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.minX + p_74987_5_, this.boundingBox.minY + p_74987_4_, this.boundingBox.maxZ + 1, 0, this.getComponentType());
                     case 2:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.maxX + 1, this.boundingBox.minY + p_74987_4_, this.boundingBox.minZ + p_74987_5_, 3, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.maxX + 1, this.boundingBox.minY + p_74987_4_, this.boundingBox.minZ + p_74987_5_, 3, this.getComponentType());
                     case 3:
-                        return StructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.minX + p_74987_5_, this.boundingBox.minY + p_74987_4_, this.boundingBox.maxZ + 1, 0, this.getComponentType());
+                        return UStructureStrongholdPieces.getNextValidComponent(p_74987_1_, p_74987_2_, p_74987_3_, this.boundingBox.minX + p_74987_5_, this.boundingBox.minY + p_74987_4_, this.boundingBox.maxZ + 1, 0, this.getComponentType());
                     default:
                         return null;
                 }
@@ -1760,7 +1756,7 @@ public class StructureStrongholdPieces
             /**
              * returns false if the Structure Bounding Box goes below 10
              */
-            protected static boolean canStrongholdGoDeeper(StructureBoundingBox p_74991_0_)
+            protected static boolean canStrongholdGoDeeper(UStructureBoundingBox p_74991_0_)
             {
                 return p_74991_0_ != null && p_74991_0_.minY > 10;
             }
@@ -1778,14 +1774,14 @@ public class StructureStrongholdPieces
 
     static final class SwitchDoor
         {
-            static final int[] doorEnum = new int[StructureStrongholdPieces.Stronghold.Door.values().length];
+            static final int[] doorEnum = new int[UStructureStrongholdPieces.Stronghold.Door.values().length];
             private static final String __OBFID = "CL_00000486";
 
             static
             {
                 try
                 {
-                    doorEnum[StructureStrongholdPieces.Stronghold.Door.OPENING.ordinal()] = 1;
+                    doorEnum[UStructureStrongholdPieces.Stronghold.Door.OPENING.ordinal()] = 1;
                 }
                 catch (NoSuchFieldError var4)
                 {
@@ -1794,7 +1790,7 @@ public class StructureStrongholdPieces
 
                 try
                 {
-                    doorEnum[StructureStrongholdPieces.Stronghold.Door.WOOD_DOOR.ordinal()] = 2;
+                    doorEnum[UStructureStrongholdPieces.Stronghold.Door.WOOD_DOOR.ordinal()] = 2;
                 }
                 catch (NoSuchFieldError var3)
                 {
@@ -1803,7 +1799,7 @@ public class StructureStrongholdPieces
 
                 try
                 {
-                    doorEnum[StructureStrongholdPieces.Stronghold.Door.GRATES.ordinal()] = 3;
+                    doorEnum[UStructureStrongholdPieces.Stronghold.Door.GRATES.ordinal()] = 3;
                 }
                 catch (NoSuchFieldError var2)
                 {
@@ -1812,7 +1808,7 @@ public class StructureStrongholdPieces
 
                 try
                 {
-                    doorEnum[StructureStrongholdPieces.Stronghold.Door.IRON_DOOR.ordinal()] = 4;
+                    doorEnum[UStructureStrongholdPieces.Stronghold.Door.IRON_DOOR.ordinal()] = 4;
                 }
                 catch (NoSuchFieldError var1)
                 {

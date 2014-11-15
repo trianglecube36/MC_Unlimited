@@ -19,17 +19,10 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.structure.MapGenStructure;
-import net.minecraft.world.gen.structure.MapGenStructureData;
-import net.minecraft.world.gen.structure.MapGenStructureIO;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureStart;
 
 public abstract class UMapGenStructure extends UMapGenBase
 {
-    private MapGenStructureData field_143029_e;
+    private UMapGenStructureData field_143029_e;
     /**
      * TODO: THIS IS WHY OLD WORLDS LAG...
      * if you are a server admin that owned a server for a long time with 1 world,
@@ -56,7 +49,7 @@ public abstract class UMapGenStructure extends UMapGenBase
             {
                 if (this.canSpawnStructureAtCoords(checkX, checkY, checkZ))
                 {
-                    StructureStart structurestart = this.getStructureStart(checkX, checkY, checkZ);
+                    UStructureStart structurestart = this.getStructureStart(checkX, checkY, checkZ);
                     this.structureMap.add(checkX, checkY, checkZ, structurestart);
                     this.func_143026_a(checkX, checkY, checkZ, structurestart);
                 }
@@ -106,13 +99,13 @@ public abstract class UMapGenStructure extends UMapGenBase
 
         while (iterator.hasNext())
         {
-            StructureStart structurestart = (StructureStart)iterator.next();
+            UStructureStart structurestart = (UStructureStart)iterator.next();
 
             if (structurestart.isSizeableStructure() && structurestart.getBoundingBox().intersectsWith(mX, mY, mZ, mX + 31, mY + 31, mZ + 31))
             {
-                structurestart.generateStructure(world, rand, new StructureBoundingBox(mX, mY, mZ, mX + 31, mY + 31, mZ + 31));
+                structurestart.generateStructure(world, rand, new UStructureBoundingBox(mX, mY, mZ, mX + 31, mY + 31, mZ + 31));
                 flag = true;
-                this.func_143026_a(structurestart.func_143019_e(), structurestart.func_143018_f(), structurestart);
+                this.func_143026_a(structurestart.func_143019_e(), structurestart.getChunkY(), structurestart.func_143018_f(), structurestart);
             }
         }
 
@@ -128,21 +121,21 @@ public abstract class UMapGenStructure extends UMapGenBase
         return this.func_143028_c(bX, bY, bZ) != null;
     }
 
-    protected StructureStart func_143028_c(int bX, int bY, int bZ)
+    protected UStructureStart func_143028_c(int bX, int bY, int bZ)
     {
         Iterator iterator = this.structureMap.iterator();
 
         while (iterator.hasNext())
         {
-            StructureStart structurestart = (StructureStart)iterator.next();
+            UStructureStart structurestart = (UStructureStart)iterator.next();
 
-            if (structurestart.isSizeableStructure() && structurestart.getBoundingBox().intersectsWith(bX, bZ, bX, bZ))
+            if (structurestart.isSizeableStructure() && structurestart.getBoundingBox().intersectsWith(bX, bY, bZ, bX, bY, bZ))
             {
                 Iterator iterator1 = structurestart.getComponents().iterator();
 
                 while (iterator1.hasNext())
                 {
-                    StructureComponent structurecomponent = (StructureComponent)iterator1.next();
+                    UStructureComponent structurecomponent = (UStructureComponent)iterator1.next();
 
                     if (structurecomponent.getBoundingBox().isVecInside(bX, bY, bZ))
                     {
@@ -155,11 +148,11 @@ public abstract class UMapGenStructure extends UMapGenBase
         return null;
     }
 
-    public boolean func_142038_b(int p_142038_1_, int p_142038_2_, int p_142038_3_)
+    public boolean func_142038_b(int bX, int bY, int bZ)
     {
         this.func_143027_a(this.worldObj);
-        Iterator iterator = this.structureMap.values().iterator();
-        StructureStart structurestart;
+        Iterator iterator = this.structureMap.iterator();
+        UStructureStart structurestart;
 
         do
         {
@@ -168,27 +161,29 @@ public abstract class UMapGenStructure extends UMapGenBase
                 return false;
             }
 
-            structurestart = (StructureStart)iterator.next();
+            structurestart = (UStructureStart)iterator.next();
         }
         while (!structurestart.isSizeableStructure());
 
-        return structurestart.getBoundingBox().intersectsWith(p_142038_1_, p_142038_3_, p_142038_1_, p_142038_3_);
+        return structurestart.getBoundingBox().intersectsWith(bX, bY, bZ, bX, bY, bZ);
     }
 
-    public ChunkPosition func_151545_a(World p_151545_1_, int p_151545_2_, int p_151545_3_, int p_151545_4_)
+    public ChunkPosition func_151545_a(World world, int bX, int bY, int bZ)
     {
-        this.worldObj = p_151545_1_;
-        this.func_143027_a(p_151545_1_);
-        this.rand.setSeed(p_151545_1_.getSeed());
-        long l = this.rand.nextLong();
-        long i1 = this.rand.nextLong();
-        long j1 = (long)(p_151545_2_ >> 4) * l;
-        long k1 = (long)(p_151545_4_ >> 4) * i1;
-        this.rand.setSeed(j1 ^ k1 ^ p_151545_1_.getSeed());
-        this.func_151538_a(p_151545_1_, p_151545_2_ >> 4, p_151545_4_ >> 4, 0, 0, (Block[])null);
+        this.worldObj = world;
+        this.func_143027_a(world);
+        this.rand.setSeed(world.getSeed());
+        long rl1 = this.rand.nextLong();
+        long rl2 = this.rand.nextLong();
+        long rl3 = this.rand.nextLong();
+        long rlX = (long)(bX >> 5) * rl1;
+        long rlY = (long)(bY >> 5) * rl2;
+        long rlZ = (long)(bZ >> 5) * rl3;
+        this.rand.setSeed(rlX ^ rlY ^ rlZ ^ world.getSeed());
+        this.func_151538_a(world, bX >> 5, bY >> 5, bZ >> 5, 0, 0, 0, (Block[])null);
         double d0 = Double.MAX_VALUE;
         ChunkPosition chunkposition = null;
-        Iterator iterator = this.structureMap.values().iterator();
+        Iterator iterator = this.structureMap.iterator();
         ChunkPosition chunkposition1;
         int l1;
         int i2;
@@ -197,15 +192,15 @@ public abstract class UMapGenStructure extends UMapGenBase
 
         while (iterator.hasNext())
         {
-            StructureStart structurestart = (StructureStart)iterator.next();
+            UStructureStart structurestart = (UStructureStart)iterator.next();
 
             if (structurestart.isSizeableStructure())
             {
-                StructureComponent structurecomponent = (StructureComponent)structurestart.getComponents().get(0);
+                UStructureComponent structurecomponent = (UStructureComponent)structurestart.getComponents().get(0);
                 chunkposition1 = structurecomponent.func_151553_a();
-                l1 = chunkposition1.chunkPosX - p_151545_2_;
-                i2 = chunkposition1.chunkPosY - p_151545_3_;
-                j2 = chunkposition1.chunkPosZ - p_151545_4_;
+                l1 = chunkposition1.chunkPosX - bX;
+                i2 = chunkposition1.chunkPosY - bY;
+                j2 = chunkposition1.chunkPosZ - bZ;
                 d1 = (double)(l1 * l1 + i2 * i2 + j2 * j2);
 
                 if (d1 < d0)
@@ -232,9 +227,9 @@ public abstract class UMapGenStructure extends UMapGenBase
                 while (iterator1.hasNext())
                 {
                     chunkposition1 = (ChunkPosition)iterator1.next();
-                    l1 = chunkposition1.chunkPosX - p_151545_2_;
-                    i2 = chunkposition1.chunkPosY - p_151545_3_;
-                    j2 = chunkposition1.chunkPosZ - p_151545_4_;
+                    l1 = chunkposition1.chunkPosX - bX;
+                    i2 = chunkposition1.chunkPosY - bY;
+                    j2 = chunkposition1.chunkPosZ - bZ;
                     d1 = (double)(l1 * l1 + i2 * i2 + j2 * j2);
 
                     if (d1 < d0)
@@ -262,16 +257,16 @@ public abstract class UMapGenStructure extends UMapGenBase
         return null;
     }
 
-    private void func_143027_a(World p_143027_1_)
+    private void func_143027_a(World world)
     {
         if (this.field_143029_e == null)
         {
-            this.field_143029_e = (MapGenStructureData)p_143027_1_.perWorldStorage.loadData(MapGenStructureData.class, this.func_143025_a());
+            this.field_143029_e = (UMapGenStructureData)world.perWorldStorage.loadData(UMapGenStructureData.class, this.func_143025_a());
 
             if (this.field_143029_e == null)
             {
-                this.field_143029_e = new MapGenStructureData(this.func_143025_a());
-                p_143027_1_.perWorldStorage.setData(this.func_143025_a(), this.field_143029_e);
+                this.field_143029_e = new UMapGenStructureData(this.func_143025_a());
+                world.perWorldStorage.setData(this.func_143025_a(), this.field_143029_e);
             }
             else
             {
@@ -287,15 +282,16 @@ public abstract class UMapGenStructure extends UMapGenBase
                     {
                         NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbtbase;
 
-                        if (nbttagcompound1.hasKey("ChunkX") && nbttagcompound1.hasKey("ChunkZ"))
+                        if (nbttagcompound1.hasKey("ChunkX") && nbttagcompound1.hasKey("ChunkY") && nbttagcompound1.hasKey("ChunkZ"))
                         {
-                            int i = nbttagcompound1.getInteger("ChunkX");
-                            int j = nbttagcompound1.getInteger("ChunkZ");
-                            StructureStart structurestart = MapGenStructureIO.func_143035_a(nbttagcompound1, p_143027_1_);
+                            int cX = nbttagcompound1.getInteger("ChunkX");
+                            int cY = nbttagcompound1.getInteger("ChunkY");
+                            int cZ = nbttagcompound1.getInteger("ChunkZ");
+                            UStructureStart structurestart = UMapGenStructureIO.func_143035_a(nbttagcompound1, world);
 
                             if (structurestart != null)
                             {
-                                this.structureMap.put(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(i, j)), structurestart);
+                                this.structureMap.add(cX, cY, cZ, structurestart);
                             }
                         }
                     }
@@ -304,13 +300,13 @@ public abstract class UMapGenStructure extends UMapGenBase
         }
     }
 
-    private void func_143026_a(int p_143026_1_, int p_143026_2_, StructureStart p_143026_3_)
+    private void func_143026_a(int cX, int cY, int cZ, UStructureStart ss)
     {
-        this.field_143029_e.func_143043_a(p_143026_3_.func_143021_a(p_143026_1_, p_143026_2_), p_143026_1_, p_143026_2_);
+        this.field_143029_e.func_143043_a(ss.func_143021_a(cX, cY, cZ), cX, cY, cZ);
         this.field_143029_e.markDirty();
     }
 
-    protected abstract boolean canSpawnStructureAtCoords(int p_75047_1_, int p_75047_2_);
+    protected abstract boolean canSpawnStructureAtCoords(int cX, int cY, int cZ);
 
-    protected abstract StructureStart getStructureStart(int p_75049_1_, int p_75049_2_);
+    protected abstract UStructureStart getStructureStart(int cX, int cY, int cZ);
 }

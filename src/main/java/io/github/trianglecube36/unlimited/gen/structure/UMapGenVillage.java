@@ -11,13 +11,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.gen.structure.MapGenStructure;
-import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureStart;
-import net.minecraft.world.gen.structure.StructureVillagePieces;
 
-public class MapGenVillage extends MapGenStructure
+public class UMapGenVillage extends UMapGenStructure
 {
     /** A list of all the biomes villages can spawn in. */
     public static List villageSpawnBiomes = Arrays.asList(new BiomeGenBase[] {BiomeGenBase.plains, BiomeGenBase.desert, BiomeGenBase.savanna});
@@ -25,15 +20,14 @@ public class MapGenVillage extends MapGenStructure
     private int terrainType;
     private int field_82665_g;
     private int field_82666_h;
-    private static final String __OBFID = "CL_00000514";
 
-    public MapGenVillage()
+    public UMapGenVillage()
     {
-        this.field_82665_g = 32;
-        this.field_82666_h = 8;
+        this.field_82665_g = 16; //was 32
+        this.field_82666_h = 4;  //was 8
     }
 
-    public MapGenVillage(Map p_i2093_1_)
+    public UMapGenVillage(Map p_i2093_1_)
     {
         this();
         Iterator iterator = p_i2093_1_.entrySet().iterator();
@@ -58,23 +52,26 @@ public class MapGenVillage extends MapGenStructure
         return "Village";
     }
 
-    protected boolean canSpawnStructureAtCoords(int p_75047_1_, int p_75047_2_)
+    protected boolean canSpawnStructureAtCoords(int cX, int cY, int cZ)
     {
-        int k = p_75047_1_;
-        int l = p_75047_2_;
+    	if(cY != 2){ //TODO: check
+    		return false;
+    	}
+        int k = cX;
+        int l = cZ;
 
-        if (p_75047_1_ < 0)
+        if (cX < 0)
         {
-            p_75047_1_ -= this.field_82665_g - 1;
+            cX -= this.field_82665_g - 1;
         }
 
-        if (p_75047_2_ < 0)
+        if (cZ < 0)
         {
-            p_75047_2_ -= this.field_82665_g - 1;
+            cZ -= this.field_82665_g - 1;
         }
 
-        int i1 = p_75047_1_ / this.field_82665_g;
-        int j1 = p_75047_2_ / this.field_82665_g;
+        int i1 = cX / this.field_82665_g;
+        int j1 = cZ / this.field_82665_g;
         Random random = this.worldObj.setRandomSeed(i1, j1, 10387312);
         i1 *= this.field_82665_g;
         j1 *= this.field_82665_g;
@@ -83,7 +80,7 @@ public class MapGenVillage extends MapGenStructure
 
         if (k == i1 && l == j1)
         {
-            boolean flag = this.worldObj.getWorldChunkManager().areBiomesViable(k * 16 + 8, l * 16 + 8, 0, villageSpawnBiomes);
+            boolean flag = this.worldObj.getWorldChunkManager().areBiomesViable(k * 32 + 16, l * 32 + 16, 0, villageSpawnBiomes);
 
             if (flag)
             {
@@ -94,45 +91,44 @@ public class MapGenVillage extends MapGenStructure
         return false;
     }
 
-    protected StructureStart getStructureStart(int p_75049_1_, int p_75049_2_)
+    protected UStructureStart getStructureStart(int cX, int cY, int cZ)
     {
-        return new MapGenVillage.Start(this.worldObj, this.rand, p_75049_1_, p_75049_2_, this.terrainType);
+        return new UMapGenVillage.Start(this.worldObj, this.rand, cX, cY, cZ, this.terrainType);
     }
 
-    public static class Start extends StructureStart
+    public static class Start extends UStructureStart
         {
             /** well ... thats what it does */
             private boolean hasMoreThanTwoComponents;
-            private static final String __OBFID = "CL_00000515";
 
             public Start() {}
 
-            public Start(World p_i2092_1_, Random p_i2092_2_, int p_i2092_3_, int p_i2092_4_, int p_i2092_5_)
+            public Start(World world, Random rand, int cX, int cY, int cZ, int type)
             {
-                super(p_i2092_3_, p_i2092_4_);
-                List list = StructureVillagePieces.getStructureVillageWeightedPieceList(p_i2092_2_, p_i2092_5_);
-                StructureVillagePieces.Start start = new StructureVillagePieces.Start(p_i2092_1_.getWorldChunkManager(), 0, p_i2092_2_, (p_i2092_3_ << 4) + 2, (p_i2092_4_ << 4) + 2, list, p_i2092_5_);
+                super(cX, cY, cZ);
+                List list = UStructureVillagePieces.getStructureVillageWeightedPieceList(rand, type);
+                UStructureVillagePieces.Start start = new UStructureVillagePieces.Start(world.getWorldChunkManager(), 0, rand, (cX << 5) + 2, (cY << 5) + 2, (cZ << 5) + 2, list, type);
                 this.components.add(start);
-                start.buildComponent(start, this.components, p_i2092_2_);
+                start.buildComponent(start, this.components, rand);
                 List list1 = start.field_74930_j;
                 List list2 = start.field_74932_i;
                 int l;
 
                 while (!list1.isEmpty() || !list2.isEmpty())
                 {
-                    StructureComponent structurecomponent;
+                    UStructureComponent structurecomponent;
 
                     if (list1.isEmpty())
                     {
-                        l = p_i2092_2_.nextInt(list2.size());
-                        structurecomponent = (StructureComponent)list2.remove(l);
-                        structurecomponent.buildComponent(start, this.components, p_i2092_2_);
+                        l = rand.nextInt(list2.size());
+                        structurecomponent = (UStructureComponent)list2.remove(l);
+                        structurecomponent.buildComponent(start, this.components, rand);
                     }
                     else
                     {
-                        l = p_i2092_2_.nextInt(list1.size());
-                        structurecomponent = (StructureComponent)list1.remove(l);
-                        structurecomponent.buildComponent(start, this.components, p_i2092_2_);
+                        l = rand.nextInt(list1.size());
+                        structurecomponent = (UStructureComponent)list1.remove(l);
+                        structurecomponent.buildComponent(start, this.components, rand);
                     }
                 }
 
@@ -142,9 +138,9 @@ public class MapGenVillage extends MapGenStructure
 
                 while (iterator.hasNext())
                 {
-                    StructureComponent structurecomponent1 = (StructureComponent)iterator.next();
+                    UStructureComponent structurecomponent1 = (UStructureComponent)iterator.next();
 
-                    if (!(structurecomponent1 instanceof StructureVillagePieces.Road))
+                    if (!(structurecomponent1 instanceof UStructureVillagePieces.Road))
                     {
                         ++l;
                     }

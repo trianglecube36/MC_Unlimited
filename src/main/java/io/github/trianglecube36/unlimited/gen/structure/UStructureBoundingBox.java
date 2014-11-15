@@ -3,7 +3,7 @@ package io.github.trianglecube36.unlimited.gen.structure;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
-public class StructureBoundingBox
+public class UStructureBoundingBox
 {
     /** The first x coordinate of a bounding box. */
     public int minX;
@@ -17,11 +17,10 @@ public class StructureBoundingBox
     public int maxY;
     /** The second z coordinate of a bounding box. */
     public int maxZ;
-    private static final String __OBFID = "CL_00000442";
 
-    public StructureBoundingBox() {}
+    public UStructureBoundingBox() {}
 
-    public StructureBoundingBox(int[] p_i43000_1_)
+    public UStructureBoundingBox(int[] p_i43000_1_)
     {
         if (p_i43000_1_.length == 6)
         {
@@ -37,32 +36,32 @@ public class StructureBoundingBox
     /**
      * returns a new StructureBoundingBox with MAX values
      */
-    public static StructureBoundingBox getNewBoundingBox()
+    public static UStructureBoundingBox getNewBoundingBox()
     {
-        return new StructureBoundingBox(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+        return new UStructureBoundingBox(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
     }
 
     /**
      * used to project a possible new component Bounding Box - to check if it would cut anything already spawned
      */
-    public static StructureBoundingBox getComponentToAddBoundingBox(int p_78889_0_, int p_78889_1_, int p_78889_2_, int p_78889_3_, int p_78889_4_, int p_78889_5_, int p_78889_6_, int p_78889_7_, int p_78889_8_, int p_78889_9_)
+    public static UStructureBoundingBox getComponentToAddBoundingBox(int p_78889_0_, int p_78889_1_, int p_78889_2_, int p_78889_3_, int p_78889_4_, int p_78889_5_, int p_78889_6_, int p_78889_7_, int p_78889_8_, int p_78889_9_)
     {
         switch (p_78889_9_)
         {
             case 0:
-                return new StructureBoundingBox(p_78889_0_ + p_78889_3_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_5_, p_78889_0_ + p_78889_6_ - 1 + p_78889_3_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_8_ - 1 + p_78889_5_);
+                return new UStructureBoundingBox(p_78889_0_ + p_78889_3_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_5_, p_78889_0_ + p_78889_6_ - 1 + p_78889_3_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_8_ - 1 + p_78889_5_);
             case 1:
-                return new StructureBoundingBox(p_78889_0_ - p_78889_8_ + 1 + p_78889_5_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_3_, p_78889_0_ + p_78889_5_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_6_ - 1 + p_78889_3_);
+                return new UStructureBoundingBox(p_78889_0_ - p_78889_8_ + 1 + p_78889_5_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_3_, p_78889_0_ + p_78889_5_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_6_ - 1 + p_78889_3_);
             case 2:
-                return new StructureBoundingBox(p_78889_0_ + p_78889_3_, p_78889_1_ + p_78889_4_, p_78889_2_ - p_78889_8_ + 1 + p_78889_5_, p_78889_0_ + p_78889_6_ - 1 + p_78889_3_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_5_);
+                return new UStructureBoundingBox(p_78889_0_ + p_78889_3_, p_78889_1_ + p_78889_4_, p_78889_2_ - p_78889_8_ + 1 + p_78889_5_, p_78889_0_ + p_78889_6_ - 1 + p_78889_3_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_5_);
             case 3:
-                return new StructureBoundingBox(p_78889_0_ + p_78889_5_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_3_, p_78889_0_ + p_78889_8_ - 1 + p_78889_5_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_6_ - 1 + p_78889_3_);
+                return new UStructureBoundingBox(p_78889_0_ + p_78889_5_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_3_, p_78889_0_ + p_78889_8_ - 1 + p_78889_5_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_6_ - 1 + p_78889_3_);
             default:
-                return new StructureBoundingBox(p_78889_0_ + p_78889_3_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_5_, p_78889_0_ + p_78889_6_ - 1 + p_78889_3_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_8_ - 1 + p_78889_5_);
+                return new UStructureBoundingBox(p_78889_0_ + p_78889_3_, p_78889_1_ + p_78889_4_, p_78889_2_ + p_78889_5_, p_78889_0_ + p_78889_6_ - 1 + p_78889_3_, p_78889_1_ + p_78889_7_ - 1 + p_78889_4_, p_78889_2_ + p_78889_8_ - 1 + p_78889_5_);
         }
     }
 
-    public StructureBoundingBox(StructureBoundingBox p_i2031_1_)
+    public UStructureBoundingBox(UStructureBoundingBox p_i2031_1_)
     {
         this.minX = p_i2031_1_.minX;
         this.minY = p_i2031_1_.minY;
@@ -72,7 +71,7 @@ public class StructureBoundingBox
         this.maxZ = p_i2031_1_.maxZ;
     }
 
-    public StructureBoundingBox(int p_i2032_1_, int p_i2032_2_, int p_i2032_3_, int p_i2032_4_, int p_i2032_5_, int p_i2032_6_)
+    public UStructureBoundingBox(int p_i2032_1_, int p_i2032_2_, int p_i2032_3_, int p_i2032_4_, int p_i2032_5_, int p_i2032_6_)
     {
         this.minX = p_i2032_1_;
         this.minY = p_i2032_2_;
@@ -82,20 +81,20 @@ public class StructureBoundingBox
         this.maxZ = p_i2032_6_;
     }
 
-    public StructureBoundingBox(int p_i2033_1_, int p_i2033_2_, int p_i2033_3_, int p_i2033_4_)
+    public UStructureBoundingBox(int p_i2033_1_, int p_i2033_2_, int p_i2033_3_, int p_i2033_4_)
     {
         this.minX = p_i2033_1_;
         this.minZ = p_i2033_2_;
         this.maxX = p_i2033_3_;
         this.maxZ = p_i2033_4_;
         this.minY = 1;
-        this.maxY = 512;
+        this.maxY = 512; //what?! y not 256... mojang? are you planning a 16 x 512 x 16 chunk :P
     }
 
     /**
      * Returns whether the given bounding box intersects with this one. Args: structureboundingbox
      */
-    public boolean intersectsWith(StructureBoundingBox p_78884_1_)
+    public boolean intersectsWith(UStructureBoundingBox p_78884_1_)
     {
         return this.maxX >= p_78884_1_.minX && this.minX <= p_78884_1_.maxX && this.maxZ >= p_78884_1_.minZ && this.minZ <= p_78884_1_.maxZ && this.maxY >= p_78884_1_.minY && this.minY <= p_78884_1_.maxY;
     }
@@ -111,7 +110,7 @@ public class StructureBoundingBox
     /**
      * Expands a bounding box's dimensions to include the supplied bounding box.
      */
-    public void expandTo(StructureBoundingBox p_78888_1_)
+    public void expandTo(UStructureBoundingBox p_78888_1_)
     {
         this.minX = Math.min(this.minX, p_78888_1_.minX);
         this.minY = Math.min(this.minY, p_78888_1_.minY);

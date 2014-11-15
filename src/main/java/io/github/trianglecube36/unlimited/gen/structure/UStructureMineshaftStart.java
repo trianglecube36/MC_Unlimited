@@ -3,22 +3,20 @@ package io.github.trianglecube36.unlimited.gen.structure;
 import java.util.Random;
 
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.StructureMineshaftPieces;
-import net.minecraft.world.gen.structure.StructureStart;
 
-public class StructureMineshaftStart extends StructureStart
+public class UStructureMineshaftStart extends UStructureStart
 {
     private static final String __OBFID = "CL_00000450";
 
-    public StructureMineshaftStart() {}
+    public UStructureMineshaftStart() {}
 
-    public StructureMineshaftStart(World p_i2039_1_, Random p_i2039_2_, int p_i2039_3_, int p_i2039_4_)
+    public UStructureMineshaftStart(World world, Random rand, int cX, int cY, int cZ)
     {
-        super(p_i2039_3_, p_i2039_4_);
-        StructureMineshaftPieces.Room room = new StructureMineshaftPieces.Room(0, p_i2039_2_, (p_i2039_3_ << 4) + 2, (p_i2039_4_ << 4) + 2);
+        super(cX, cZ);
+        UStructureMineshaftPieces.Room room = new UStructureMineshaftPieces.Room(0, rand, (cX << 5) + 2, (cY << 5) + 2, (cZ << 5) + 2);
         this.components.add(room);
-        room.buildComponent(room, this.components, p_i2039_2_);
+        room.buildComponent(room, this.components, rand);
         this.updateBoundingBox();
-        this.markAvailableHeight(p_i2039_1_, p_i2039_2_, 10);
+        this.markAvailableHeight(world, rand, 10);
     }
 }

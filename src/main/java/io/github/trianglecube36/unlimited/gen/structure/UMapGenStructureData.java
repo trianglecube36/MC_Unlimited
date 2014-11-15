@@ -3,12 +3,12 @@ package io.github.trianglecube36.unlimited.gen.structure;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldSavedData;
 
-public class MapGenStructureData extends WorldSavedData
+public class UMapGenStructureData extends WorldSavedData
 {
     private NBTTagCompound field_143044_a = new NBTTagCompound();
     private static final String __OBFID = "CL_00000510";
 
-    public MapGenStructureData(String p_i43001_1_)
+    public UMapGenStructureData(String p_i43001_1_)
     {
         super(p_i43001_1_);
     }

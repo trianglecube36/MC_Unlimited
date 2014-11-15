@@ -9,6 +9,10 @@ import io.github.trianglecube36.unlimited.event.UTerrainGen;
 import io.github.trianglecube36.unlimited.gen.UMapGenBase;
 import io.github.trianglecube36.unlimited.gen.UMapGenCaves;
 import io.github.trianglecube36.unlimited.gen.UMapGenRavine;
+import io.github.trianglecube36.unlimited.gen.structure.UMapGenMineshaft;
+import io.github.trianglecube36.unlimited.gen.structure.UMapGenScatteredFeature;
+import io.github.trianglecube36.unlimited.gen.structure.UMapGenStronghold;
+import io.github.trianglecube36.unlimited.gen.structure.UMapGenVillage;
 
 import java.util.List;
 import java.util.Random;
@@ -33,10 +37,6 @@ import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.feature.WorldGenLakes;
-import net.minecraft.world.gen.structure.MapGenMineshaft;
-import net.minecraft.world.gen.structure.MapGenScatteredFeature;
-import net.minecraft.world.gen.structure.MapGenStronghold;
-import net.minecraft.world.gen.structure.MapGenVillage;
 import static io.github.trianglecube36.unlimited.event.UInitMapGenEvent.EventType.*;
 import static io.github.trianglecube36.unlimited.event.UPopulateChunkEvent.Populate.EventType.*;
 import net.minecraftforge.common.*;
@@ -84,10 +84,10 @@ public class UChunkProviderGenerate implements IUChunkProvider
 
     {
         caveGenerator = UTerrainGen.getModdedMapGen(caveGenerator, CAVE);
-        strongholdGenerator = (MapGenStronghold) UTerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
-        villageGenerator = (MapGenVillage) UTerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
-        mineshaftGenerator = (MapGenMineshaft) UTerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
-        scatteredFeatureGenerator = (MapGenScatteredFeature) UTerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
+        strongholdGenerator = (UMapGenStronghold) UTerrainGen.getModdedMapGen(strongholdGenerator, STRONGHOLD);
+        villageGenerator = (UMapGenVillage) UTerrainGen.getModdedMapGen(villageGenerator, VILLAGE);
+        mineshaftGenerator = (UMapGenMineshaft) UTerrainGen.getModdedMapGen(mineshaftGenerator, MINESHAFT);
+        scatteredFeatureGenerator = (UMapGenScatteredFeature) UTerrainGen.getModdedMapGen(scatteredFeatureGenerator, SCATTERED_FEATURE);
         ravineGenerator = UTerrainGen.getModdedMapGen(ravineGenerator, RAVINE);
     }
 

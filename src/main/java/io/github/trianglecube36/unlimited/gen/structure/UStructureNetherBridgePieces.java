@@ -11,105 +11,99 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureIO;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureNetherBridgePieces;
 
-public class StructureNetherBridgePieces
+public class UStructureNetherBridgePieces
 {
-    private static final StructureNetherBridgePieces.PieceWeight[] primaryComponents = new StructureNetherBridgePieces.PieceWeight[] {new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Straight.class, 30, 0, true), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Crossing3.class, 10, 4), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Crossing.class, 10, 4), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Stairs.class, 10, 3), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Throne.class, 5, 2), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Entrance.class, 5, 1)};
-    private static final StructureNetherBridgePieces.PieceWeight[] secondaryComponents = new StructureNetherBridgePieces.PieceWeight[] {new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Corridor5.class, 25, 0, true), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Crossing2.class, 15, 5), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Corridor2.class, 5, 10), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Corridor.class, 5, 10), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Corridor3.class, 10, 3, true), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.Corridor4.class, 7, 2), new StructureNetherBridgePieces.PieceWeight(StructureNetherBridgePieces.NetherStalkRoom.class, 5, 2)};
-    private static final String __OBFID = "CL_00000453";
+    private static final UStructureNetherBridgePieces.PieceWeight[] primaryComponents = new UStructureNetherBridgePieces.PieceWeight[] {new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Straight.class, 30, 0, true), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Crossing3.class, 10, 4), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Crossing.class, 10, 4), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Stairs.class, 10, 3), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Throne.class, 5, 2), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Entrance.class, 5, 1)};
+    private static final UStructureNetherBridgePieces.PieceWeight[] secondaryComponents = new UStructureNetherBridgePieces.PieceWeight[] {new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Corridor5.class, 25, 0, true), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Crossing2.class, 15, 5), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Corridor2.class, 5, 10), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Corridor.class, 5, 10), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Corridor3.class, 10, 3, true), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.Corridor4.class, 7, 2), new UStructureNetherBridgePieces.PieceWeight(UStructureNetherBridgePieces.NetherStalkRoom.class, 5, 2)};
 
     public static void registerNetherFortressPieces()
     {
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Crossing3.class, "NeBCr");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.End.class, "NeBEF");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Straight.class, "NeBS");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Corridor3.class, "NeCCS");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Corridor4.class, "NeCTB");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Entrance.class, "NeCE");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Crossing2.class, "NeSCSC");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Corridor.class, "NeSCLT");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Corridor5.class, "NeSC");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Corridor2.class, "NeSCRT");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.NetherStalkRoom.class, "NeCSR");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Throne.class, "NeMT");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Crossing.class, "NeRC");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Stairs.class, "NeSR");
-        MapGenStructureIO.func_143031_a(StructureNetherBridgePieces.Start.class, "NeStart");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Crossing3.class, "NeBCr");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.End.class, "NeBEF");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Straight.class, "NeBS");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Corridor3.class, "NeCCS");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Corridor4.class, "NeCTB");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Entrance.class, "NeCE");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Crossing2.class, "NeSCSC");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Corridor.class, "NeSCLT");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Corridor5.class, "NeSC");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Corridor2.class, "NeSCRT");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.NetherStalkRoom.class, "NeCSR");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Throne.class, "NeMT");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Crossing.class, "NeRC");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Stairs.class, "NeSR");
+        UMapGenStructureIO.func_143031_a(UStructureNetherBridgePieces.Start.class, "NeStart");
     }
 
-    private static StructureNetherBridgePieces.Piece createNextComponentRandom(StructureNetherBridgePieces.PieceWeight p_78738_0_, List p_78738_1_, Random p_78738_2_, int p_78738_3_, int p_78738_4_, int p_78738_5_, int p_78738_6_, int p_78738_7_)
+    private static UStructureNetherBridgePieces.Piece createNextComponentRandom(UStructureNetherBridgePieces.PieceWeight p_78738_0_, List p_78738_1_, Random p_78738_2_, int p_78738_3_, int p_78738_4_, int p_78738_5_, int p_78738_6_, int p_78738_7_)
     {
         Class oclass = p_78738_0_.weightClass;
         Object object = null;
 
-        if (oclass == StructureNetherBridgePieces.Straight.class)
+        if (oclass == UStructureNetherBridgePieces.Straight.class)
         {
-            object = StructureNetherBridgePieces.Straight.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Straight.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Crossing3.class)
+        else if (oclass == UStructureNetherBridgePieces.Crossing3.class)
         {
-            object = StructureNetherBridgePieces.Crossing3.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Crossing3.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Crossing.class)
+        else if (oclass == UStructureNetherBridgePieces.Crossing.class)
         {
-            object = StructureNetherBridgePieces.Crossing.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Crossing.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Stairs.class)
+        else if (oclass == UStructureNetherBridgePieces.Stairs.class)
         {
-            object = StructureNetherBridgePieces.Stairs.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Stairs.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Throne.class)
+        else if (oclass == UStructureNetherBridgePieces.Throne.class)
         {
-            object = StructureNetherBridgePieces.Throne.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Throne.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Entrance.class)
+        else if (oclass == UStructureNetherBridgePieces.Entrance.class)
         {
-            object = StructureNetherBridgePieces.Entrance.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Entrance.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Corridor5.class)
+        else if (oclass == UStructureNetherBridgePieces.Corridor5.class)
         {
-            object = StructureNetherBridgePieces.Corridor5.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Corridor5.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Corridor2.class)
+        else if (oclass == UStructureNetherBridgePieces.Corridor2.class)
         {
-            object = StructureNetherBridgePieces.Corridor2.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Corridor2.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Corridor.class)
+        else if (oclass == UStructureNetherBridgePieces.Corridor.class)
         {
-            object = StructureNetherBridgePieces.Corridor.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Corridor.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Corridor3.class)
+        else if (oclass == UStructureNetherBridgePieces.Corridor3.class)
         {
-            object = StructureNetherBridgePieces.Corridor3.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Corridor3.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Corridor4.class)
+        else if (oclass == UStructureNetherBridgePieces.Corridor4.class)
         {
-            object = StructureNetherBridgePieces.Corridor4.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Corridor4.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.Crossing2.class)
+        else if (oclass == UStructureNetherBridgePieces.Crossing2.class)
         {
-            object = StructureNetherBridgePieces.Crossing2.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.Crossing2.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
-        else if (oclass == StructureNetherBridgePieces.NetherStalkRoom.class)
+        else if (oclass == UStructureNetherBridgePieces.NetherStalkRoom.class)
         {
-            object = StructureNetherBridgePieces.NetherStalkRoom.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
+            object = UStructureNetherBridgePieces.NetherStalkRoom.createValidComponent(p_78738_1_, p_78738_2_, p_78738_3_, p_78738_4_, p_78738_5_, p_78738_6_, p_78738_7_);
         }
 
-        return (StructureNetherBridgePieces.Piece)object;
+        return (UStructureNetherBridgePieces.Piece)object;
     }
 
-    public static class Corridor extends StructureNetherBridgePieces.Piece
+    public static class Corridor extends UStructureNetherBridgePieces.Piece
         {
             private boolean field_111021_b;
-            private static final String __OBFID = "CL_00000461";
 
             public Corridor() {}
 
-            public Corridor(int p_i2049_1_, Random p_i2049_2_, StructureBoundingBox p_i2049_3_, int p_i2049_4_)
+            public Corridor(int p_i2049_1_, Random p_i2049_2_, UStructureBoundingBox p_i2049_3_, int p_i2049_4_)
             {
                 super(p_i2049_1_);
                 this.coordBaseMode = p_i2049_4_;
@@ -132,28 +126,28 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentX((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
+                this.getNextComponentX((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Corridor createValidComponent(List p_74978_0_, Random p_74978_1_, int p_74978_2_, int p_74978_3_, int p_74978_4_, int p_74978_5_, int p_74978_6_)
+            public static UStructureNetherBridgePieces.Corridor createValidComponent(List p_74978_0_, Random p_74978_1_, int p_74978_2_, int p_74978_3_, int p_74978_4_, int p_74978_5_, int p_74978_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74978_2_, p_74978_3_, p_74978_4_, -1, 0, 0, 5, 7, 5, p_74978_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74978_2_, p_74978_3_, p_74978_4_, -1, 0, 0, 5, 7, 5, p_74978_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74978_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Corridor(p_74978_6_, p_74978_1_, structureboundingbox, p_74978_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74978_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Corridor(p_74978_6_, p_74978_1_, structureboundingbox, p_74978_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 1, 4, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 4, 5, 4, Blocks.air, Blocks.air, false);
@@ -194,14 +188,14 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Corridor2 extends StructureNetherBridgePieces.Piece
+    public static class Corridor2 extends UStructureNetherBridgePieces.Piece
         {
             private boolean field_111020_b;
             private static final String __OBFID = "CL_00000463";
 
             public Corridor2() {}
 
-            public Corridor2(int p_i2051_1_, Random p_i2051_2_, StructureBoundingBox p_i2051_3_, int p_i2051_4_)
+            public Corridor2(int p_i2051_1_, Random p_i2051_2_, UStructureBoundingBox p_i2051_3_, int p_i2051_4_)
             {
                 super(p_i2051_1_);
                 this.coordBaseMode = p_i2051_4_;
@@ -224,28 +218,28 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentZ((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
+                this.getNextComponentZ((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Corridor2 createValidComponent(List p_74980_0_, Random p_74980_1_, int p_74980_2_, int p_74980_3_, int p_74980_4_, int p_74980_5_, int p_74980_6_)
+            public static UStructureNetherBridgePieces.Corridor2 createValidComponent(List p_74980_0_, Random p_74980_1_, int p_74980_2_, int p_74980_3_, int p_74980_4_, int p_74980_5_, int p_74980_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74980_2_, p_74980_3_, p_74980_4_, -1, 0, 0, 5, 7, 5, p_74980_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74980_2_, p_74980_3_, p_74980_4_, -1, 0, 0, 5, 7, 5, p_74980_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74980_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Corridor2(p_74980_6_, p_74980_1_, structureboundingbox, p_74980_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74980_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Corridor2(p_74980_6_, p_74980_1_, structureboundingbox, p_74980_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 1, 4, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 4, 5, 4, Blocks.air, Blocks.air, false);
@@ -286,13 +280,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Corridor3 extends StructureNetherBridgePieces.Piece
+    public static class Corridor3 extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000457";
 
             public Corridor3() {}
 
-            public Corridor3(int p_i2045_1_, Random p_i2045_2_, StructureBoundingBox p_i2045_3_, int p_i2045_4_)
+            public Corridor3(int p_i2045_1_, Random p_i2045_2_, UStructureBoundingBox p_i2045_3_, int p_i2045_4_)
             {
                 super(p_i2045_1_);
                 this.coordBaseMode = p_i2045_4_;
@@ -302,28 +296,28 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 0, true);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 0, true);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Corridor3 createValidComponent(List p_74982_0_, Random p_74982_1_, int p_74982_2_, int p_74982_3_, int p_74982_4_, int p_74982_5_, int p_74982_6_)
+            public static UStructureNetherBridgePieces.Corridor3 createValidComponent(List p_74982_0_, Random p_74982_1_, int p_74982_2_, int p_74982_3_, int p_74982_4_, int p_74982_5_, int p_74982_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74982_2_, p_74982_3_, p_74982_4_, -1, -7, 0, 5, 14, 10, p_74982_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74982_2_, p_74982_3_, p_74982_4_, -1, -7, 0, 5, 14, 10, p_74982_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74982_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Corridor3(p_74982_6_, p_74982_1_, structureboundingbox, p_74982_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74982_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Corridor3(p_74982_6_, p_74982_1_, structureboundingbox, p_74982_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 int i = this.getMetadataWithOffset(Blocks.nether_brick_stairs, 2);
 
@@ -362,13 +356,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Corridor4 extends StructureNetherBridgePieces.Piece
+    public static class Corridor4 extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000458";
 
             public Corridor4() {}
 
-            public Corridor4(int p_i2046_1_, Random p_i2046_2_, StructureBoundingBox p_i2046_3_, int p_i2046_4_)
+            public Corridor4(int p_i2046_1_, Random p_i2046_2_, UStructureBoundingBox p_i2046_3_, int p_i2046_4_)
             {
                 super(p_i2046_1_);
                 this.coordBaseMode = p_i2046_4_;
@@ -378,7 +372,7 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
                 byte b0 = 1;
 
@@ -387,27 +381,27 @@ public class StructureNetherBridgePieces
                     b0 = 5;
                 }
 
-                this.getNextComponentX((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, b0, p_74861_3_.nextInt(8) > 0);
-                this.getNextComponentZ((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, b0, p_74861_3_.nextInt(8) > 0);
+                this.getNextComponentX((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, b0, p_74861_3_.nextInt(8) > 0);
+                this.getNextComponentZ((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, b0, p_74861_3_.nextInt(8) > 0);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Corridor4 createValidComponent(List p_74985_0_, Random p_74985_1_, int p_74985_2_, int p_74985_3_, int p_74985_4_, int p_74985_5_, int p_74985_6_)
+            public static UStructureNetherBridgePieces.Corridor4 createValidComponent(List p_74985_0_, Random p_74985_1_, int p_74985_2_, int p_74985_3_, int p_74985_4_, int p_74985_5_, int p_74985_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74985_2_, p_74985_3_, p_74985_4_, -3, 0, 0, 9, 7, 9, p_74985_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74985_2_, p_74985_3_, p_74985_4_, -3, 0, 0, 9, 7, 9, p_74985_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74985_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Corridor4(p_74985_6_, p_74985_1_, structureboundingbox, p_74985_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74985_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Corridor4(p_74985_6_, p_74985_1_, structureboundingbox, p_74985_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 8, 1, 8, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 8, 5, 8, Blocks.air, Blocks.air, false);
@@ -441,13 +435,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Corridor5 extends StructureNetherBridgePieces.Piece
+    public static class Corridor5 extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000462";
 
             public Corridor5() {}
 
-            public Corridor5(int p_i2050_1_, Random p_i2050_2_, StructureBoundingBox p_i2050_3_, int p_i2050_4_)
+            public Corridor5(int p_i2050_1_, Random p_i2050_2_, UStructureBoundingBox p_i2050_3_, int p_i2050_4_)
             {
                 super(p_i2050_1_);
                 this.coordBaseMode = p_i2050_4_;
@@ -457,28 +451,28 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 0, true);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 0, true);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Corridor5 createValidComponent(List p_74981_0_, Random p_74981_1_, int p_74981_2_, int p_74981_3_, int p_74981_4_, int p_74981_5_, int p_74981_6_)
+            public static UStructureNetherBridgePieces.Corridor5 createValidComponent(List p_74981_0_, Random p_74981_1_, int p_74981_2_, int p_74981_3_, int p_74981_4_, int p_74981_5_, int p_74981_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74981_2_, p_74981_3_, p_74981_4_, -1, 0, 0, 5, 7, 5, p_74981_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74981_2_, p_74981_3_, p_74981_4_, -1, 0, 0, 5, 7, 5, p_74981_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74981_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Corridor5(p_74981_6_, p_74981_1_, structureboundingbox, p_74981_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74981_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Corridor5(p_74981_6_, p_74981_1_, structureboundingbox, p_74981_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 1, 4, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 4, 5, 4, Blocks.air, Blocks.air, false);
@@ -502,13 +496,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Crossing extends StructureNetherBridgePieces.Piece
+    public static class Crossing extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000468";
 
             public Crossing() {}
 
-            public Crossing(int p_i2057_1_, Random p_i2057_2_, StructureBoundingBox p_i2057_3_, int p_i2057_4_)
+            public Crossing(int p_i2057_1_, Random p_i2057_2_, UStructureBoundingBox p_i2057_3_, int p_i2057_4_)
             {
                 super(p_i2057_1_);
                 this.coordBaseMode = p_i2057_4_;
@@ -518,30 +512,30 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 2, 0, false);
-                this.getNextComponentX((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 2, false);
-                this.getNextComponentZ((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 2, false);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 2, 0, false);
+                this.getNextComponentX((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 2, false);
+                this.getNextComponentZ((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 2, false);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Crossing createValidComponent(List p_74974_0_, Random p_74974_1_, int p_74974_2_, int p_74974_3_, int p_74974_4_, int p_74974_5_, int p_74974_6_)
+            public static UStructureNetherBridgePieces.Crossing createValidComponent(List p_74974_0_, Random p_74974_1_, int p_74974_2_, int p_74974_3_, int p_74974_4_, int p_74974_5_, int p_74974_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74974_2_, p_74974_3_, p_74974_4_, -2, 0, 0, 7, 9, 7, p_74974_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74974_2_, p_74974_3_, p_74974_4_, -2, 0, 0, 7, 9, 7, p_74974_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74974_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Crossing(p_74974_6_, p_74974_1_, structureboundingbox, p_74974_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74974_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Crossing(p_74974_6_, p_74974_1_, structureboundingbox, p_74974_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 6, 1, 6, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 6, 7, 6, Blocks.air, Blocks.air, false);
@@ -574,13 +568,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Crossing2 extends StructureNetherBridgePieces.Piece
+    public static class Crossing2 extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000460";
 
             public Crossing2() {}
 
-            public Crossing2(int p_i2048_1_, Random p_i2048_2_, StructureBoundingBox p_i2048_3_, int p_i2048_4_)
+            public Crossing2(int p_i2048_1_, Random p_i2048_2_, UStructureBoundingBox p_i2048_3_, int p_i2048_4_)
             {
                 super(p_i2048_1_);
                 this.coordBaseMode = p_i2048_4_;
@@ -590,30 +584,30 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 0, true);
-                this.getNextComponentX((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
-                this.getNextComponentZ((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 0, true);
+                this.getNextComponentX((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
+                this.getNextComponentZ((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 0, 1, true);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Crossing2 createValidComponent(List p_74979_0_, Random p_74979_1_, int p_74979_2_, int p_74979_3_, int p_74979_4_, int p_74979_5_, int p_74979_6_)
+            public static UStructureNetherBridgePieces.Crossing2 createValidComponent(List p_74979_0_, Random p_74979_1_, int p_74979_2_, int p_74979_3_, int p_74979_4_, int p_74979_5_, int p_74979_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74979_2_, p_74979_3_, p_74979_4_, -1, 0, 0, 5, 7, 5, p_74979_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74979_2_, p_74979_3_, p_74979_4_, -1, 0, 0, 5, 7, 5, p_74979_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74979_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Crossing2(p_74979_6_, p_74979_1_, structureboundingbox, p_74979_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74979_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Crossing2(p_74979_6_, p_74979_1_, structureboundingbox, p_74979_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 4, 1, 4, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 4, 5, 4, Blocks.air, Blocks.air, false);
@@ -635,13 +629,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Crossing3 extends StructureNetherBridgePieces.Piece
+    public static class Crossing3 extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000454";
 
             public Crossing3() {}
 
-            public Crossing3(int p_i2041_1_, Random p_i2041_2_, StructureBoundingBox p_i2041_3_, int p_i2041_4_)
+            public Crossing3(int p_i2041_1_, Random p_i2041_2_, UStructureBoundingBox p_i2041_3_, int p_i2041_4_)
             {
                 super(p_i2041_1_);
                 this.coordBaseMode = p_i2041_4_;
@@ -657,40 +651,40 @@ public class StructureNetherBridgePieces
                 {
                     case 0:
                     case 2:
-                        this.boundingBox = new StructureBoundingBox(p_i2042_2_, 64, p_i2042_3_, p_i2042_2_ + 19 - 1, 73, p_i2042_3_ + 19 - 1);
+                        this.boundingBox = new UStructureBoundingBox(p_i2042_2_, 64, p_i2042_3_, p_i2042_2_ + 19 - 1, 73, p_i2042_3_ + 19 - 1);
                         break;
                     default:
-                        this.boundingBox = new StructureBoundingBox(p_i2042_2_, 64, p_i2042_3_, p_i2042_2_ + 19 - 1, 73, p_i2042_3_ + 19 - 1);
+                        this.boundingBox = new UStructureBoundingBox(p_i2042_2_, 64, p_i2042_3_, p_i2042_2_ + 19 - 1, 73, p_i2042_3_ + 19 - 1);
                 }
             }
 
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 8, 3, false);
-                this.getNextComponentX((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 3, 8, false);
-                this.getNextComponentZ((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 3, 8, false);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 8, 3, false);
+                this.getNextComponentX((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 3, 8, false);
+                this.getNextComponentZ((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 3, 8, false);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Crossing3 createValidComponent(List p_74966_0_, Random p_74966_1_, int p_74966_2_, int p_74966_3_, int p_74966_4_, int p_74966_5_, int p_74966_6_)
+            public static UStructureNetherBridgePieces.Crossing3 createValidComponent(List p_74966_0_, Random p_74966_1_, int p_74966_2_, int p_74966_3_, int p_74966_4_, int p_74966_5_, int p_74966_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74966_2_, p_74966_3_, p_74966_4_, -8, -3, 0, 19, 10, 19, p_74966_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74966_2_, p_74966_3_, p_74966_4_, -8, -3, 0, 19, 10, 19, p_74966_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74966_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Crossing3(p_74966_6_, p_74966_1_, structureboundingbox, p_74966_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74966_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Crossing3(p_74966_6_, p_74966_1_, structureboundingbox, p_74966_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 7, 3, 0, 11, 4, 18, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 3, 7, 18, 4, 11, Blocks.nether_brick, Blocks.nether_brick, false);
@@ -738,14 +732,14 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class End extends StructureNetherBridgePieces.Piece
+    public static class End extends UStructureNetherBridgePieces.Piece
         {
             private int fillSeed;
             private static final String __OBFID = "CL_00000455";
 
             public End() {}
 
-            public End(int p_i2043_1_, Random p_i2043_2_, StructureBoundingBox p_i2043_3_, int p_i2043_4_)
+            public End(int p_i2043_1_, Random p_i2043_2_, UStructureBoundingBox p_i2043_3_, int p_i2043_4_)
             {
                 super(p_i2043_1_);
                 this.coordBaseMode = p_i2043_4_;
@@ -753,13 +747,13 @@ public class StructureNetherBridgePieces
                 this.fillSeed = p_i2043_2_.nextInt();
             }
 
-            public static StructureNetherBridgePieces.End func_74971_a(List p_74971_0_, Random p_74971_1_, int p_74971_2_, int p_74971_3_, int p_74971_4_, int p_74971_5_, int p_74971_6_)
+            public static UStructureNetherBridgePieces.End func_74971_a(List p_74971_0_, Random p_74971_1_, int p_74971_2_, int p_74971_3_, int p_74971_4_, int p_74971_5_, int p_74971_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74971_2_, p_74971_3_, p_74971_4_, -1, -3, 0, 5, 10, 8, p_74971_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74971_2_, p_74971_3_, p_74971_4_, -1, -3, 0, 5, 10, 8, p_74971_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74971_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.End(p_74971_6_, p_74971_1_, structureboundingbox, p_74971_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74971_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.End(p_74971_6_, p_74971_1_, structureboundingbox, p_74971_5_) : null;
             }
 
             protected void func_143011_b(NBTTagCompound p_143011_1_)
@@ -778,7 +772,7 @@ public class StructureNetherBridgePieces
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 Random random1 = new Random((long)this.fillSeed);
                 int i;
@@ -818,13 +812,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Entrance extends StructureNetherBridgePieces.Piece
+    public static class Entrance extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000459";
 
             public Entrance() {}
 
-            public Entrance(int p_i2047_1_, Random p_i2047_2_, StructureBoundingBox p_i2047_3_, int p_i2047_4_)
+            public Entrance(int p_i2047_1_, Random p_i2047_2_, UStructureBoundingBox p_i2047_3_, int p_i2047_4_)
             {
                 super(p_i2047_1_);
                 this.coordBaseMode = p_i2047_4_;
@@ -834,28 +828,28 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 5, 3, true);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 5, 3, true);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Entrance createValidComponent(List p_74984_0_, Random p_74984_1_, int p_74984_2_, int p_74984_3_, int p_74984_4_, int p_74984_5_, int p_74984_6_)
+            public static UStructureNetherBridgePieces.Entrance createValidComponent(List p_74984_0_, Random p_74984_1_, int p_74984_2_, int p_74984_3_, int p_74984_4_, int p_74984_5_, int p_74984_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74984_2_, p_74984_3_, p_74984_4_, -5, -3, 0, 13, 14, 13, p_74984_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74984_2_, p_74984_3_, p_74984_4_, -5, -3, 0, 13, 14, 13, p_74984_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74984_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Entrance(p_74984_6_, p_74984_1_, structureboundingbox, p_74984_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74984_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Entrance(p_74984_6_, p_74984_1_, structureboundingbox, p_74984_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 3, 0, 12, 4, 12, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 5, 0, 12, 13, 12, Blocks.air, Blocks.air, false);
@@ -943,13 +937,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class NetherStalkRoom extends StructureNetherBridgePieces.Piece
+    public static class NetherStalkRoom extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000464";
 
             public NetherStalkRoom() {}
 
-            public NetherStalkRoom(int p_i2052_1_, Random p_i2052_2_, StructureBoundingBox p_i2052_3_, int p_i2052_4_)
+            public NetherStalkRoom(int p_i2052_1_, Random p_i2052_2_, UStructureBoundingBox p_i2052_3_, int p_i2052_4_)
             {
                 super(p_i2052_1_);
                 this.coordBaseMode = p_i2052_4_;
@@ -959,29 +953,29 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 5, 3, true);
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 5, 11, true);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 5, 3, true);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 5, 11, true);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.NetherStalkRoom createValidComponent(List p_74977_0_, Random p_74977_1_, int p_74977_2_, int p_74977_3_, int p_74977_4_, int p_74977_5_, int p_74977_6_)
+            public static UStructureNetherBridgePieces.NetherStalkRoom createValidComponent(List p_74977_0_, Random p_74977_1_, int p_74977_2_, int p_74977_3_, int p_74977_4_, int p_74977_5_, int p_74977_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74977_2_, p_74977_3_, p_74977_4_, -5, -3, 0, 13, 14, 13, p_74977_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74977_2_, p_74977_3_, p_74977_4_, -5, -3, 0, 13, 14, 13, p_74977_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74977_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.NetherStalkRoom(p_74977_6_, p_74977_1_, structureboundingbox, p_74977_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74977_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.NetherStalkRoom(p_74977_6_, p_74977_1_, structureboundingbox, p_74977_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 3, 0, 12, 4, 12, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 5, 0, 12, 13, 12, Blocks.air, Blocks.air, false);
@@ -1110,7 +1104,7 @@ public class StructureNetherBridgePieces
             }
         }
 
-    abstract static class Piece extends StructureComponent
+    abstract static class Piece extends UStructureComponent
         {
             protected static final WeightedRandomChestContent[] field_111019_a = new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.diamond, 0, 1, 3, 5), new WeightedRandomChestContent(Items.iron_ingot, 0, 1, 5, 5), new WeightedRandomChestContent(Items.gold_ingot, 0, 1, 3, 15), new WeightedRandomChestContent(Items.golden_sword, 0, 1, 1, 5), new WeightedRandomChestContent(Items.golden_chestplate, 0, 1, 1, 5), new WeightedRandomChestContent(Items.flint_and_steel, 0, 1, 1, 5), new WeightedRandomChestContent(Items.nether_wart, 0, 3, 7, 5), new WeightedRandomChestContent(Items.saddle, 0, 1, 1, 10), new WeightedRandomChestContent(Items.golden_horse_armor, 0, 1, 1, 8), new WeightedRandomChestContent(Items.iron_horse_armor, 0, 1, 1, 5), new WeightedRandomChestContent(Items.diamond_horse_armor, 0, 1, 1, 3)};
             private static final String __OBFID = "CL_00000466";
@@ -1130,11 +1124,11 @@ public class StructureNetherBridgePieces
             {
                 boolean flag = false;
                 int i = 0;
-                StructureNetherBridgePieces.PieceWeight pieceweight;
+                UStructureNetherBridgePieces.PieceWeight pieceweight;
 
                 for (Iterator iterator = p_74960_1_.iterator(); iterator.hasNext(); i += pieceweight.field_78826_b)
                 {
-                    pieceweight = (StructureNetherBridgePieces.PieceWeight)iterator.next();
+                    pieceweight = (UStructureNetherBridgePieces.PieceWeight)iterator.next();
 
                     if (pieceweight.field_78824_d > 0 && pieceweight.field_78827_c < pieceweight.field_78824_d)
                     {
@@ -1145,7 +1139,7 @@ public class StructureNetherBridgePieces
                 return flag ? i : -1;
             }
 
-            private StructureNetherBridgePieces.Piece getNextComponent(StructureNetherBridgePieces.Start p_74959_1_, List p_74959_2_, List p_74959_3_, Random p_74959_4_, int p_74959_5_, int p_74959_6_, int p_74959_7_, int p_74959_8_, int p_74959_9_)
+            private UStructureNetherBridgePieces.Piece getNextComponent(UStructureNetherBridgePieces.Start p_74959_1_, List p_74959_2_, List p_74959_3_, Random p_74959_4_, int p_74959_5_, int p_74959_6_, int p_74959_7_, int p_74959_8_, int p_74959_9_)
             {
                 int j1 = this.getTotalWeight(p_74959_2_);
                 boolean flag = j1 > 0 && p_74959_9_ <= 30;
@@ -1159,7 +1153,7 @@ public class StructureNetherBridgePieces
 
                     while (iterator.hasNext())
                     {
-                        StructureNetherBridgePieces.PieceWeight pieceweight = (StructureNetherBridgePieces.PieceWeight)iterator.next();
+                        UStructureNetherBridgePieces.PieceWeight pieceweight = (UStructureNetherBridgePieces.PieceWeight)iterator.next();
                         l1 -= pieceweight.field_78826_b;
 
                         if (l1 < 0)
@@ -1169,7 +1163,7 @@ public class StructureNetherBridgePieces
                                 break;
                             }
 
-                            StructureNetherBridgePieces.Piece piece = StructureNetherBridgePieces.createNextComponentRandom(pieceweight, p_74959_3_, p_74959_4_, p_74959_5_, p_74959_6_, p_74959_7_, p_74959_8_, p_74959_9_);
+                            UStructureNetherBridgePieces.Piece piece = UStructureNetherBridgePieces.createNextComponentRandom(pieceweight, p_74959_3_, p_74959_4_, p_74959_5_, p_74959_6_, p_74959_7_, p_74959_8_, p_74959_9_);
 
                             if (piece != null)
                             {
@@ -1187,13 +1181,13 @@ public class StructureNetherBridgePieces
                     }
                 }
 
-                return StructureNetherBridgePieces.End.func_74971_a(p_74959_3_, p_74959_4_, p_74959_5_, p_74959_6_, p_74959_7_, p_74959_8_, p_74959_9_);
+                return UStructureNetherBridgePieces.End.func_74971_a(p_74959_3_, p_74959_4_, p_74959_5_, p_74959_6_, p_74959_7_, p_74959_8_, p_74959_9_);
             }
 
             /**
              * Finds a random component to tack on to the bridge. Or builds the end.
              */
-            private StructureComponent getNextComponent(StructureNetherBridgePieces.Start p_74962_1_, List p_74962_2_, Random p_74962_3_, int p_74962_4_, int p_74962_5_, int p_74962_6_, int p_74962_7_, int p_74962_8_, boolean p_74962_9_)
+            private UStructureComponent getNextComponent(UStructureNetherBridgePieces.Start p_74962_1_, List p_74962_2_, Random p_74962_3_, int p_74962_4_, int p_74962_5_, int p_74962_6_, int p_74962_7_, int p_74962_8_, boolean p_74962_9_)
             {
                 if (Math.abs(p_74962_4_ - p_74962_1_.getBoundingBox().minX) <= 112 && Math.abs(p_74962_6_ - p_74962_1_.getBoundingBox().minZ) <= 112)
                 {
@@ -1204,7 +1198,7 @@ public class StructureNetherBridgePieces
                         list1 = p_74962_1_.secondaryWeights;
                     }
 
-                    StructureNetherBridgePieces.Piece piece = this.getNextComponent(p_74962_1_, list1, p_74962_2_, p_74962_3_, p_74962_4_, p_74962_5_, p_74962_6_, p_74962_7_, p_74962_8_ + 1);
+                    UStructureNetherBridgePieces.Piece piece = this.getNextComponent(p_74962_1_, list1, p_74962_2_, p_74962_3_, p_74962_4_, p_74962_5_, p_74962_6_, p_74962_7_, p_74962_8_ + 1);
 
                     if (piece != null)
                     {
@@ -1216,14 +1210,14 @@ public class StructureNetherBridgePieces
                 }
                 else
                 {
-                    return StructureNetherBridgePieces.End.func_74971_a(p_74962_2_, p_74962_3_, p_74962_4_, p_74962_5_, p_74962_6_, p_74962_7_, p_74962_8_);
+                    return UStructureNetherBridgePieces.End.func_74971_a(p_74962_2_, p_74962_3_, p_74962_4_, p_74962_5_, p_74962_6_, p_74962_7_, p_74962_8_);
                 }
             }
 
             /**
              * Gets the next component in any cardinal direction
              */
-            protected StructureComponent getNextComponentNormal(StructureNetherBridgePieces.Start p_74963_1_, List p_74963_2_, Random p_74963_3_, int p_74963_4_, int p_74963_5_, boolean p_74963_6_)
+            protected UStructureComponent getNextComponentNormal(UStructureNetherBridgePieces.Start p_74963_1_, List p_74963_2_, Random p_74963_3_, int p_74963_4_, int p_74963_5_, boolean p_74963_6_)
             {
                 switch (this.coordBaseMode)
                 {
@@ -1243,7 +1237,7 @@ public class StructureNetherBridgePieces
             /**
              * Gets the next component in the +/- X direction
              */
-            protected StructureComponent getNextComponentX(StructureNetherBridgePieces.Start p_74961_1_, List p_74961_2_, Random p_74961_3_, int p_74961_4_, int p_74961_5_, boolean p_74961_6_)
+            protected UStructureComponent getNextComponentX(UStructureNetherBridgePieces.Start p_74961_1_, List p_74961_2_, Random p_74961_3_, int p_74961_4_, int p_74961_5_, boolean p_74961_6_)
             {
                 switch (this.coordBaseMode)
                 {
@@ -1263,7 +1257,7 @@ public class StructureNetherBridgePieces
             /**
              * Gets the next component in the +/- Z direction
              */
-            protected StructureComponent getNextComponentZ(StructureNetherBridgePieces.Start p_74965_1_, List p_74965_2_, Random p_74965_3_, int p_74965_4_, int p_74965_5_, boolean p_74965_6_)
+            protected UStructureComponent getNextComponentZ(UStructureNetherBridgePieces.Start p_74965_1_, List p_74965_2_, Random p_74965_3_, int p_74965_4_, int p_74965_5_, boolean p_74965_6_)
             {
                 switch (this.coordBaseMode)
                 {
@@ -1283,7 +1277,7 @@ public class StructureNetherBridgePieces
             /**
              * Checks if the bounding box's minY is > 10
              */
-            protected static boolean isAboveGround(StructureBoundingBox p_74964_0_)
+            protected static boolean isAboveGround(UStructureBoundingBox p_74964_0_)
             {
                 return p_74964_0_ != null && p_74964_0_.minY > 10;
             }
@@ -1323,13 +1317,13 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Stairs extends StructureNetherBridgePieces.Piece
+    public static class Stairs extends UStructureNetherBridgePieces.Piece
         {
             private static final String __OBFID = "CL_00000469";
 
             public Stairs() {}
 
-            public Stairs(int p_i2058_1_, Random p_i2058_2_, StructureBoundingBox p_i2058_3_, int p_i2058_4_)
+            public Stairs(int p_i2058_1_, Random p_i2058_2_, UStructureBoundingBox p_i2058_3_, int p_i2058_4_)
             {
                 super(p_i2058_1_);
                 this.coordBaseMode = p_i2058_4_;
@@ -1339,28 +1333,28 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentZ((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 6, 2, false);
+                this.getNextComponentZ((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 6, 2, false);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Stairs createValidComponent(List p_74973_0_, Random p_74973_1_, int p_74973_2_, int p_74973_3_, int p_74973_4_, int p_74973_5_, int p_74973_6_)
+            public static UStructureNetherBridgePieces.Stairs createValidComponent(List p_74973_0_, Random p_74973_1_, int p_74973_2_, int p_74973_3_, int p_74973_4_, int p_74973_5_, int p_74973_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74973_2_, p_74973_3_, p_74973_4_, -2, 0, 0, 7, 11, 7, p_74973_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74973_2_, p_74973_3_, p_74973_4_, -2, 0, 0, 7, 11, 7, p_74973_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74973_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Stairs(p_74973_6_, p_74973_1_, structureboundingbox, p_74973_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74973_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Stairs(p_74973_6_, p_74973_1_, structureboundingbox, p_74973_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 0, 0, 6, 1, 6, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 6, 10, 6, Blocks.air, Blocks.air, false);
@@ -1394,10 +1388,10 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Start extends StructureNetherBridgePieces.Crossing3
+    public static class Start extends UStructureNetherBridgePieces.Crossing3
         {
             /** Instance of StructureNetherBridgePieceWeight. */
-            public StructureNetherBridgePieces.PieceWeight theNetherBridgePieceWeight;
+            public UStructureNetherBridgePieces.PieceWeight theNetherBridgePieceWeight;
             /**
              * Contains the list of valid piece weights for the set of nether bridge structure pieces.
              */
@@ -1411,14 +1405,14 @@ public class StructureNetherBridgePieces
 
             public Start() {}
 
-            public Start(Random p_i2059_1_, int p_i2059_2_, int p_i2059_3_)
+            public Start(Random rand, int bX, int bY, int bZ)
             {
-                super(p_i2059_1_, p_i2059_2_, p_i2059_3_);
+                super(rand, bX, bY, bZ);
                 this.primaryWeights = new ArrayList();
-                StructureNetherBridgePieces.PieceWeight[] apieceweight = StructureNetherBridgePieces.primaryComponents;
+                UStructureNetherBridgePieces.PieceWeight[] apieceweight = UStructureNetherBridgePieces.primaryComponents;
                 int k = apieceweight.length;
                 int l;
-                StructureNetherBridgePieces.PieceWeight pieceweight;
+                UStructureNetherBridgePieces.PieceWeight pieceweight;
 
                 for (l = 0; l < k; ++l)
                 {
@@ -1428,7 +1422,7 @@ public class StructureNetherBridgePieces
                 }
 
                 this.secondaryWeights = new ArrayList();
-                apieceweight = StructureNetherBridgePieces.secondaryComponents;
+                apieceweight = UStructureNetherBridgePieces.secondaryComponents;
                 k = apieceweight.length;
 
                 for (l = 0; l < k; ++l)
@@ -1450,13 +1444,11 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Straight extends StructureNetherBridgePieces.Piece
+    public static class Straight extends UStructureNetherBridgePieces.Piece
         {
-            private static final String __OBFID = "CL_00000456";
-
             public Straight() {}
 
-            public Straight(int p_i2044_1_, Random p_i2044_2_, StructureBoundingBox p_i2044_3_, int p_i2044_4_)
+            public Straight(int p_i2044_1_, Random p_i2044_2_, UStructureBoundingBox p_i2044_3_, int p_i2044_4_)
             {
                 super(p_i2044_1_);
                 this.coordBaseMode = p_i2044_4_;
@@ -1466,28 +1458,28 @@ public class StructureNetherBridgePieces
             /**
              * Initiates construction of the Structure Component picked, at the current Location of StructGen
              */
-            public void buildComponent(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
+            public void buildComponent(UStructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_)
             {
-                this.getNextComponentNormal((StructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 3, false);
+                this.getNextComponentNormal((UStructureNetherBridgePieces.Start)p_74861_1_, p_74861_2_, p_74861_3_, 1, 3, false);
             }
 
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Straight createValidComponent(List p_74983_0_, Random p_74983_1_, int p_74983_2_, int p_74983_3_, int p_74983_4_, int p_74983_5_, int p_74983_6_)
+            public static UStructureNetherBridgePieces.Straight createValidComponent(List p_74983_0_, Random p_74983_1_, int p_74983_2_, int p_74983_3_, int p_74983_4_, int p_74983_5_, int p_74983_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74983_2_, p_74983_3_, p_74983_4_, -1, -3, 0, 5, 10, 19, p_74983_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74983_2_, p_74983_3_, p_74983_4_, -1, -3, 0, 5, 10, 19, p_74983_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74983_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Straight(p_74983_6_, p_74983_1_, structureboundingbox, p_74983_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74983_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Straight(p_74983_6_, p_74983_1_, structureboundingbox, p_74983_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 3, 0, 4, 4, 18, Blocks.nether_brick, Blocks.nether_brick, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 1, 5, 0, 3, 7, 18, Blocks.air, Blocks.air, false);
@@ -1519,14 +1511,14 @@ public class StructureNetherBridgePieces
             }
         }
 
-    public static class Throne extends StructureNetherBridgePieces.Piece
+    public static class Throne extends UStructureNetherBridgePieces.Piece
         {
             private boolean hasSpawner;
             private static final String __OBFID = "CL_00000465";
 
             public Throne() {}
 
-            public Throne(int p_i2053_1_, Random p_i2053_2_, StructureBoundingBox p_i2053_3_, int p_i2053_4_)
+            public Throne(int p_i2053_1_, Random p_i2053_2_, UStructureBoundingBox p_i2053_3_, int p_i2053_4_)
             {
                 super(p_i2053_1_);
                 this.coordBaseMode = p_i2053_4_;
@@ -1548,20 +1540,20 @@ public class StructureNetherBridgePieces
             /**
              * Creates and returns a new component piece. Or null if it could not find enough room to place it.
              */
-            public static StructureNetherBridgePieces.Throne createValidComponent(List p_74975_0_, Random p_74975_1_, int p_74975_2_, int p_74975_3_, int p_74975_4_, int p_74975_5_, int p_74975_6_)
+            public static UStructureNetherBridgePieces.Throne createValidComponent(List p_74975_0_, Random p_74975_1_, int p_74975_2_, int p_74975_3_, int p_74975_4_, int p_74975_5_, int p_74975_6_)
             {
-                StructureBoundingBox structureboundingbox = StructureBoundingBox.getComponentToAddBoundingBox(p_74975_2_, p_74975_3_, p_74975_4_, -2, 0, 0, 7, 8, 9, p_74975_5_);
+                UStructureBoundingBox structureboundingbox = UStructureBoundingBox.getComponentToAddBoundingBox(p_74975_2_, p_74975_3_, p_74975_4_, -2, 0, 0, 7, 8, 9, p_74975_5_);
                 /**
                  * Checks if the bounding box's minY is > 10
                  */
-                return isAboveGround(structureboundingbox) && StructureComponent.findIntersecting(p_74975_0_, structureboundingbox) == null ? new StructureNetherBridgePieces.Throne(p_74975_6_, p_74975_1_, structureboundingbox, p_74975_5_) : null;
+                return isAboveGround(structureboundingbox) && UStructureComponent.findIntersecting(p_74975_0_, structureboundingbox) == null ? new UStructureNetherBridgePieces.Throne(p_74975_6_, p_74975_1_, structureboundingbox, p_74975_5_) : null;
             }
 
             /**
              * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes
              * Mineshafts at the end, it adds Fences...
              */
-            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, StructureBoundingBox p_74875_3_)
+            public boolean addComponentParts(World p_74875_1_, Random p_74875_2_, UStructureBoundingBox p_74875_3_)
             {
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 0, 2, 0, 6, 7, 7, Blocks.air, Blocks.air, false);
                 this.fillWithBlocks(p_74875_1_, p_74875_3_, 1, 0, 0, 5, 1, 7, Blocks.nether_brick, Blocks.nether_brick, false);
